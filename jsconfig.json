@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "jsx": "react-jsx",
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./resources/js/*"]
+        },
+        "allowJs": true,
+        "checkJs": false,
+        "ignoreDeprecations": "6.0"
+    },
+    "include": ["resources/js/**/*"],
+    "exclude": ["node_modules", "public", "vendor"]
+}
