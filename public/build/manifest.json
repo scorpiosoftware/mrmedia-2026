@@ -1,0 +1,72 @@
+{
+  "public/fonts/font-arabic/TheYearofHandicrafts-Black.otf": {
+    "file": "assets/TheYearofHandicrafts-Black-rCYLjEFk.otf",
+    "src": "public/fonts/font-arabic/TheYearofHandicrafts-Black.otf"
+  },
+  "public/fonts/font-arabic/TheYearofHandicrafts-Medium.otf": {
+    "file": "assets/TheYearofHandicrafts-Medium-DsNf24X5.otf",
+    "src": "public/fonts/font-arabic/TheYearofHandicrafts-Medium.otf"
+  },
+  "public/fonts/font-arabic/TheYearofHandicrafts-Regular.otf": {
+    "file": "assets/TheYearofHandicrafts-Regular-7j3c_1gU.otf",
+    "src": "public/fonts/font-arabic/TheYearofHandicrafts-Regular.otf"
+  },
+  "public/fonts/font-arabic/alfont_com_TheYearofHandicrafts-SemiBold.otf": {
+    "file": "assets/alfont_com_TheYearofHandicrafts-SemiBold-CGTLdX4F.otf",
+    "src": "public/fonts/font-arabic/alfont_com_TheYearofHandicrafts-SemiBold.otf"
+  },
+  "public/fonts/font-english/Nexa-Bold.otf": {
+    "file": "assets/Nexa-Bold-CGC_93Iw.otf",
+    "src": "public/fonts/font-english/Nexa-Bold.otf"
+  },
+  "public/fonts/font-english/Nexa-ExtraLight.ttf": {
+    "file": "assets/Nexa-ExtraLight-CYUoXLGo.ttf",
+    "src": "public/fonts/font-english/Nexa-ExtraLight.ttf"
+  },
+  "public/fonts/font-english/Nexa-Heavy.ttf": {
+    "file": "assets/Nexa-Heavy-C4LswGRq.ttf",
+    "src": "public/fonts/font-english/Nexa-Heavy.ttf"
+  },
+  "public/fonts/font-english/Nexa-Light.otf": {
+    "file": "assets/Nexa-Light-DohsbLqI.otf",
+    "src": "public/fonts/font-english/Nexa-Light.otf"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BJeEgEwt.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "assets": [
+      "assets/Nexa-ExtraLight-CYUoXLGo.ttf",
+      "assets/Nexa-Light-DohsbLqI.otf",
+      "assets/Nexa-Bold-CGC_93Iw.otf",
+      "assets/Nexa-Heavy-C4LswGRq.ttf",
+      "assets/TheYearofHandicrafts-Regular-7j3c_1gU.otf",
+      "assets/TheYearofHandicrafts-Medium-DsNf24X5.otf",
+      "assets/alfont_com_TheYearofHandicrafts-SemiBold-CGTLdX4F.otf",
+      "assets/TheYearofHandicrafts-Black-rCYLjEFk.otf"
+    ]
+  },
+  "resources/js/spa.jsx": {
+    "file": "assets/spa-MkvXEj0J.js",
+    "name": "spa",
+    "src": "resources/js/spa.jsx",
+    "isEntry": true,
+    "css": [
+      "assets/app-BJeEgEwt.css"
+    ],
+    "assets": [
+      "assets/Nexa-ExtraLight-CYUoXLGo.ttf",
+      "assets/Nexa-Light-DohsbLqI.otf",
+      "assets/Nexa-Bold-CGC_93Iw.otf",
+      "assets/Nexa-Heavy-C4LswGRq.ttf",
+      "assets/TheYearofHandicrafts-Regular-7j3c_1gU.otf",
+      "assets/TheYearofHandicrafts-Medium-DsNf24X5.otf",
+      "assets/alfont_com_TheYearofHandicrafts-SemiBold-CGTLdX4F.otf",
+      "assets/TheYearofHandicrafts-Black-rCYLjEFk.otf"
+    ]
+  }
+}
