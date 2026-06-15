@@ -10,6 +10,8 @@ export function AppProvider({ children }) {
     const [locale, setLocaleState] = useState(() => localStorage.getItem('mm_locale') || 'en');
     const [content, setContent] = useState({});
     const [contentLoading, setContentLoading] = useState(true);
+    const [whatsappNumber, setWhatsappNumber] = useState(null);
+    const [whatsappVisible, setWhatsappVisible] = useState(true);
     const [user, setUser] = useState(null);
     const [userLoading, setUserLoading] = useState(true);
     const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -29,6 +31,17 @@ export function AppProvider({ children }) {
             })
             .catch(() => setContentLoading(false));
     }, [locale]);
+
+    // Load public site settings on mount
+    useEffect(() => {
+        fetch('/api/settings')
+            .then((r) => (r.ok ? r.json() : {}))
+            .then((data) => {
+                setWhatsappNumber(data.whatsapp_number ?? null);
+                setWhatsappVisible(data.whatsapp_visible ?? true);
+            })
+            .catch(() => {});
+    }, []);
 
     // Check authentication on mount
     useEffect(() => {
@@ -89,7 +102,7 @@ export function AppProvider({ children }) {
 
     return (
         <AppContext.Provider
-            value={{ locale, content, contentLoading, user, userLoading, setLocale, login, logout, isDarkMode, toggleDarkMode }}
+            value={{ locale, content, contentLoading, whatsappNumber, whatsappVisible, user, userLoading, setLocale, login, logout, isDarkMode, toggleDarkMode }}
         >
             {children}
         </AppContext.Provider>

@@ -1,21 +1,48 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent } from '@/hooks/use-content';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
+
+function getCsrf() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+}
 
 export default function Contact() {
     const t = useContent();
     const [form, setForm] = useState({ name: '', email: '', service: '', message: '' });
-    const [sent, setSent] = useState(false);
+    const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+    const [errorMsg, setErrorMsg] = useState('');
     const [ref, isVisible] = useScrollAnimation(0.1);
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setSent(true);
-        setTimeout(() => setSent(false), 4000);
-        setForm({ name: '', email: '', service: '', message: '' });
+        setStatus('sending');
+        setErrorMsg('');
+        try {
+            const res = await fetch('/spa/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body: JSON.stringify(form),
+            });
+            const json = await res.json().catch(() => ({}));
+            if (res.ok) {
+                setStatus('sent');
+                setForm({ name: '', email: '', service: '', message: '' });
+                setTimeout(() => setStatus('idle'), 5000);
+            } else {
+                setErrorMsg(json?.message || 'Something went wrong. Please try again.');
+                setStatus('error');
+            }
+        } catch {
+            setErrorMsg('Network error. Please check your connection.');
+            setStatus('error');
+        }
     };
 
     return (
@@ -74,7 +101,7 @@ export default function Contact() {
                         }}
                     >
                         <div className="rounded-3xl bg-[#F1F1F0] dark:bg-primary-dark p-8 shadow-[0_4px_32px_rgba(33,60,147,0.08)] border border-[#D1D5E8] dark:border-primary-light/40">
-                            {sent ? (
+                            {status === 'sent' ? (
                                 <div className="flex h-full items-center justify-center text-center py-16">
                                     <div>
                                         <div
@@ -89,6 +116,12 @@ export default function Contact() {
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-5">
+                                    {status === 'error' && (
+                                        <div className="flex items-start gap-2 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/40 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+                                            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                                            {errorMsg}
+                                        </div>
+                                    )}
                                     {[
                                         { name: 'name',    label: t('contact.form.name'),    type: 'text'  },
                                         { name: 'email',   label: t('contact.form.email'),   type: 'email' },
@@ -123,10 +156,20 @@ export default function Contact() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#213C93] py-3.5 text-sm font-bold text-white hover:bg-[#2E52C9] hover:shadow-[0_8px_32px_rgba(33,60,147,0.35)] hover:scale-[1.02] transition-all duration-300"
+                                        disabled={status === 'sending'}
+                                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#213C93] py-3.5 text-sm font-bold text-white hover:bg-[#2E52C9] hover:shadow-[0_8px_32px_rgba(33,60,147,0.35)] hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 transition-all duration-300"
                                     >
-                                        {t('contact.form.submit')}
-                                        <Send size={16} />
+                                        {status === 'sending' ? (
+                                            <>
+                                                <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                                                Sending…
+                                            </>
+                                        ) : (
+                                            <>
+                                                {t('contact.form.submit')}
+                                                <Send size={16} />
+                                            </>
+                                        )}
                                     </button>
                                 </form>
                             )}

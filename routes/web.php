@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\EmailSettingsController;
 use App\Http\Controllers\Api\ContentApiController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,10 +43,17 @@ Route::post('/spa/logout', function (Request $request) {
     return response()->json(['ok' => true]);
 });
 
-// Admin content editor endpoints (auth required)
+// Public contact form submission
+Route::post('/spa/contact', [ContactController::class, 'send'])->middleware('throttle:5,1');
+
+// Admin endpoints (auth required)
 Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/content',  [ContentApiController::class, 'adminIndex']);
     Route::post('/spa/admin/content', [ContentApiController::class, 'adminUpdate']);
+
+    Route::get('/spa/admin/email-settings',       [EmailSettingsController::class, 'show']);
+    Route::post('/spa/admin/email-settings',      [EmailSettingsController::class, 'update']);
+    Route::post('/spa/admin/email-settings/test', [EmailSettingsController::class, 'testSend']);
 });
 
 /*

@@ -7,6 +7,7 @@ import Portfolio from '@/components/portfolio/Portfolio';
 import Services from '@/components/portfolio/Services';
 import Stats from '@/components/portfolio/Stats';
 import Testimonials from '@/components/portfolio/Testimonials';
+import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 
 export default function Home() {
     return (
@@ -22,6 +23,7 @@ export default function Home() {
                 <Contact />
             </main>
             <Footer />
+            <WhatsAppButton />
         </>
     );
 }
