@@ -15,8 +15,9 @@ class SiteContentSeeder extends Seeder
             ['key' => 'nav.services',    'section' => 'nav', 'en_value' => 'Services',   'ar_value' => 'خدماتنا',  'type' => 'text', 'sort_order' => 2],
             ['key' => 'nav.portfolio',   'section' => 'nav', 'en_value' => 'Portfolio',  'ar_value' => 'أعمالنا',  'type' => 'text', 'sort_order' => 3],
             ['key' => 'nav.about',       'section' => 'nav', 'en_value' => 'About',      'ar_value' => 'من نحن',  'type' => 'text', 'sort_order' => 4],
-            ['key' => 'nav.contact',     'section' => 'nav', 'en_value' => 'Contact',    'ar_value' => 'تواصل',   'type' => 'text', 'sort_order' => 5],
-            ['key' => 'nav.cta',         'section' => 'nav', 'en_value' => 'Get Started','ar_value' => 'ابدأ الآن','type' => 'text', 'sort_order' => 6],
+            ['key' => 'nav.events',      'section' => 'nav', 'en_value' => 'Events',     'ar_value' => 'الفعاليات', 'type' => 'text', 'sort_order' => 5],
+            ['key' => 'nav.contact',     'section' => 'nav', 'en_value' => 'Contact',    'ar_value' => 'تواصل',   'type' => 'text', 'sort_order' => 6],
+            ['key' => 'nav.cta',         'section' => 'nav', 'en_value' => 'Get Started','ar_value' => 'ابدأ الآن','type' => 'text', 'sort_order' => 7],
 
             // ── Hero
             ['key' => 'hero.badge',     'section' => 'hero', 'en_value' => 'Marketing Agency',       'ar_value' => 'وكالة تسويق',              'type' => 'text',     'sort_order' => 1],
@@ -61,6 +62,26 @@ class SiteContentSeeder extends Seeder
             ['key' => 'portfolio.filter_brand',  'section' => 'portfolio', 'en_value' => 'Branding',      'ar_value' => 'هوية بصرية',     'type' => 'text',     'sort_order' => 6],
             ['key' => 'portfolio.filter_digital','section' => 'portfolio', 'en_value' => 'Digital',       'ar_value' => 'رقمي',           'type' => 'text',     'sort_order' => 7],
             ['key' => 'portfolio.filter_media',  'section' => 'portfolio', 'en_value' => 'Media',         'ar_value' => 'إعلام',          'type' => 'text',     'sort_order' => 8],
+
+            // ── Events & Training
+            ['key' => 'events.section_badge', 'section' => 'events', 'en_value' => 'Join Us',           'ar_value' => 'انضم إلينا',          'type' => 'text',     'sort_order' => 1],
+            ['key' => 'events.title',         'section' => 'events', 'en_value' => 'Events & Training Courses', 'ar_value' => 'الفعاليات والدورات التدريبية', 'type' => 'text', 'sort_order' => 2],
+            ['key' => 'events.subtitle',      'section' => 'events', 'en_value' => 'Reserve your spot at our upcoming events and training sessions.', 'ar_value' => 'احجز مكانك في فعالياتنا ودوراتنا التدريبية القادمة.', 'type' => 'textarea', 'sort_order' => 3],
+            ['key' => 'events.empty',         'section' => 'events', 'en_value' => 'No upcoming events at the moment. Check back soon!', 'ar_value' => 'لا توجد فعاليات قادمة حاليًا. تابعونا قريبًا!', 'type' => 'text', 'sort_order' => 4],
+            ['key' => 'events.badge_event',    'section' => 'events', 'en_value' => 'Event',    'ar_value' => 'فعالية',  'type' => 'text', 'sort_order' => 5],
+            ['key' => 'events.badge_training', 'section' => 'events', 'en_value' => 'Training', 'ar_value' => 'تدريب',   'type' => 'text', 'sort_order' => 6],
+            ['key' => 'events.cta_register',  'section' => 'events', 'en_value' => 'Register Now', 'ar_value' => 'سجّل الآن', 'type' => 'text', 'sort_order' => 7],
+            ['key' => 'events.full',          'section' => 'events', 'en_value' => 'Fully Booked', 'ar_value' => 'اكتمل الحجز', 'type' => 'text', 'sort_order' => 8],
+            ['key' => 'events.form.title',    'section' => 'events', 'en_value' => 'Register',  'ar_value' => 'التسجيل', 'type' => 'text', 'sort_order' => 9],
+            ['key' => 'events.form.name',     'section' => 'events', 'en_value' => 'Your Name', 'ar_value' => 'اسمك', 'type' => 'text', 'sort_order' => 10],
+            ['key' => 'events.form.email',    'section' => 'events', 'en_value' => 'Email Address', 'ar_value' => 'البريد الإلكتروني', 'type' => 'text', 'sort_order' => 11],
+            ['key' => 'events.form.phone',    'section' => 'events', 'en_value' => 'Phone Number', 'ar_value' => 'رقم الهاتف', 'type' => 'text', 'sort_order' => 12],
+            ['key' => 'events.form.company',  'section' => 'events', 'en_value' => 'Company / Organization', 'ar_value' => 'الشركة / الجهة', 'type' => 'text', 'sort_order' => 13],
+            ['key' => 'events.form.attendees','section' => 'events', 'en_value' => 'Number of Attendees', 'ar_value' => 'عدد الحضور', 'type' => 'text', 'sort_order' => 14],
+            ['key' => 'events.form.message',  'section' => 'events', 'en_value' => 'Notes (optional)', 'ar_value' => 'ملاحظات (اختياري)', 'type' => 'text', 'sort_order' => 15],
+            ['key' => 'events.form.submit',   'section' => 'events', 'en_value' => 'Submit Registration', 'ar_value' => 'إرسال التسجيل', 'type' => 'text', 'sort_order' => 16],
+            ['key' => 'events.success_title', 'section' => 'events', 'en_value' => 'Registration received!', 'ar_value' => 'تم استلام تسجيلك!', 'type' => 'text', 'sort_order' => 17],
+            ['key' => 'events.success_message','section' => 'events', 'en_value' => 'We\'ll be in touch with the details shortly.', 'ar_value' => 'سنتواصل معك قريبًا بالتفاصيل.', 'type' => 'textarea', 'sort_order' => 18],
 
             // ── About
             ['key' => 'about.section_badge', 'section' => 'about', 'en_value' => 'Who We Are',        'ar_value' => 'من نحن',               'type' => 'text',     'sort_order' => 1],

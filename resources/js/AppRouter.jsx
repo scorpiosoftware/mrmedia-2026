@@ -3,6 +3,7 @@ import { useApp } from '@/context/AppContext';
 import Home from '@/pages/Home';
 import AdminLogin from '@/pages/admin/Login';
 import ContentEditor from '@/pages/admin/ContentEditor';
+import AdminEvents from '@/pages/admin/Events';
 import EmailSettings from '@/pages/admin/EmailSettings';
 
 function RequireAuth({ children }) {
@@ -44,6 +45,14 @@ export default function AppRouter() {
                 element={
                     <RequireAuth>
                         <EmailSettings />
+                    </RequireAuth>
+                }
+            />
+            <Route
+                path="/admin/events"
+                element={
+                    <RequireAuth>
+                        <AdminEvents />
                     </RequireAuth>
                 }
             />

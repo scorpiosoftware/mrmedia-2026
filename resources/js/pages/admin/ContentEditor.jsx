@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { Check, ChevronLeft, Globe, LogOut, Mail, Save, Search, X } from 'lucide-react';
+import { Calendar, Check, ChevronLeft, Globe, LogOut, Mail, Save, Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const SECTION_LABELS = {
@@ -143,6 +143,14 @@ export default function ContentEditor() {
                         >
                             <Mail size={15} />
                             Email
+                        </button>
+                        <span className="text-white/30">|</span>
+                        <button
+                            onClick={() => navigate('/admin/events')}
+                            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-sm"
+                        >
+                            <Calendar size={15} />
+                            Events
                         </button>
                     </div>
 

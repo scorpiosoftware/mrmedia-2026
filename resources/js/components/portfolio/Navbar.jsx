@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { useContent, useLocale } from '@/hooks/use-content';
 
-const NAV_KEYS = ['home', 'services', 'portfolio', 'about', 'contact'];
-const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', about: 'about', contact: 'contact' };
+const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
+const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', events: 'events', about: 'about', contact: 'contact' };
 
 export default function Navbar() {
     const t = useContent();

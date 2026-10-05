@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { Check, ChevronLeft, Eye, EyeOff, Loader2, LogOut, Mail, MessageCircle, Send } from 'lucide-react';
+import { Calendar, Check, ChevronLeft, Eye, EyeOff, Loader2, LogOut, Mail, MessageCircle, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 function getCsrf() {
@@ -160,6 +160,14 @@ export default function EmailSettings() {
                             <Mail size={18} className="text-[#FCD532]" />
                             <span className="font-bold text-sm">Email Settings</span>
                         </div>
+                        <span className="text-white/30">|</span>
+                        <button
+                            onClick={() => navigate('/admin/events')}
+                            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-sm"
+                        >
+                            <Calendar size={15} />
+                            Events
+                        </button>
                     </div>
                     <div className="flex items-center gap-3">
                         {savedMsg && (

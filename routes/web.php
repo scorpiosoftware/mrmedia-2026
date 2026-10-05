@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\EmailSettingsController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\EventSubmissionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +48,9 @@ Route::post('/spa/logout', function (Request $request) {
 // Public contact form submission
 Route::post('/spa/contact', [ContactController::class, 'send'])->middleware('throttle:5,1');
 
+// Public: submit/register for an event or training course
+Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'store'])->middleware('throttle:5,1');
+
 // Admin endpoints (auth required)
 Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/content',  [ContentApiController::class, 'adminIndex']);
@@ -54,6 +59,15 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/email-settings',       [EmailSettingsController::class, 'show']);
     Route::post('/spa/admin/email-settings',      [EmailSettingsController::class, 'update']);
     Route::post('/spa/admin/email-settings/test', [EmailSettingsController::class, 'testSend']);
+
+    Route::get('/spa/admin/events',       [EventController::class, 'index']);
+    Route::post('/spa/admin/events',      [EventController::class, 'store']);
+    Route::post('/spa/admin/events/upload-image', [EventController::class, 'uploadImage'])->middleware('throttle:20,1');
+    Route::post('/spa/admin/events/{event}',   [EventController::class, 'update']);
+    Route::delete('/spa/admin/events/{event}', [EventController::class, 'destroy']);
+
+    Route::get('/spa/admin/events/{event}/submissions',                 [EventController::class, 'submissions']);
+    Route::delete('/spa/admin/events/{event}/submissions/{submission}', [EventController::class, 'destroySubmission']);
 });
 
 /*

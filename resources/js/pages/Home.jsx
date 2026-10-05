@@ -1,5 +1,6 @@
 import About from '@/components/portfolio/About';
 import Contact from '@/components/portfolio/Contact';
+import Events from '@/components/portfolio/Events';
 import Footer from '@/components/portfolio/Footer';
 import Hero from '@/components/portfolio/Hero';
 import Navbar from '@/components/portfolio/Navbar';
@@ -18,6 +19,7 @@ export default function Home() {
                 <Stats />
                 <Services />
                 <Portfolio />
+                <Events />
                 <About />
                 <Testimonials />
                 <Contact />
