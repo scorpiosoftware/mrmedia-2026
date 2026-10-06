@@ -102,9 +102,9 @@ export default function Portfolio() {
                                 />
                             </div>
 
-                            {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-6">
-                                <div className="w-full flex items-end justify-between translate-y-3 group-hover:translate-y-0 transition-transform duration-400">
+                            {/* Caption overlay — always visible, no hover required */}
+                            <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent flex items-end p-6">
+                                <div className="w-full flex items-end justify-between">
                                     <div>
                                         <p className="text-xs font-bold uppercase tracking-widest text-[#FCD532] mb-1">
                                             {project.category}

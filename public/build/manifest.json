@@ -1,20 +1,20 @@
 {
-  "_eye-DWX_1IuG.js": {
-    "file": "assets/eye-DWX_1IuG.js",
+  "_eye-CYkUonGe.js": {
+    "file": "assets/eye-CYkUonGe.js",
     "name": "eye",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_loader-circle-C6AbrbvN.js": {
-    "file": "assets/loader-circle-C6AbrbvN.js",
+  "_loader-circle-CoclAinJ.js": {
+    "file": "assets/loader-circle-CoclAinJ.js",
     "name": "loader-circle",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_log-out-CiNZ4S8r.js": {
-    "file": "assets/log-out-CiNZ4S8r.js",
+  "_log-out-B98Z4ZR-.js": {
+    "file": "assets/log-out-B98Z4ZR-.js",
     "name": "log-out",
     "imports": [
       "resources/js/spa.jsx"
@@ -53,7 +53,7 @@
     "src": "public/fonts/font-english/Nexa-Light.otf"
   },
   "resources/css/app.css": {
-    "file": "assets/app-lbG_Ckk0.css",
+    "file": "assets/app-CsPKImj-.css",
     "name": "app",
     "names": [
       "app.css"
@@ -72,50 +72,50 @@
     ]
   },
   "resources/js/pages/admin/ContentEditor.jsx": {
-    "file": "assets/ContentEditor-Dgx9oNzC.js",
+    "file": "assets/ContentEditor-DrmK7Vkd.js",
     "name": "ContentEditor",
     "src": "resources/js/pages/admin/ContentEditor.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_log-out-CiNZ4S8r.js"
+      "_log-out-B98Z4ZR-.js"
     ]
   },
   "resources/js/pages/admin/EmailSettings.jsx": {
-    "file": "assets/EmailSettings-CGBcA4uR.js",
+    "file": "assets/EmailSettings-BaJgznmX.js",
     "name": "EmailSettings",
     "src": "resources/js/pages/admin/EmailSettings.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_log-out-CiNZ4S8r.js",
-      "_eye-DWX_1IuG.js",
-      "_loader-circle-C6AbrbvN.js"
+      "_log-out-B98Z4ZR-.js",
+      "_eye-CYkUonGe.js",
+      "_loader-circle-CoclAinJ.js"
     ]
   },
   "resources/js/pages/admin/Events.jsx": {
-    "file": "assets/Events-D5sUCskw.js",
+    "file": "assets/Events-Dy93lSLP.js",
     "name": "Events",
     "src": "resources/js/pages/admin/Events.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_log-out-CiNZ4S8r.js",
-      "_loader-circle-C6AbrbvN.js"
+      "_log-out-B98Z4ZR-.js",
+      "_loader-circle-CoclAinJ.js"
     ]
   },
   "resources/js/pages/admin/Login.jsx": {
-    "file": "assets/Login-BD_7VoMa.js",
+    "file": "assets/Login-C9VZDVuO.js",
     "name": "Login",
     "src": "resources/js/pages/admin/Login.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_eye-DWX_1IuG.js"
+      "_eye-CYkUonGe.js"
     ]
   },
   "resources/js/spa.jsx": {
-    "file": "assets/spa-DAi7cAIz.js",
+    "file": "assets/spa-CfnsED17.js",
     "name": "spa",
     "src": "resources/js/spa.jsx",
     "isEntry": true,
@@ -126,7 +126,7 @@
       "resources/js/pages/admin/EmailSettings.jsx"
     ],
     "css": [
-      "assets/app-lbG_Ckk0.css"
+      "assets/app-CsPKImj-.css"
     ],
     "assets": [
       "assets/Nexa-ExtraLight-CYUoXLGo.ttf",
