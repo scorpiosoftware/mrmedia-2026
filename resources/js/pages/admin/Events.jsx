@@ -411,7 +411,7 @@ export default function AdminEvents() {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Price (SAR, optional)</label>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Price (IQD, optional)</label>
                                     <input
                                         type="number"
                                         min={0}
@@ -619,7 +619,7 @@ export default function AdminEvents() {
                                                 {event.mode === 'online' ? 'Online' : 'In-Person'}
                                             </span>
                                             <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#F1F1F0] text-[#0D1B4B]">
-                                                {event.price ? `${Number(event.price).toLocaleString()} SAR` : 'Free'}
+                                                {event.price ? `${Number(event.price).toLocaleString()} IQD` : 'Free'}
                                             </span>
                                         </div>
                                         <h3 className="font-bold text-[#0D1B4B] truncate">{event.title}</h3>

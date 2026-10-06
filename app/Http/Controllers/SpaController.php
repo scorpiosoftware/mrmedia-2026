@@ -132,7 +132,7 @@ class SpaController extends Controller
             ? max(0, $event->capacity - (int) $event->submissions_sum_attendees)
             : null;
 
-        $currency = SiteContent::getAllForLocale('en')['events.currency'] ?? 'SAR';
+        $currency = SiteContent::getAllForLocale('en')['events.currency'] ?? 'IQD';
 
         return array_filter([
             '@context'             => 'https://schema.org',

@@ -85,7 +85,7 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.mode_online',    'section' => 'events', 'en_value' => 'Online',  'ar_value' => 'عن بُعد',  'type' => 'text', 'sort_order' => 19],
             ['key' => 'events.mode_offline',   'section' => 'events', 'en_value' => 'In-Person', 'ar_value' => 'حضوري', 'type' => 'text', 'sort_order' => 20],
             ['key' => 'events.free',           'section' => 'events', 'en_value' => 'Free', 'ar_value' => 'مجاني', 'type' => 'text', 'sort_order' => 21],
-            ['key' => 'events.currency',       'section' => 'events', 'en_value' => 'SAR', 'ar_value' => 'ر.س', 'type' => 'text', 'sort_order' => 22],
+            ['key' => 'events.currency',       'section' => 'events', 'en_value' => 'IQD', 'ar_value' => 'د.ع', 'type' => 'text', 'sort_order' => 22],
             ['key' => 'events.view_details',   'section' => 'events', 'en_value' => 'View Details', 'ar_value' => 'عرض التفاصيل', 'type' => 'text', 'sort_order' => 23],
             ['key' => 'events.back_to_events', 'section' => 'events', 'en_value' => 'Back to Events', 'ar_value' => 'العودة إلى الفعاليات', 'type' => 'text', 'sort_order' => 24],
             ['key' => 'events.not_found',      'section' => 'events', 'en_value' => 'Event not found.', 'ar_value' => 'الفعالية غير موجودة.', 'type' => 'text', 'sort_order' => 25],
