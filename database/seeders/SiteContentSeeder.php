@@ -82,6 +82,16 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.form.submit',   'section' => 'events', 'en_value' => 'Submit Registration', 'ar_value' => 'إرسال التسجيل', 'type' => 'text', 'sort_order' => 16],
             ['key' => 'events.success_title', 'section' => 'events', 'en_value' => 'Registration received!', 'ar_value' => 'تم استلام تسجيلك!', 'type' => 'text', 'sort_order' => 17],
             ['key' => 'events.success_message','section' => 'events', 'en_value' => 'We\'ll be in touch with the details shortly.', 'ar_value' => 'سنتواصل معك قريبًا بالتفاصيل.', 'type' => 'textarea', 'sort_order' => 18],
+            ['key' => 'events.mode_online',    'section' => 'events', 'en_value' => 'Online',  'ar_value' => 'عن بُعد',  'type' => 'text', 'sort_order' => 19],
+            ['key' => 'events.mode_offline',   'section' => 'events', 'en_value' => 'In-Person', 'ar_value' => 'حضوري', 'type' => 'text', 'sort_order' => 20],
+            ['key' => 'events.free',           'section' => 'events', 'en_value' => 'Free', 'ar_value' => 'مجاني', 'type' => 'text', 'sort_order' => 21],
+            ['key' => 'events.currency',       'section' => 'events', 'en_value' => 'SAR', 'ar_value' => 'ر.س', 'type' => 'text', 'sort_order' => 22],
+            ['key' => 'events.view_details',   'section' => 'events', 'en_value' => 'View Details', 'ar_value' => 'عرض التفاصيل', 'type' => 'text', 'sort_order' => 23],
+            ['key' => 'events.back_to_events', 'section' => 'events', 'en_value' => 'Back to Events', 'ar_value' => 'العودة إلى الفعاليات', 'type' => 'text', 'sort_order' => 24],
+            ['key' => 'events.not_found',      'section' => 'events', 'en_value' => 'Event not found.', 'ar_value' => 'الفعالية غير موجودة.', 'type' => 'text', 'sort_order' => 25],
+            ['key' => 'events.about_label',    'section' => 'events', 'en_value' => 'About this session', 'ar_value' => 'عن هذه الجلسة', 'type' => 'text', 'sort_order' => 26],
+            ['key' => 'events.details_label',  'section' => 'events', 'en_value' => 'Details', 'ar_value' => 'التفاصيل', 'type' => 'text', 'sort_order' => 27],
+            ['key' => 'events.price_label',    'section' => 'events', 'en_value' => 'Price', 'ar_value' => 'السعر', 'type' => 'text', 'sort_order' => 28],
 
             // ── About
             ['key' => 'about.section_badge', 'section' => 'about', 'en_value' => 'Who We Are',        'ar_value' => 'من نحن',               'type' => 'text',     'sort_order' => 1],

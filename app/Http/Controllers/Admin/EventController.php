@@ -33,6 +33,7 @@ class EventController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $this->validateEvent($request);
+        $data['slug'] = $this->generateUniqueSlug($data['title']);
 
         $event = Event::create($data);
 
@@ -136,6 +137,7 @@ class EventController extends Controller
             'title'           => ['required', 'string', 'max:255'],
             'title_ar'        => ['nullable', 'string', 'max:255'],
             'type'            => ['required', 'string', 'in:event,training'],
+            'mode'            => ['required', 'string', 'in:online,offline'],
             'description'     => ['nullable', 'string', 'max:5000'],
             'description_ar'  => ['nullable', 'string', 'max:5000'],
             'location'        => ['nullable', 'string', 'max:255'],
@@ -143,9 +145,25 @@ class EventController extends Controller
             'starts_at'       => ['required', 'date'],
             'ends_at'         => ['nullable', 'date', 'after_or_equal:starts_at'],
             'capacity'        => ['nullable', 'integer', 'min:1'],
+            'price'           => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
             'image_url'       => ['nullable', 'string', 'max:2048'],
             'is_published'    => ['boolean'],
         ]);
+    }
+
+    /** Generates a URL-safe slug from the title, appending -2, -3, … on collision. */
+    private function generateUniqueSlug(string $title): string
+    {
+        $base = Str::slug($title) ?: 'event';
+        $slug = $base;
+        $i = 2;
+
+        while (Event::where('slug', $slug)->exists()) {
+            $slug = "{$base}-{$i}";
+            $i++;
+        }
+
+        return $slug;
     }
 
     /** Re-encodes the image via GD, stripping anything that isn't genuine pixel data. */
@@ -186,8 +204,8 @@ class EventController extends Controller
             return;
         }
 
-        $publicPrefix = '/storage/' . self::UPLOAD_DIR . '/';
-        if (! str_starts_with($url, $publicPrefix)) {
+        $marker = '/storage/' . self::UPLOAD_DIR . '/';
+        if (! str_contains($url, $marker)) {
             return;
         }
 

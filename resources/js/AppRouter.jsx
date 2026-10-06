@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import EventDetails from '@/pages/EventDetails';
 import Home from '@/pages/Home';
 import AdminLogin from '@/pages/admin/Login';
 import ContentEditor from '@/pages/admin/ContentEditor';
@@ -25,6 +26,7 @@ export default function AppRouter() {
     return (
         <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/events/:slug" element={<EventDetails />} />
 
             {/* Redirect legacy Laravel auth URLs to our admin login */}
             <Route path="/login" element={<Navigate to="/admin/login" replace />} />

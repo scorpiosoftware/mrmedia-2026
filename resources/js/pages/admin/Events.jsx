@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import {
-    Calendar, Check, ChevronLeft, Globe, Image as ImageIcon, ListChecks, Loader2, LogOut,
+    Calendar, Check, ChevronLeft, ExternalLink, Globe, Image as ImageIcon, ListChecks, Loader2, LogOut,
     Mail, MapPin, Pencil, Plus, Trash2, Upload, Users, X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ const EMPTY_FORM = {
     title: '',
     title_ar: '',
     type: 'event',
+    mode: 'offline',
     description: '',
     description_ar: '',
     location: '',
@@ -21,6 +22,7 @@ const EMPTY_FORM = {
     starts_at: '',
     ends_at: '',
     capacity: '',
+    price: '',
     image_url: '',
     is_published: true,
 };
@@ -84,6 +86,7 @@ export default function AdminEvents() {
             title: event.title ?? '',
             title_ar: event.title_ar ?? '',
             type: event.type ?? 'event',
+            mode: event.mode ?? 'offline',
             description: event.description ?? '',
             description_ar: event.description_ar ?? '',
             location: event.location ?? '',
@@ -91,6 +94,7 @@ export default function AdminEvents() {
             starts_at: toDatetimeLocal(event.starts_at),
             ends_at: toDatetimeLocal(event.ends_at),
             capacity: event.capacity ?? '',
+            price: event.price ?? '',
             image_url: event.image_url ?? '',
             is_published: !!event.is_published,
         });
@@ -159,6 +163,7 @@ export default function AdminEvents() {
                 body: JSON.stringify({
                     ...form,
                     capacity: form.capacity === '' ? null : Number(form.capacity),
+                    price: form.price === '' ? null : Number(form.price),
                     ends_at: form.ends_at || null,
                 }),
             });
@@ -206,6 +211,7 @@ export default function AdminEvents() {
                     title: event.title,
                     title_ar: event.title_ar,
                     type: event.type,
+                    mode: event.mode,
                     description: event.description,
                     description_ar: event.description_ar,
                     location: event.location,
@@ -213,6 +219,7 @@ export default function AdminEvents() {
                     starts_at: event.starts_at,
                     ends_at: event.ends_at,
                     capacity: event.capacity,
+                    price: event.price,
                     image_url: event.image_url,
                     is_published: !event.is_published,
                 }),
@@ -379,6 +386,20 @@ export default function AdminEvents() {
                                     </select>
                                 </div>
                                 <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Session</label>
+                                    <select
+                                        value={form.mode}
+                                        onChange={(e) => set('mode', e.target.value)}
+                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
+                                    >
+                                        <option value="offline">In-Person (Offline)</option>
+                                        <option value="online">Online</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div>
                                     <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Capacity (optional)</label>
                                     <input
                                         type="number"
@@ -386,6 +407,18 @@ export default function AdminEvents() {
                                         value={form.capacity}
                                         onChange={(e) => set('capacity', e.target.value)}
                                         placeholder="Unlimited"
+                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Price (SAR, optional)</label>
+                                    <input
+                                        type="number"
+                                        min={0}
+                                        step="0.01"
+                                        value={form.price}
+                                        onChange={(e) => set('price', e.target.value)}
+                                        placeholder="Free"
                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
                                     />
                                 </div>
@@ -415,7 +448,9 @@ export default function AdminEvents() {
 
                             {/* Location (EN / AR) */}
                             <div>
-                                <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">Location</label>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-[#213C93] mb-2">
+                                    {form.mode === 'online' ? 'Platform / Link' : 'Location'}
+                                </label>
                                 <div className="grid gap-3 sm:grid-cols-2">
                                     <div>
                                         <label className="block text-xs font-semibold text-[#5A6A9A] mb-1.5">🇬🇧 English</label>
@@ -423,7 +458,7 @@ export default function AdminEvents() {
                                             type="text"
                                             value={form.location}
                                             onChange={(e) => set('location', e.target.value)}
-                                            placeholder="Riyadh, Saudi Arabia"
+                                            placeholder={form.mode === 'online' ? 'Zoom link / Google Meet' : 'Riyadh, Saudi Arabia'}
                                             className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
                                         />
                                     </div>
@@ -580,6 +615,12 @@ export default function AdminEvents() {
                                             >
                                                 {event.is_published ? 'Published' : 'Hidden'}
                                             </span>
+                                            <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#E8EAF6] text-[#213C93]">
+                                                {event.mode === 'online' ? 'Online' : 'In-Person'}
+                                            </span>
+                                            <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-[#F1F1F0] text-[#0D1B4B]">
+                                                {event.price ? `${Number(event.price).toLocaleString()} SAR` : 'Free'}
+                                            </span>
                                         </div>
                                         <h3 className="font-bold text-[#0D1B4B] truncate">{event.title}</h3>
                                         <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#5A6A9A]">
@@ -594,6 +635,17 @@ export default function AdminEvents() {
                                     </div>
 
                                     <div className="flex items-center gap-2 shrink-0">
+                                        {event.slug && (
+                                            <a
+                                                href={`/events/${event.slug}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                title="View live page"
+                                                className="rounded-lg p-2 text-[#5A6A9A] hover:bg-[#F1F1F0] hover:text-[#213C93] transition-colors"
+                                            >
+                                                <ExternalLink size={15} />
+                                            </a>
+                                        )}
                                         <button
                                             onClick={() => openSubmissions(event)}
                                             title="View submissions"

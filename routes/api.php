@@ -10,6 +10,7 @@ Route::get('/content', [ContentApiController::class, 'index']);
 
 // Public: published events & training courses
 Route::get('/events', [EventApiController::class, 'index']);
+Route::get('/events/{slug}', [EventApiController::class, 'show']);
 
 // Public: safe site settings (whatsapp number, etc.)
 Route::get('/settings', function () {

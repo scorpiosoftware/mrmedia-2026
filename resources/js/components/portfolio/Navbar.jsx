@@ -1,5 +1,6 @@
 import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { useContent, useLocale } from '@/hooks/use-content';
 
@@ -10,6 +11,8 @@ export default function Navbar() {
     const t = useContent();
     const locale = useLocale();
     const { setLocale, isDarkMode, toggleDarkMode } = useApp();
+    const navigate = useNavigate();
+    const location = useLocation();
     const isAr = locale === 'ar';
     const [open, setOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -41,7 +44,11 @@ export default function Navbar() {
     }, []);
 
     const scrollTo = (id) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        if (location.pathname !== '/') {
+            navigate('/', { state: { scrollTo: id } });
+        } else {
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        }
         setOpen(false);
     };
 

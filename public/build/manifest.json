@@ -32,7 +32,7 @@
     "src": "public/fonts/font-english/Nexa-Light.otf"
   },
   "resources/css/app.css": {
-    "file": "assets/app-N4-D2rA7.css",
+    "file": "assets/app-lbG_Ckk0.css",
     "name": "app",
     "names": [
       "app.css"
@@ -51,12 +51,12 @@
     ]
   },
   "resources/js/spa.jsx": {
-    "file": "assets/spa-Bj4XiRsJ.js",
+    "file": "assets/spa-C637nYZ8.js",
     "name": "spa",
     "src": "resources/js/spa.jsx",
     "isEntry": true,
     "css": [
-      "assets/app-N4-D2rA7.css"
+      "assets/app-lbG_Ckk0.css"
     ],
     "assets": [
       "assets/Nexa-ExtraLight-CYUoXLGo.ttf",
