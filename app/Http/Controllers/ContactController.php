@@ -32,7 +32,7 @@ class ContactController extends Controller
                 senderName:  $data['name'],
                 senderEmail: $data['email'],
                 service:     $data['service'],
-                message:     $data['message'],
+                body:        $data['message'],
             )
         );
 

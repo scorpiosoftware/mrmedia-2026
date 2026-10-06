@@ -40,7 +40,7 @@
             <hr class="divider">
             <div class="field">
                 <label>Message</label>
-                <p>{{ $message }}</p>
+                <p>{{ $body }}</p>
             </div>
         </div>
         <div class="footer">

@@ -16,7 +16,10 @@ class ContactFormMail extends Mailable
         public readonly string $senderName,
         public readonly string $senderEmail,
         public readonly string $service,
-        public readonly string $message,
+        // Not named `$message` — Laravel injects its own $message (the
+        // Illuminate\Mail\Message wrapper) into every mail view, which would
+        // silently shadow a Mailable property of the same name.
+        public readonly string $body,
     ) {}
 
     public function envelope(): Envelope
