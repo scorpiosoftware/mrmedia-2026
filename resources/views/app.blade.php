@@ -12,6 +12,8 @@
         {{-- Brand meta --}}
         <meta name="theme-color" content="#213C93">
         <meta name="description" content="Mr.MEDIA – Marketing Agency that moves markets.">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Settings | Mr.MEDIA</title>
 
         {{-- Dark mode detection --}}
         <script>

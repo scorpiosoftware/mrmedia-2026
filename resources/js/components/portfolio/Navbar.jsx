@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { useContent, useLocale } from '@/hooks/use-content';
+import { LOGO_SRC } from '@/lib/brand-logos';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
 const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', events: 'events', about: 'about', contact: 'contact' };
@@ -78,7 +79,7 @@ export default function Navbar() {
                             }`}
                         >
                             <img
-                                src="/images/logo.png"
+                                src={LOGO_SRC}
                                 alt="Mr. Media"
                                 className="w-9 h-9 object-contain"
                             />

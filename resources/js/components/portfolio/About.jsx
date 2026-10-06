@@ -1,5 +1,6 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent } from '@/hooks/use-content';
+import { LOGO_SRC } from '@/lib/brand-logos';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 
 const VALUES = [
@@ -38,7 +39,7 @@ export default function About() {
                             </div>
 
                             <img
-                                src="/images/logo.png"
+                                src={LOGO_SRC}
                                 alt=""
                                 aria-hidden="true"
                                 className="w-56 object-contain select-none mm-float-slow opacity-10"

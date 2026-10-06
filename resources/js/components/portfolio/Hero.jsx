@@ -1,4 +1,5 @@
 import { useContent } from '@/hooks/use-content';
+import { LOGO_DARK_SRC } from '@/lib/brand-logos';
 import { ArrowDown, ArrowRight, Play } from 'lucide-react';
 
 /* Deterministic particle positions so there are no hydration mismatches */
@@ -104,7 +105,7 @@ export default function Hero() {
                     style={{ opacity: 0.13, animationDelay: '3s' }}
                 >
                     <img
-                        src="/images/logo-dark.png"
+                        src={LOGO_DARK_SRC}
                         alt=""
                         aria-hidden="true"
                         className="w-72 sm:w-96 md:w-120 object-contain"

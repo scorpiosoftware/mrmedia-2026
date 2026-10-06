@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventSubmissionController;
+use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SpaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -72,10 +74,18 @@ Route::middleware('auth:web')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
+| SEO
+|--------------------------------------------------------------------------
+*/
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::get('/robots.txt', [SitemapController::class, 'robots']);
+
+/*
+|--------------------------------------------------------------------------
 | SPA catch-all  (must be last — serves the React app for every other URL)
 |--------------------------------------------------------------------------
 */
-Route::get('/{any?}', fn () => view('spa'))
+Route::get('/{any?}', [SpaController::class, 'show'])
     ->where('any', '^(?!api|storage|up|spa).*$')
     ->name('spa');
 

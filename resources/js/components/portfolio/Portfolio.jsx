@@ -1,5 +1,6 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent } from '@/hooks/use-content';
+import { LOGO_SRC } from '@/lib/brand-logos';
 import { ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -93,7 +94,7 @@ export default function Portfolio() {
                             {/* Background watermark */}
                             <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                                 <img
-                                    src="/images/logo.png"
+                                    src={LOGO_SRC}
                                     alt=""
                                     aria-hidden="true"
                                     className="w-36 object-contain select-none mm-float-slow opacity-10 transition-all duration-500 group-hover:opacity-20 group-hover:scale-110"

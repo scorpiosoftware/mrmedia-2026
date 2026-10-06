@@ -4,6 +4,7 @@ import Footer from '@/components/portfolio/Footer';
 import Navbar from '@/components/portfolio/Navbar';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 import { useContent, useLocale } from '@/hooks/use-content';
+import { useDocumentMeta } from '@/hooks/use-document-meta';
 import {
     AlertCircle, Calendar, CalendarX, ChevronLeft, Globe, MapPin, Send, Users,
 } from 'lucide-react';
@@ -221,6 +222,13 @@ export default function EventDetails() {
     const backToEvents = () => navigate('/', { state: { scrollTo: 'events' } });
 
     const isFull = event?.remaining !== null && event?.remaining !== undefined && event.remaining <= 0;
+
+    useDocumentMeta({
+        title: event ? `${event.title} | Mr.MEDIA` : undefined,
+        description: event?.description
+            ? event.description.replace(/\s+/g, ' ').trim().slice(0, 160)
+            : undefined,
+    });
 
     return (
         <>

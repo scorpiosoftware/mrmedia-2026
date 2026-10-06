@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
 import AppLogoIcon from '@/components/app-logo-icon';
+import { LOGO_DARK_SRC } from '@/lib/brand-logos';
 import { home } from '@/routes';
 
 const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
@@ -83,7 +84,7 @@ export default function AuthSimpleLayout({ children, title, description }) {
                     style={{ opacity: 0.13, animationDelay: '3s' }}
                 >
                     <img
-                        src="/images/logo-dark.png"
+                        src={LOGO_DARK_SRC}
                         alt=""
                         aria-hidden="true"
                         className="w-72 sm:w-96 md:w-120 object-contain"
