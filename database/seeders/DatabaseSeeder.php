@@ -16,11 +16,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@mrmedia.com',
-            'password' => Hash::make('password'),
-        ]);
+        User::query()->firstOrCreate(
+            ['email' => 'admin@mrmedia.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ],
+        );
 
         $this->call(SiteContentSeeder::class);
         $this->call(EventSeeder::class);
