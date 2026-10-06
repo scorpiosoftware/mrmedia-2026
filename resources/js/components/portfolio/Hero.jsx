@@ -1,6 +1,6 @@
 import { useContent } from '@/hooks/use-content';
 import { LOGO_DARK_SRC } from '@/lib/brand-logos';
-import { ArrowDown, ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
 /* Deterministic particle positions so there are no hydration mismatches */
 const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
@@ -174,16 +174,6 @@ export default function Hero() {
                             <Play size={18} className="transition-transform duration-300 group-hover:scale-110" />
                             {t('hero.cta_secondary')}
                         </button>
-                    </div>
-
-                    {/* Scroll indicator */}
-                    <div
-                        className="mt-20 flex flex-col items-center gap-2 text-white/35 select-none"
-                        style={{ animation: 'slide-up-fade 0.75s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.88s' }}
-                    >
-                        <span className="text-[10px] font-semibold tracking-[0.2em] uppercase">Scroll</span>
-                        <div className="w-px h-8 bg-linear-to-b from-white/40 to-transparent" />
-                        <ArrowDown size={13} className="animate-bounce" />
                     </div>
                 </div>
             </div>
