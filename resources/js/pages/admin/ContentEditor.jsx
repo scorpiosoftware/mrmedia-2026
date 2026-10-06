@@ -28,6 +28,7 @@ export default function ContentEditor() {
     const [fetchLoading, setFetchLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [activeSection, setActiveSection] = useState('all');
+    const [editingId, setEditingId] = useState(null);
     const [saving, setSaving] = useState(false);
     const [savedMsg, setSavedMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
@@ -51,6 +52,11 @@ export default function ContentEditor() {
 
     const filtered = useMemo(() => {
         return items.filter((item) => {
+            // Keep whatever's actively being edited visible even if the edit itself
+            // makes it stop matching the search/section — it shouldn't vanish out
+            // from under the field the admin is typing into.
+            if (item.id === editingId) return true;
+
             const matchSection = activeSection === 'all' || item.section === activeSection;
             const q = search.toLowerCase();
             const matchSearch =
@@ -60,7 +66,7 @@ export default function ContentEditor() {
                 (item.ar_value ?? '').toLowerCase().includes(q);
             return matchSection && matchSearch;
         });
-    }, [items, activeSection, search]);
+    }, [items, activeSection, search, editingId]);
 
     const grouped = useMemo(() => {
         return filtered.reduce((acc, item) => {
@@ -261,6 +267,8 @@ export default function ContentEditor() {
                                                     <textarea
                                                         value={item.en_value ?? ''}
                                                         onChange={(e) => updateItem(item.id, 'en_value', e.target.value)}
+                                                        onFocus={() => setEditingId(item.id)}
+                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
                                                         rows={3}
                                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 resize-y"
                                                     />
@@ -269,6 +277,8 @@ export default function ContentEditor() {
                                                         type="text"
                                                         value={item.en_value ?? ''}
                                                         onChange={(e) => updateItem(item.id, 'en_value', e.target.value)}
+                                                        onFocus={() => setEditingId(item.id)}
+                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
                                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
                                                     />
                                                 )}
@@ -284,6 +294,8 @@ export default function ContentEditor() {
                                                         dir="rtl"
                                                         value={item.ar_value ?? ''}
                                                         onChange={(e) => updateItem(item.id, 'ar_value', e.target.value)}
+                                                        onFocus={() => setEditingId(item.id)}
+                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
                                                         rows={3}
                                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 resize-y font-arabic"
                                                     />
@@ -293,6 +305,8 @@ export default function ContentEditor() {
                                                         dir="rtl"
                                                         value={item.ar_value ?? ''}
                                                         onChange={(e) => updateItem(item.id, 'ar_value', e.target.value)}
+                                                        onFocus={() => setEditingId(item.id)}
+                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
                                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 font-arabic"
                                                     />
                                                 )}
