@@ -1,4 +1,25 @@
 {
+  "_eye-D-vWM3wh.js": {
+    "file": "assets/eye-D-vWM3wh.js",
+    "name": "eye",
+    "imports": [
+      "resources/js/spa.jsx"
+    ]
+  },
+  "_loader-circle-TewI69N8.js": {
+    "file": "assets/loader-circle-TewI69N8.js",
+    "name": "loader-circle",
+    "imports": [
+      "resources/js/spa.jsx"
+    ]
+  },
+  "_log-out-CuSLMqPY.js": {
+    "file": "assets/log-out-CuSLMqPY.js",
+    "name": "log-out",
+    "imports": [
+      "resources/js/spa.jsx"
+    ]
+  },
   "public/fonts/font-arabic/TheYearofHandicrafts-Black.otf": {
     "file": "assets/TheYearofHandicrafts-Black-rCYLjEFk.otf",
     "src": "public/fonts/font-arabic/TheYearofHandicrafts-Black.otf"
@@ -50,11 +71,60 @@
       "assets/TheYearofHandicrafts-Black-rCYLjEFk.otf"
     ]
   },
+  "resources/js/pages/admin/ContentEditor.jsx": {
+    "file": "assets/ContentEditor-4fxLdvuQ.js",
+    "name": "ContentEditor",
+    "src": "resources/js/pages/admin/ContentEditor.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/spa.jsx",
+      "_log-out-CuSLMqPY.js"
+    ]
+  },
+  "resources/js/pages/admin/EmailSettings.jsx": {
+    "file": "assets/EmailSettings-DOlNksbG.js",
+    "name": "EmailSettings",
+    "src": "resources/js/pages/admin/EmailSettings.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/spa.jsx",
+      "_log-out-CuSLMqPY.js",
+      "_eye-D-vWM3wh.js",
+      "_loader-circle-TewI69N8.js"
+    ]
+  },
+  "resources/js/pages/admin/Events.jsx": {
+    "file": "assets/Events-BIy9MZ6V.js",
+    "name": "Events",
+    "src": "resources/js/pages/admin/Events.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/spa.jsx",
+      "_log-out-CuSLMqPY.js",
+      "_loader-circle-TewI69N8.js"
+    ]
+  },
+  "resources/js/pages/admin/Login.jsx": {
+    "file": "assets/Login-Bmnp4KBe.js",
+    "name": "Login",
+    "src": "resources/js/pages/admin/Login.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/spa.jsx",
+      "_eye-D-vWM3wh.js"
+    ]
+  },
   "resources/js/spa.jsx": {
-    "file": "assets/spa-DF_s5Cg2.js",
+    "file": "assets/spa-GDPMG3r7.js",
     "name": "spa",
     "src": "resources/js/spa.jsx",
     "isEntry": true,
+    "dynamicImports": [
+      "resources/js/pages/admin/Login.jsx",
+      "resources/js/pages/admin/ContentEditor.jsx",
+      "resources/js/pages/admin/Events.jsx",
+      "resources/js/pages/admin/EmailSettings.jsx"
+    ],
     "css": [
       "assets/app-lbG_Ckk0.css"
     ],

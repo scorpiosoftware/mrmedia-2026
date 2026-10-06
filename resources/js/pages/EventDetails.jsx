@@ -321,8 +321,13 @@ export default function EventDetails() {
                                     {/* Left: image + description */}
                                     <div className="lg:col-span-3">
                                         {event.image_url && (
-                                            <div className="mb-8 overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
-                                                <img src={event.image_url} alt={event.title} className="w-full object-cover" />
+                                            <div className="mb-8 aspect-video w-full overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)]">
+                                                <img
+                                                    src={event.image_url}
+                                                    alt={event.title}
+                                                    className="h-full w-full object-cover"
+                                                    loading="eager"
+                                                />
                                             </div>
                                         )}
 

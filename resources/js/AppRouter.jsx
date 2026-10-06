@@ -1,11 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import EventDetails from '@/pages/EventDetails';
 import Home from '@/pages/Home';
-import AdminLogin from '@/pages/admin/Login';
-import ContentEditor from '@/pages/admin/ContentEditor';
-import AdminEvents from '@/pages/admin/Events';
-import EmailSettings from '@/pages/admin/EmailSettings';
+
+// Admin screens are only ever needed by logged-in staff, not public visitors —
+// code-split them so the public site's bundle doesn't pay for admin code.
+const AdminLogin = lazy(() => import('@/pages/admin/Login'));
+const ContentEditor = lazy(() => import('@/pages/admin/ContentEditor'));
+const AdminEvents = lazy(() => import('@/pages/admin/Events'));
+const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
+
+function RouteFallback() {
+    return (
+        <div className="flex min-h-screen items-center justify-center bg-[#F1F1F0]">
+            <div className="h-10 w-10 rounded-full border-4 border-[#213C93] border-t-transparent animate-spin" />
+        </div>
+    );
+}
 
 function RequireAuth({ children }) {
     const { user, userLoading } = useApp();
@@ -24,42 +36,44 @@ function RequireAuth({ children }) {
 
 export default function AppRouter() {
     return (
-        <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/events/:slug" element={<EventDetails />} />
+        <Suspense fallback={<RouteFallback />}>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/events/:slug" element={<EventDetails />} />
 
-            {/* Redirect legacy Laravel auth URLs to our admin login */}
-            <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-            <Route path="/register" element={<Navigate to="/admin/login" replace />} />
-            <Route path="/dashboard" element={<Navigate to="/admin/content" replace />} />
+                {/* Redirect legacy Laravel auth URLs to our admin login */}
+                <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+                <Route path="/register" element={<Navigate to="/admin/login" replace />} />
+                <Route path="/dashboard" element={<Navigate to="/admin/content" replace />} />
 
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route
-                path="/admin/content"
-                element={
-                    <RequireAuth>
-                        <ContentEditor />
-                    </RequireAuth>
-                }
-            />
-            <Route
-                path="/admin/email-settings"
-                element={
-                    <RequireAuth>
-                        <EmailSettings />
-                    </RequireAuth>
-                }
-            />
-            <Route
-                path="/admin/events"
-                element={
-                    <RequireAuth>
-                        <AdminEvents />
-                    </RequireAuth>
-                }
-            />
-            <Route path="/admin" element={<Navigate to="/admin/content" replace />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route
+                    path="/admin/content"
+                    element={
+                        <RequireAuth>
+                            <ContentEditor />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/email-settings"
+                    element={
+                        <RequireAuth>
+                            <EmailSettings />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/events"
+                    element={
+                        <RequireAuth>
+                            <AdminEvents />
+                        </RequireAuth>
+                    }
+                />
+                <Route path="/admin" element={<Navigate to="/admin/content" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </Suspense>
     );
 }
