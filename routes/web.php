@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\EmailSettingsController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventSubmissionController;
@@ -70,6 +73,25 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/spa/admin/events/{event}/submissions',                 [EventController::class, 'submissions']);
     Route::delete('/spa/admin/events/{event}/submissions/{submission}', [EventController::class, 'destroySubmission']);
+
+    Route::get('/spa/admin/projects',       [ProjectController::class, 'index']);
+    Route::post('/spa/admin/projects',      [ProjectController::class, 'store']);
+    Route::post('/spa/admin/projects/upload-image', [ProjectController::class, 'uploadImage'])->middleware('throttle:20,1');
+    Route::post('/spa/admin/projects/reorder',      [ProjectController::class, 'reorder']);
+    Route::post('/spa/admin/projects/{project}',    [ProjectController::class, 'update']);
+    Route::delete('/spa/admin/projects/{project}',  [ProjectController::class, 'destroy']);
+
+    Route::get('/spa/admin/services',       [ServiceController::class, 'index']);
+    Route::post('/spa/admin/services',      [ServiceController::class, 'store']);
+    Route::post('/spa/admin/services/reorder',     [ServiceController::class, 'reorder']);
+    Route::post('/spa/admin/services/{service}',   [ServiceController::class, 'update']);
+    Route::delete('/spa/admin/services/{service}', [ServiceController::class, 'destroy']);
+
+    Route::get('/spa/admin/social-links',       [SocialLinkController::class, 'index']);
+    Route::post('/spa/admin/social-links',      [SocialLinkController::class, 'store']);
+    Route::post('/spa/admin/social-links/reorder',          [SocialLinkController::class, 'reorder']);
+    Route::post('/spa/admin/social-links/{socialLink}',     [SocialLinkController::class, 'update']);
+    Route::delete('/spa/admin/social-links/{socialLink}',   [SocialLinkController::class, 'destroy']);
 });
 
 /*

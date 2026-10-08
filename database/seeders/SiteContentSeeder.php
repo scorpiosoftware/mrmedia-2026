@@ -130,13 +130,12 @@ class SiteContentSeeder extends Seeder
             // ── Footer
             ['key' => 'footer.tagline',    'section' => 'footer', 'en_value' => 'Marketing that moves markets.', 'ar_value' => 'تسويق يُحرّك الأسواق.',         'type' => 'text',     'sort_order' => 1],
             ['key' => 'footer.copyright',  'section' => 'footer', 'en_value' => '© 2026 Mr.MEDIA. All rights reserved.', 'ar_value' => '© 2026 مستر ميديا. جميع الحقوق محفوظة.', 'type' => 'text', 'sort_order' => 2],
-            ['key' => 'footer.social.instagram', 'section' => 'footer', 'en_value' => 'https://instagram.com/mrmedia', 'ar_value' => 'https://instagram.com/mrmedia', 'type' => 'text', 'sort_order' => 3],
-            ['key' => 'footer.social.twitter',   'section' => 'footer', 'en_value' => 'https://twitter.com/mrmedia',   'ar_value' => 'https://twitter.com/mrmedia',   'type' => 'text', 'sort_order' => 4],
-            ['key' => 'footer.social.linkedin',  'section' => 'footer', 'en_value' => 'https://linkedin.com/company/mrmedia', 'ar_value' => 'https://linkedin.com/company/mrmedia', 'type' => 'text', 'sort_order' => 5],
         ];
 
         foreach ($contents as $item) {
             SiteContent::updateOrCreate(['key' => $item['key']], $item);
         }
+
+        SiteContent::clearCache();
     }
 }

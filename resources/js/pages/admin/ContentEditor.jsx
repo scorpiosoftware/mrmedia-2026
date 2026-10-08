@@ -1,6 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import { useApp } from '@/context/AppContext';
-import { Calendar, Check, ChevronLeft, Globe, LogOut, Mail, Save, Search, X } from 'lucide-react';
+import AdminLayout from '@/components/admin/AdminLayout';
+import { Check, Save, Search, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const SECTION_LABELS = {
@@ -15,15 +14,22 @@ const SECTION_LABELS = {
     footer: 'Footer',
 };
 
-const TYPE_LABELS = { text: 'Text', textarea: 'Long Text', html: 'HTML', image: 'Image URL' };
+const TYPE_LABELS = {
+    text: 'Text',
+    textarea: 'Long Text',
+    html: 'HTML',
+    image: 'Image URL',
+};
 
 function getCsrf() {
-    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+    return (
+        document
+            .querySelector('meta[name="csrf-token"]')
+            ?.getAttribute('content') ?? ''
+    );
 }
 
 export default function ContentEditor() {
-    const { user, logout } = useApp();
-    const navigate = useNavigate();
     const [items, setItems] = useState([]);
     const [fetchLoading, setFetchLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -36,7 +42,7 @@ export default function ContentEditor() {
     // Load all content rows
     useEffect(() => {
         fetch('/spa/admin/content', { credentials: 'include' })
-            .then((r) => r.ok ? r.json() : [])
+            .then((r) => (r.ok ? r.json() : []))
             .then((data) => {
                 setItems(data);
                 setFetchLoading(false);
@@ -57,7 +63,8 @@ export default function ContentEditor() {
             // from under the field the admin is typing into.
             if (item.id === editingId) return true;
 
-            const matchSection = activeSection === 'all' || item.section === activeSection;
+            const matchSection =
+                activeSection === 'all' || item.section === activeSection;
             const q = search.toLowerCase();
             const matchSearch =
                 !q ||
@@ -77,7 +84,9 @@ export default function ContentEditor() {
 
     const updateItem = (id, field, value) => {
         setItems((prev) =>
-            prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
+            prev.map((item) =>
+                item.id === id ? { ...item, [field]: value } : item,
+            ),
         );
         setSavedMsg('');
     };
@@ -91,11 +100,15 @@ export default function ContentEditor() {
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                     'X-CSRF-TOKEN': getCsrf(),
                 },
                 body: JSON.stringify({
-                    items: items.map(({ id, en_value, ar_value }) => ({ id, en_value, ar_value })),
+                    items: items.map(({ id, en_value, ar_value }) => ({
+                        id,
+                        en_value,
+                        ar_value,
+                    })),
                 }),
             });
             if (res.ok) {
@@ -111,104 +124,60 @@ export default function ContentEditor() {
         }
     };
 
-    const handleLogout = async () => {
-        await logout();
-        navigate('/admin/login', { replace: true });
-    };
-
     if (fetchLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-[#F1F1F0]">
-                <div className="h-10 w-10 rounded-full border-4 border-[#213C93] border-t-transparent animate-spin" />
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#213C93] border-t-transparent" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#F1F1F0]">
-            {/* Top bar */}
-            <header className="sticky top-0 z-40 bg-[#213C93] text-white shadow-brand">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => navigate('/')}
-                            className="flex items-center gap-1 text-white/60 hover:text-white transition-colors text-sm"
-                        >
-                            <ChevronLeft size={16} />
-                            Site
-                        </button>
-                        <span className="text-white/30">|</span>
-                        <div className="flex items-center gap-2">
-                            <Globe size={18} className="text-[#FCD532]" />
-                            <span className="font-bold text-sm">Content Editor</span>
-                        </div>
-                        <span className="text-white/30">|</span>
-                        <button
-                            onClick={() => navigate('/admin/email-settings')}
-                            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-sm"
-                        >
-                            <Mail size={15} />
-                            Email
-                        </button>
-                        <span className="text-white/30">|</span>
-                        <button
-                            onClick={() => navigate('/admin/events')}
-                            className="flex items-center gap-1.5 text-white/60 hover:text-white transition-colors text-sm"
-                        >
-                            <Calendar size={15} />
-                            Events
-                        </button>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        {savedMsg && (
-                            <span className="flex items-center gap-1.5 rounded-full bg-green-500/20 px-3 py-1 text-xs font-semibold text-green-300">
-                                <Check size={12} />
-                                {savedMsg}
-                            </span>
-                        )}
-                        {errorMsg && (
-                            <span className="rounded-full bg-red-500/20 px-3 py-1 text-xs font-semibold text-red-300">
-                                {errorMsg}
-                            </span>
-                        )}
-                        <span className="hidden sm:block text-xs text-white/50">{user?.email}</span>
-                        <button
-                            onClick={handleLogout}
-                            title="Logout"
-                            className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs text-white/70 hover:bg-white/20 transition-colors"
-                        >
-                            <LogOut size={13} />
-                            Logout
-                        </button>
-                        <button
-                            onClick={handleSave}
-                            disabled={saving}
-                            className="inline-flex items-center gap-2 rounded-full bg-[#DDB50E] px-5 py-2 text-sm font-bold text-[#0D1B4B] hover:bg-[#FCD532] disabled:opacity-60 transition-colors"
-                        >
-                            <Save size={14} />
-                            {saving ? 'Saving…' : 'Save All'}
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+        <AdminLayout
+            title="Content Editor"
+            actions={
+                <>
+                    {savedMsg && (
+                        <span className="flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                            <Check size={12} />
+                            {savedMsg}
+                        </span>
+                    )}
+                    {errorMsg && (
+                        <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
+                            {errorMsg}
+                        </span>
+                    )}
+                    <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#DDB50E] px-5 py-2 text-sm font-bold text-[#0D1B4B] transition-colors hover:bg-[#FCD532] disabled:opacity-60"
+                    >
+                        <Save size={14} />
+                        {saving ? 'Saving…' : 'Save All'}
+                    </button>
+                </>
+            }
+        >
+            <div>
                 {/* Search + section filter */}
-                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <div className="relative flex-1 max-w-md">
-                        <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#5A6A9A]" />
+                <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+                    <div className="relative max-w-md min-w-55 flex-1">
+                        <Search
+                            size={15}
+                            className="absolute top-1/2 left-3 -translate-y-1/2 text-[#5A6A9A]"
+                        />
                         <input
                             type="search"
                             placeholder="Search by key or value…"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="w-full rounded-xl border border-[#D1D5E8] bg-white pl-9 pr-9 py-2.5 text-sm focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
+                            className="w-full rounded-xl border border-[#D1D5E8] bg-white py-2.5 pr-9 pl-9 text-sm focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                         />
                         {search && (
                             <button
                                 onClick={() => setSearch('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#5A6A9A] hover:text-[#0D1B4B]"
+                                className="absolute top-1/2 right-3 -translate-y-1/2 text-[#5A6A9A] hover:text-[#0D1B4B]"
                             >
                                 <X size={14} />
                             </button>
@@ -219,10 +188,10 @@ export default function ContentEditor() {
                             <button
                                 key={s}
                                 onClick={() => setActiveSection(s)}
-                                className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors capitalize ${
+                                className={`rounded-full px-4 py-1.5 text-xs font-semibold capitalize transition-colors ${
                                     activeSection === s
                                         ? 'bg-[#213C93] text-white'
-                                        : 'bg-white border border-[#D1D5E8] text-[#213C93] hover:border-[#213C93]'
+                                        : 'border border-[#D1D5E8] bg-white text-[#213C93] hover:border-[#213C93]'
                                 }`}
                             >
                                 {s === 'all' ? 'All' : (SECTION_LABELS[s] ?? s)}
@@ -234,7 +203,7 @@ export default function ContentEditor() {
                 {/* Content rows grouped by section */}
                 {Object.entries(grouped).map(([section, rows]) => (
                     <div key={section} className="mb-8">
-                        <h2 className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-[#213C93]">
+                        <h2 className="mb-4 flex items-center gap-3 text-xs font-bold tracking-widest text-[#213C93] uppercase">
                             <span className="h-px flex-1 bg-[#D1D5E8]" />
                             {SECTION_LABELS[section] ?? section}
                             <span className="h-px flex-1 bg-[#D1D5E8]" />
@@ -242,72 +211,155 @@ export default function ContentEditor() {
 
                         <div className="space-y-3">
                             {rows.map((item) => {
-                                const isLong = item.type === 'textarea' || item.type === 'html';
+                                const isLong =
+                                    item.type === 'textarea' ||
+                                    item.type === 'html';
                                 return (
                                     <div
                                         key={item.id}
-                                        className="rounded-2xl bg-white border border-[#D1D5E8] p-5 hover:border-[#213C93]/30 transition-colors"
+                                        className="rounded-2xl border border-[#D1D5E8] bg-white p-5 transition-colors hover:border-[#213C93]/30"
                                     >
                                         <div className="mb-3 flex items-center justify-between gap-2">
-                                            <code className="rounded-md bg-[#E8EAF6] px-2 py-0.5 text-xs font-mono text-[#213C93] break-all">
+                                            <code className="rounded-md bg-[#E8EAF6] px-2 py-0.5 font-mono text-xs break-all text-[#213C93]">
                                                 {item.key}
                                             </code>
-                                            <span className="flex-shrink-0 text-xs text-[#5A6A9A] bg-[#F1F1F0] px-2 py-0.5 rounded-full">
-                                                {TYPE_LABELS[item.type] ?? item.type}
+                                            <span className="flex-shrink-0 rounded-full bg-[#F1F1F0] px-2 py-0.5 text-xs text-[#5A6A9A]">
+                                                {TYPE_LABELS[item.type] ??
+                                                    item.type}
                                             </span>
                                         </div>
 
                                         <div className="grid gap-3 sm:grid-cols-2">
                                             {/* English */}
                                             <div>
-                                                <label className="block text-xs font-semibold text-[#5A6A9A] mb-1.5">
+                                                <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
                                                     🇬🇧 English
                                                 </label>
                                                 {isLong ? (
                                                     <textarea
-                                                        value={item.en_value ?? ''}
-                                                        onChange={(e) => updateItem(item.id, 'en_value', e.target.value)}
-                                                        onFocus={() => setEditingId(item.id)}
-                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
+                                                        value={
+                                                            item.en_value ?? ''
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                item.id,
+                                                                'en_value',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onFocus={() =>
+                                                            setEditingId(
+                                                                item.id,
+                                                            )
+                                                        }
+                                                        onBlur={() =>
+                                                            setEditingId(
+                                                                (id) =>
+                                                                    id ===
+                                                                    item.id
+                                                                        ? null
+                                                                        : id,
+                                                            )
+                                                        }
                                                         rows={3}
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 resize-y"
+                                                        className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                                     />
                                                 ) : (
                                                     <input
                                                         type="text"
-                                                        value={item.en_value ?? ''}
-                                                        onChange={(e) => updateItem(item.id, 'en_value', e.target.value)}
-                                                        onFocus={() => setEditingId(item.id)}
-                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20"
+                                                        value={
+                                                            item.en_value ?? ''
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                item.id,
+                                                                'en_value',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onFocus={() =>
+                                                            setEditingId(
+                                                                item.id,
+                                                            )
+                                                        }
+                                                        onBlur={() =>
+                                                            setEditingId(
+                                                                (id) =>
+                                                                    id ===
+                                                                    item.id
+                                                                        ? null
+                                                                        : id,
+                                                            )
+                                                        }
+                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                                     />
                                                 )}
                                             </div>
 
                                             {/* Arabic */}
                                             <div>
-                                                <label className="block text-xs font-semibold text-[#5A6A9A] mb-1.5">
+                                                <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
                                                     🇸🇦 Arabic
                                                 </label>
                                                 {isLong ? (
                                                     <textarea
                                                         dir="rtl"
-                                                        value={item.ar_value ?? ''}
-                                                        onChange={(e) => updateItem(item.id, 'ar_value', e.target.value)}
-                                                        onFocus={() => setEditingId(item.id)}
-                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
+                                                        value={
+                                                            item.ar_value ?? ''
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                item.id,
+                                                                'ar_value',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onFocus={() =>
+                                                            setEditingId(
+                                                                item.id,
+                                                            )
+                                                        }
+                                                        onBlur={() =>
+                                                            setEditingId(
+                                                                (id) =>
+                                                                    id ===
+                                                                    item.id
+                                                                        ? null
+                                                                        : id,
+                                                            )
+                                                        }
                                                         rows={3}
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 resize-y font-arabic"
+                                                        className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                                     />
                                                 ) : (
                                                     <input
                                                         type="text"
                                                         dir="rtl"
-                                                        value={item.ar_value ?? ''}
-                                                        onChange={(e) => updateItem(item.id, 'ar_value', e.target.value)}
-                                                        onFocus={() => setEditingId(item.id)}
-                                                        onBlur={() => setEditingId((id) => (id === item.id ? null : id))}
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 font-arabic"
+                                                        value={
+                                                            item.ar_value ?? ''
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateItem(
+                                                                item.id,
+                                                                'ar_value',
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onFocus={() =>
+                                                            setEditingId(
+                                                                item.id,
+                                                            )
+                                                        }
+                                                        onBlur={() =>
+                                                            setEditingId(
+                                                                (id) =>
+                                                                    id ===
+                                                                    item.id
+                                                                        ? null
+                                                                        : id,
+                                                            )
+                                                        }
+                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                                     />
                                                 )}
                                             </div>
@@ -323,10 +375,12 @@ export default function ContentEditor() {
                     <div className="py-24 text-center text-[#5A6A9A]">
                         <Search size={40} className="mx-auto mb-3 opacity-30" />
                         <p className="font-medium">No content found</p>
-                        <p className="text-sm">Try a different search or section filter.</p>
+                        <p className="text-sm">
+                            Try a different search or section filter.
+                        </p>
                     </div>
                 )}
             </div>
-        </div>
+        </AdminLayout>
     );
 }

@@ -9,12 +9,15 @@ import Home from '@/pages/Home';
 const AdminLogin = lazy(() => import('@/pages/admin/Login'));
 const ContentEditor = lazy(() => import('@/pages/admin/ContentEditor'));
 const AdminEvents = lazy(() => import('@/pages/admin/Events'));
+const AdminProjects = lazy(() => import('@/pages/admin/Projects'));
+const AdminServices = lazy(() => import('@/pages/admin/Services'));
+const AdminSocialLinks = lazy(() => import('@/pages/admin/SocialLinks'));
 const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
 
 function RouteFallback() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-[#F1F1F0]">
-            <div className="h-10 w-10 rounded-full border-4 border-[#213C93] border-t-transparent animate-spin" />
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#213C93] border-t-transparent" />
         </div>
     );
 }
@@ -25,7 +28,7 @@ function RequireAuth({ children }) {
     if (userLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-[#F1F1F0]">
-                <div className="h-10 w-10 rounded-full border-4 border-[#213C93] border-t-transparent animate-spin" />
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#213C93] border-t-transparent" />
             </div>
         );
     }
@@ -42,9 +45,18 @@ export default function AppRouter() {
                 <Route path="/events/:slug" element={<EventDetails />} />
 
                 {/* Redirect legacy Laravel auth URLs to our admin login */}
-                <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-                <Route path="/register" element={<Navigate to="/admin/login" replace />} />
-                <Route path="/dashboard" element={<Navigate to="/admin/content" replace />} />
+                <Route
+                    path="/login"
+                    element={<Navigate to="/admin/login" replace />}
+                />
+                <Route
+                    path="/register"
+                    element={<Navigate to="/admin/login" replace />}
+                />
+                <Route
+                    path="/dashboard"
+                    element={<Navigate to="/admin/content" replace />}
+                />
 
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route
@@ -71,7 +83,34 @@ export default function AppRouter() {
                         </RequireAuth>
                     }
                 />
-                <Route path="/admin" element={<Navigate to="/admin/content" replace />} />
+                <Route
+                    path="/admin/projects"
+                    element={
+                        <RequireAuth>
+                            <AdminProjects />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/services"
+                    element={
+                        <RequireAuth>
+                            <AdminServices />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/social-links"
+                    element={
+                        <RequireAuth>
+                            <AdminSocialLinks />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin"
+                    element={<Navigate to="/admin/content" replace />}
+                />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Suspense>

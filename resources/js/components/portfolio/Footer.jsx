@@ -1,11 +1,13 @@
 import { useContent } from '@/hooks/use-content';
-import { Instagram, Linkedin, Twitter } from 'lucide-react';
+import { usePublicList } from '@/hooks/use-public-list';
+import { getSocialIcon, getSocialLabel } from '@/lib/social-platforms';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'about', 'contact'];
 const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', about: 'about', contact: 'contact' };
 
 export default function Footer() {
     const t = useContent();
+    const { items: socialLinks } = usePublicList('/api/social-links');
 
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -21,24 +23,27 @@ export default function Footer() {
                         <p className="text-white/60 text-sm max-w-xs leading-relaxed">
                             {t('footer.tagline')}
                         </p>
-                        <div className="mt-6 flex gap-3">
-                            {[
-                                { Icon: Instagram, href: t('footer.social.instagram'), label: 'Instagram' },
-                                { Icon: Twitter, href: t('footer.social.twitter'), label: 'Twitter' },
-                                { Icon: Linkedin, href: t('footer.social.linkedin'), label: 'LinkedIn' },
-                            ].map(({ Icon, href, label }) => (
-                                <a
-                                    key={label}
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={label}
-                                    className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-[#DDB50E] hover:text-[#0D1B4B] transition-colors"
-                                >
-                                    <Icon size={16} />
-                                </a>
-                            ))}
-                        </div>
+                        {socialLinks.length > 0 && (
+                            <div className="mt-6 flex flex-wrap gap-3">
+                                {socialLinks.map((link) => {
+                                    const Icon = getSocialIcon(link.platform);
+                                    const label = link.label || getSocialLabel(link.platform);
+                                    return (
+                                        <a
+                                            key={link.id}
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={label}
+                                            title={label}
+                                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-[#DDB50E] hover:text-[#0D1B4B] transition-colors"
+                                        >
+                                            <Icon size={16} />
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
                     {/* Navigation */}
