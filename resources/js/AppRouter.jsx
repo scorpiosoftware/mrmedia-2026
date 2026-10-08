@@ -8,6 +8,7 @@ import Home from '@/pages/Home';
 // code-split them so the public site's bundle doesn't pay for admin code.
 const AdminLogin = lazy(() => import('@/pages/admin/Login'));
 const ContentEditor = lazy(() => import('@/pages/admin/ContentEditor'));
+const AdminInbox = lazy(() => import('@/pages/admin/Inbox'));
 const AdminEvents = lazy(() => import('@/pages/admin/Events'));
 const AdminProjects = lazy(() => import('@/pages/admin/Projects'));
 const AdminServices = lazy(() => import('@/pages/admin/Services'));
@@ -96,6 +97,14 @@ export default function AppRouter() {
                     element={
                         <RequireAuth>
                             <AdminServices />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/inbox"
+                    element={
+                        <RequireAuth>
+                            <AdminInbox />
                         </RequireAuth>
                     }
                 />

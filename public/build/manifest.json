@@ -1,41 +1,48 @@
 {
-  "_AdminLayout-QlMWgger.js": {
-    "file": "assets/AdminLayout-QlMWgger.js",
+  "_AdminLayout-7bAw80EK.js": {
+    "file": "assets/AdminLayout-7bAw80EK.js",
     "name": "AdminLayout",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_arrow-up-C0Y10812.js": {
-    "file": "assets/arrow-up-C0Y10812.js",
+  "_arrow-up-DbvpJQwz.js": {
+    "file": "assets/arrow-up-DbvpJQwz.js",
     "name": "arrow-up",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_eye-Cq8Fkr4U.js": {
-    "file": "assets/eye-Cq8Fkr4U.js",
+  "_eye-D9bs0QtI.js": {
+    "file": "assets/eye-D9bs0QtI.js",
     "name": "eye",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_loader-circle-BPgAmFN_.js": {
-    "file": "assets/loader-circle-BPgAmFN_.js",
+  "_loader-circle-DsHXUkzy.js": {
+    "file": "assets/loader-circle-DsHXUkzy.js",
     "name": "loader-circle",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_trash-2-BNZ2ipYI.js": {
-    "file": "assets/trash-2-BNZ2ipYI.js",
+  "_plus-DTZVvP-L.js": {
+    "file": "assets/plus-DTZVvP-L.js",
+    "name": "plus",
+    "imports": [
+      "resources/js/spa.jsx"
+    ]
+  },
+  "_trash-2-YJNeg3pV.js": {
+    "file": "assets/trash-2-YJNeg3pV.js",
     "name": "trash-2",
     "imports": [
       "resources/js/spa.jsx"
     ]
   },
-  "_upload-LoBN5QHy.js": {
-    "file": "assets/upload-LoBN5QHy.js",
+  "_upload-ztA1EYPn.js": {
+    "file": "assets/upload-ztA1EYPn.js",
     "name": "upload",
     "imports": [
       "resources/js/spa.jsx"
@@ -74,7 +81,7 @@
     "src": "public/fonts/font-english/Nexa-Light.otf"
   },
   "resources/css/app.css": {
-    "file": "assets/app-bbb9lJYS.css",
+    "file": "assets/app-BXLfocGj.css",
     "name": "app",
     "names": [
       "app.css"
@@ -93,98 +100,115 @@
     ]
   },
   "resources/js/pages/admin/ContentEditor.jsx": {
-    "file": "assets/ContentEditor-DcYeeXn5.js",
+    "file": "assets/ContentEditor-DFEjXMsX.js",
     "name": "ContentEditor",
     "src": "resources/js/pages/admin/ContentEditor.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js"
+      "_AdminLayout-7bAw80EK.js"
     ]
   },
   "resources/js/pages/admin/EmailSettings.jsx": {
-    "file": "assets/EmailSettings-CmVo-9F9.js",
+    "file": "assets/EmailSettings-DY8aE637.js",
     "name": "EmailSettings",
     "src": "resources/js/pages/admin/EmailSettings.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js",
-      "_eye-Cq8Fkr4U.js",
-      "_loader-circle-BPgAmFN_.js"
+      "_AdminLayout-7bAw80EK.js",
+      "_eye-D9bs0QtI.js",
+      "_loader-circle-DsHXUkzy.js"
     ]
   },
   "resources/js/pages/admin/Events.jsx": {
-    "file": "assets/Events-BlCqADg8.js",
+    "file": "assets/Events-B7fGL1J6.js",
     "name": "Events",
     "src": "resources/js/pages/admin/Events.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js",
-      "_upload-LoBN5QHy.js",
-      "_loader-circle-BPgAmFN_.js",
-      "_trash-2-BNZ2ipYI.js"
+      "_AdminLayout-7bAw80EK.js",
+      "_upload-ztA1EYPn.js",
+      "_loader-circle-DsHXUkzy.js",
+      "_plus-DTZVvP-L.js",
+      "_trash-2-YJNeg3pV.js"
+    ]
+  },
+  "resources/js/pages/admin/Inbox.jsx": {
+    "file": "assets/Inbox-DgkvcJuR.js",
+    "name": "Inbox",
+    "src": "resources/js/pages/admin/Inbox.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/spa.jsx",
+      "_AdminLayout-7bAw80EK.js",
+      "_loader-circle-DsHXUkzy.js",
+      "_trash-2-YJNeg3pV.js"
     ]
   },
   "resources/js/pages/admin/Login.jsx": {
-    "file": "assets/Login-DC4jlWFr.js",
+    "file": "assets/Login-B9JHl_RW.js",
     "name": "Login",
     "src": "resources/js/pages/admin/Login.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_eye-Cq8Fkr4U.js"
+      "_eye-D9bs0QtI.js"
     ]
   },
   "resources/js/pages/admin/Projects.jsx": {
-    "file": "assets/Projects-Dytbkcaj.js",
+    "file": "assets/Projects-C7HD1vE4.js",
     "name": "Projects",
     "src": "resources/js/pages/admin/Projects.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js",
-      "_arrow-up-C0Y10812.js",
-      "_upload-LoBN5QHy.js",
-      "_loader-circle-BPgAmFN_.js",
-      "_trash-2-BNZ2ipYI.js"
+      "_AdminLayout-7bAw80EK.js",
+      "_arrow-up-DbvpJQwz.js",
+      "_upload-ztA1EYPn.js",
+      "_loader-circle-DsHXUkzy.js",
+      "_plus-DTZVvP-L.js",
+      "_trash-2-YJNeg3pV.js"
     ]
   },
   "resources/js/pages/admin/Services.jsx": {
-    "file": "assets/Services-S83F_YEC.js",
+    "file": "assets/Services-dhXv9IXL.js",
     "name": "Services",
     "src": "resources/js/pages/admin/Services.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js",
-      "_arrow-up-C0Y10812.js",
-      "_loader-circle-BPgAmFN_.js",
-      "_trash-2-BNZ2ipYI.js"
+      "_AdminLayout-7bAw80EK.js",
+      "_arrow-up-DbvpJQwz.js",
+      "_loader-circle-DsHXUkzy.js",
+      "_plus-DTZVvP-L.js",
+      "_trash-2-YJNeg3pV.js"
     ]
   },
   "resources/js/pages/admin/SocialLinks.jsx": {
-    "file": "assets/SocialLinks-DAexkHkV.js",
+    "file": "assets/SocialLinks--jB4ywgB.js",
     "name": "SocialLinks",
     "src": "resources/js/pages/admin/SocialLinks.jsx",
     "isDynamicEntry": true,
     "imports": [
       "resources/js/spa.jsx",
-      "_AdminLayout-QlMWgger.js",
-      "_arrow-up-C0Y10812.js",
-      "_loader-circle-BPgAmFN_.js",
-      "_trash-2-BNZ2ipYI.js"
+      "_AdminLayout-7bAw80EK.js",
+      "_arrow-up-DbvpJQwz.js",
+      "_loader-circle-DsHXUkzy.js",
+      "_plus-DTZVvP-L.js",
+      "_trash-2-YJNeg3pV.js"
     ]
   },
   "resources/js/spa.jsx": {
-    "file": "assets/spa-DpiW4cuM.js",
+    "file": "assets/spa-CR3q9jse.js",
     "name": "spa",
     "src": "resources/js/spa.jsx",
     "isEntry": true,
     "dynamicImports": [
       "resources/js/pages/admin/Login.jsx",
       "resources/js/pages/admin/ContentEditor.jsx",
+      "resources/js/pages/admin/Inbox.jsx",
       "resources/js/pages/admin/Events.jsx",
       "resources/js/pages/admin/Projects.jsx",
       "resources/js/pages/admin/Services.jsx",
@@ -192,7 +216,7 @@
       "resources/js/pages/admin/EmailSettings.jsx"
     ],
     "css": [
-      "assets/app-bbb9lJYS.css"
+      "assets/app-BXLfocGj.css"
     ],
     "assets": [
       "assets/Nexa-ExtraLight-CYUoXLGo.ttf",

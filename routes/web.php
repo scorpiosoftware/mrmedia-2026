@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\EmailSettingsController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\InboxController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SocialLinkController;
@@ -51,10 +52,10 @@ Route::post('/spa/logout', function (Request $request) {
 });
 
 // Public contact form submission
-Route::post('/spa/contact', [ContactController::class, 'send'])->middleware('throttle:5,1');
+Route::post('/spa/contact', [ContactController::class, 'send'])->middleware('throttle:contact');
 
 // Public: submit/register for an event or training course
-Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'store'])->middleware('throttle:5,1');
+Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'store'])->middleware('throttle:event-submission');
 
 // Admin endpoints (auth required)
 Route::middleware('auth:web')->group(function () {
@@ -86,6 +87,10 @@ Route::middleware('auth:web')->group(function () {
     Route::post('/spa/admin/services/reorder',     [ServiceController::class, 'reorder']);
     Route::post('/spa/admin/services/{service}',   [ServiceController::class, 'update']);
     Route::delete('/spa/admin/services/{service}', [ServiceController::class, 'destroy']);
+
+    Route::get('/spa/admin/inbox',    [InboxController::class, 'index']);
+    Route::post('/spa/admin/inbox/{contactMessage}/read',  [InboxController::class, 'markRead']);
+    Route::delete('/spa/admin/inbox/{contactMessage}',     [InboxController::class, 'destroy']);
 
     Route::get('/spa/admin/social-links',       [SocialLinkController::class, 'index']);
     Route::post('/spa/admin/social-links',      [SocialLinkController::class, 'store']);

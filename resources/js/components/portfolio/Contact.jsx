@@ -18,6 +18,7 @@ export default function Contact() {
         email: '',
         service: '',
         message: '',
+        website: '', // honeypot — hidden from real users, only bots fill it in
     });
     const [status, setStatus] = useState('idle'); // idle | sending | sent | error
     const [errorMsg, setErrorMsg] = useState('');
@@ -43,7 +44,13 @@ export default function Contact() {
             const json = await res.json().catch(() => ({}));
             if (res.ok) {
                 setStatus('sent');
-                setForm({ name: '', email: '', service: '', message: '' });
+                setForm({
+                    name: '',
+                    email: '',
+                    service: '',
+                    message: '',
+                    website: '',
+                });
                 setTimeout(() => setStatus('idle'), 5000);
             } else {
                 setErrorMsg(
@@ -216,6 +223,23 @@ export default function Contact() {
                                             rows={4}
                                             required
                                             className="w-full resize-none rounded-xl border border-[#D1D5E8] bg-white px-4 py-3 text-sm text-[#0D1B4B] transition-all duration-200 placeholder:text-muted-foreground hover:border-[#213C93]/40 focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20"
+                                        />
+                                    </div>
+                                    <div
+                                        aria-hidden="true"
+                                        className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
+                                    >
+                                        <label htmlFor="contact-website">
+                                            Leave this field empty
+                                        </label>
+                                        <input
+                                            id="contact-website"
+                                            type="text"
+                                            name="website"
+                                            value={form.website}
+                                            onChange={handleChange}
+                                            tabIndex={-1}
+                                            autoComplete="off"
                                         />
                                     </div>
                                     <button
