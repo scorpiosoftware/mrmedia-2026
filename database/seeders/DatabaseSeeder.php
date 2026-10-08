@@ -27,6 +27,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call(SiteContentSeeder::class);
         $this->call(SocialLinkSeeder::class);
+        $this->call(ServiceSeeder::class);
+        $this->call(ProjectSeeder::class);
         $this->call(EventSeeder::class);
     }
 }
