@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class EventController extends Controller
 {
@@ -133,7 +134,7 @@ class EventController extends Controller
 
     private function validateEvent(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'title'           => ['required', 'string', 'max:255'],
             'title_ar'        => ['nullable', 'string', 'max:255'],
             'type'            => ['required', 'string', 'in:event,training'],
@@ -148,7 +149,69 @@ class EventController extends Controller
             'price'           => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
             'image_url'       => ['nullable', 'string', 'max:2048'],
             'is_published'    => ['boolean'],
+
+            // Registration form — which fields the public form requires
+            'required_fields'   => ['nullable', 'array'],
+            'required_fields.*' => ['string', 'in:name,email,phone,company,message'],
+
+            // About the Event
+            'target_audience'    => ['nullable', 'string', 'max:2000'],
+            'target_audience_ar' => ['nullable', 'string', 'max:2000'],
+
+            // Learning Outcomes / Agenda
+            'agenda'                    => ['nullable', 'array'],
+            'agenda.*.title'            => ['nullable', 'string', 'max:255'],
+            'agenda.*.title_ar'         => ['nullable', 'string', 'max:255'],
+            'agenda.*.description'      => ['nullable', 'string', 'max:2000'],
+            'agenda.*.description_ar'   => ['nullable', 'string', 'max:2000'],
+
+            // Trainer / Speaker
+            'trainer_name'               => ['nullable', 'string', 'max:255'],
+            'trainer_name_ar'            => ['nullable', 'string', 'max:255'],
+            'trainer_title'              => ['nullable', 'string', 'max:255'],
+            'trainer_title_ar'           => ['nullable', 'string', 'max:255'],
+            'trainer_bio'                => ['nullable', 'string', 'max:5000'],
+            'trainer_bio_ar'             => ['nullable', 'string', 'max:5000'],
+            'trainer_image_url'          => ['nullable', 'string', 'max:2048'],
+            'trainer_credentials'        => ['nullable', 'array'],
+            'trainer_credentials.*.text'    => ['nullable', 'string', 'max:255'],
+            'trainer_credentials.*.text_ar' => ['nullable', 'string', 'max:255'],
+
+            // Registration
+            'payment_note'    => ['nullable', 'string', 'max:2000'],
+            'payment_note_ar' => ['nullable', 'string', 'max:2000'],
+
+            // Testimonials
+            'testimonials'              => ['nullable', 'array'],
+            'testimonials.*.quote'      => ['nullable', 'string', 'max:2000'],
+            'testimonials.*.quote_ar'   => ['nullable', 'string', 'max:2000'],
+            'testimonials.*.name'       => ['nullable', 'string', 'max:255'],
+            'testimonials.*.role'       => ['nullable', 'string', 'max:255'],
+            'testimonials.*.role_ar'    => ['nullable', 'string', 'max:255'],
+            'testimonials.*.avatar_url' => ['nullable', 'string', 'max:2048'],
+
+            // FAQ
+            'faqs'               => ['nullable', 'array'],
+            'faqs.*.question'    => ['nullable', 'string', 'max:500'],
+            'faqs.*.question_ar' => ['nullable', 'string', 'max:500'],
+            'faqs.*.answer'      => ['nullable', 'string', 'max:3000'],
+            'faqs.*.answer_ar'   => ['nullable', 'string', 'max:3000'],
+
+            // Final CTA
+            'cta_heading'      => ['nullable', 'string', 'max:255'],
+            'cta_heading_ar'   => ['nullable', 'string', 'max:255'],
+            'cta_subheading'   => ['nullable', 'string', 'max:1000'],
+            'cta_subheading_ar' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        $required = $data['required_fields'] ?? [];
+        if (! in_array('email', $required, true) && ! in_array('phone', $required, true)) {
+            throw ValidationException::withMessages([
+                'required_fields' => 'At least one of Email or Phone must be required, so a registrant can always be reached.',
+            ]);
+        }
+
+        return $data;
     }
 
     /** Generates a URL-safe slug from the title, appending -2, -3, … on collision. */

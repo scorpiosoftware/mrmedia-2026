@@ -78,7 +78,7 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.form.phone',    'section' => 'events', 'en_value' => 'Phone Number', 'ar_value' => 'رقم الهاتف', 'type' => 'text', 'sort_order' => 12],
             ['key' => 'events.form.company',  'section' => 'events', 'en_value' => 'Company / Organization', 'ar_value' => 'الشركة / الجهة', 'type' => 'text', 'sort_order' => 13],
             ['key' => 'events.form.attendees','section' => 'events', 'en_value' => 'Number of Attendees', 'ar_value' => 'عدد الحضور', 'type' => 'text', 'sort_order' => 14],
-            ['key' => 'events.form.message',  'section' => 'events', 'en_value' => 'Notes (optional)', 'ar_value' => 'ملاحظات (اختياري)', 'type' => 'text', 'sort_order' => 15],
+            ['key' => 'events.form.message',  'section' => 'events', 'en_value' => 'Notes', 'ar_value' => 'ملاحظات', 'type' => 'text', 'sort_order' => 15],
             ['key' => 'events.form.submit',   'section' => 'events', 'en_value' => 'Submit Registration', 'ar_value' => 'إرسال التسجيل', 'type' => 'text', 'sort_order' => 16],
             ['key' => 'events.success_title', 'section' => 'events', 'en_value' => 'Registration received!', 'ar_value' => 'تم استلام تسجيلك!', 'type' => 'text', 'sort_order' => 17],
             ['key' => 'events.success_message','section' => 'events', 'en_value' => 'We\'ll be in touch with the details shortly.', 'ar_value' => 'سنتواصل معك قريبًا بالتفاصيل.', 'type' => 'textarea', 'sort_order' => 18],
@@ -92,6 +92,14 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.about_label',    'section' => 'events', 'en_value' => 'About this session', 'ar_value' => 'عن هذه الجلسة', 'type' => 'text', 'sort_order' => 26],
             ['key' => 'events.details_label',  'section' => 'events', 'en_value' => 'Details', 'ar_value' => 'التفاصيل', 'type' => 'text', 'sort_order' => 27],
             ['key' => 'events.price_label',    'section' => 'events', 'en_value' => 'Price', 'ar_value' => 'السعر', 'type' => 'text', 'sort_order' => 28],
+            ['key' => 'events.register_cta',       'section' => 'events', 'en_value' => 'Register Now', 'ar_value' => 'سجّل الآن', 'type' => 'text', 'sort_order' => 29],
+            ['key' => 'events.target_audience_label', 'section' => 'events', 'en_value' => 'Who should attend', 'ar_value' => 'لمن هذه الدورة', 'type' => 'text', 'sort_order' => 30],
+            ['key' => 'events.agenda_label',       'section' => 'events', 'en_value' => 'Learning Outcomes & Agenda', 'ar_value' => 'المخرجات التعليمية وجدول الأعمال', 'type' => 'text', 'sort_order' => 31],
+            ['key' => 'events.agenda_subtitle',    'section' => 'events', 'en_value' => 'What you\'ll gain from this session', 'ar_value' => 'ما الذي ستكتسبه من هذه الجلسة', 'type' => 'text', 'sort_order' => 32],
+            ['key' => 'events.trainer_label',      'section' => 'events', 'en_value' => 'Your Trainer', 'ar_value' => 'مدربك', 'type' => 'text', 'sort_order' => 33],
+            ['key' => 'events.registration_label', 'section' => 'events', 'en_value' => 'Registration', 'ar_value' => 'التسجيل', 'type' => 'text', 'sort_order' => 34],
+            ['key' => 'events.testimonials_label', 'section' => 'events', 'en_value' => 'What Past Attendees Say', 'ar_value' => 'ماذا يقول المشاركون السابقون', 'type' => 'text', 'sort_order' => 35],
+            ['key' => 'events.faq_label',          'section' => 'events', 'en_value' => 'Frequently Asked Questions', 'ar_value' => 'الأسئلة الشائعة', 'type' => 'text', 'sort_order' => 36],
 
             // ── About
             ['key' => 'about.section_badge', 'section' => 'about', 'en_value' => 'Who We Are',        'ar_value' => 'من نحن',               'type' => 'text',     'sort_order' => 1],

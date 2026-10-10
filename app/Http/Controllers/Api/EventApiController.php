@@ -41,22 +41,72 @@ class EventApiController extends Controller
 
     private function present(Event $event, string $locale): array
     {
+        $pick = fn (?string $en, ?string $ar) => $locale === 'ar' && $ar ? $ar : $en;
+
+        $agenda = collect($event->agenda ?? [])
+            ->map(fn ($item) => [
+                'title'       => $pick($item['title'] ?? null, $item['title_ar'] ?? null),
+                'description' => $pick($item['description'] ?? null, $item['description_ar'] ?? null),
+            ])
+            ->filter(fn ($item) => $item['title'] || $item['description'])
+            ->values();
+
+        $trainer = $event->trainer_name ? [
+            'name'        => $pick($event->trainer_name, $event->trainer_name_ar),
+            'title'       => $pick($event->trainer_title, $event->trainer_title_ar),
+            'bio'         => $pick($event->trainer_bio, $event->trainer_bio_ar),
+            'image_url'   => $event->trainer_image_url,
+            'credentials' => collect($event->trainer_credentials ?? [])
+                ->map(fn ($c) => $pick($c['text'] ?? null, $c['text_ar'] ?? null))
+                ->filter()
+                ->values(),
+        ] : null;
+
+        $testimonials = collect($event->testimonials ?? [])
+            ->map(fn ($item) => [
+                'quote'      => $pick($item['quote'] ?? null, $item['quote_ar'] ?? null),
+                'name'       => $item['name'] ?? null,
+                'role'       => $pick($item['role'] ?? null, $item['role_ar'] ?? null),
+                'avatar_url' => $item['avatar_url'] ?? null,
+            ])
+            ->filter(fn ($item) => $item['quote'])
+            ->values();
+
+        $faqs = collect($event->faqs ?? [])
+            ->map(fn ($item) => [
+                'question' => $pick($item['question'] ?? null, $item['question_ar'] ?? null),
+                'answer'   => $pick($item['answer'] ?? null, $item['answer_ar'] ?? null),
+            ])
+            ->filter(fn ($item) => $item['question'] && $item['answer'])
+            ->values();
+
         return [
-            'id'          => $event->id,
-            'slug'        => $event->slug,
-            'title'       => $locale === 'ar' && $event->title_ar ? $event->title_ar : $event->title,
-            'type'        => $event->type,
-            'mode'        => $event->mode,
-            'description' => $locale === 'ar' && $event->description_ar ? $event->description_ar : $event->description,
-            'location'    => $locale === 'ar' && $event->location_ar ? $event->location_ar : $event->location,
-            'starts_at'   => $event->starts_at,
-            'ends_at'     => $event->ends_at,
-            'capacity'    => $event->capacity,
-            'price'       => $event->price !== null ? (float) $event->price : null,
-            'image_url'   => $event->image_url,
-            'remaining'   => $event->capacity
+            'id'              => $event->id,
+            'slug'            => $event->slug,
+            'title'           => $pick($event->title, $event->title_ar),
+            'type'            => $event->type,
+            'mode'            => $event->mode,
+            'description'     => $pick($event->description, $event->description_ar),
+            'target_audience' => $pick($event->target_audience, $event->target_audience_ar),
+            'location'        => $pick($event->location, $event->location_ar),
+            'starts_at'       => $event->starts_at,
+            'ends_at'         => $event->ends_at,
+            'capacity'        => $event->capacity,
+            'price'           => $event->price !== null ? (float) $event->price : null,
+            'image_url'       => $event->image_url,
+            'required_fields' => $event->required_fields ?: ['name', 'email'],
+            'remaining'       => $event->capacity
                 ? max(0, $event->capacity - (int) $event->submissions_sum_attendees)
                 : null,
+            'agenda'          => $agenda,
+            'trainer'         => $trainer,
+            'payment_note'    => $pick($event->payment_note, $event->payment_note_ar),
+            'testimonials'    => $testimonials,
+            'faqs'            => $faqs,
+            'cta'             => ($event->cta_heading || $event->cta_subheading) ? [
+                'heading'    => $pick($event->cta_heading, $event->cta_heading_ar),
+                'subheading' => $pick($event->cta_subheading, $event->cta_subheading_ar),
+            ] : null,
         ];
     }
 }

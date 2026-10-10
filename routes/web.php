@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\EmailSettingsController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\InboxController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SocialLinkController;
@@ -61,6 +62,9 @@ Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'st
 Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/content',  [ContentApiController::class, 'adminIndex']);
     Route::post('/spa/admin/content', [ContentApiController::class, 'adminUpdate']);
+
+    Route::get('/spa/admin/profile',           [ProfileController::class, 'show']);
+    Route::post('/spa/admin/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:6,1');
 
     Route::get('/spa/admin/email-settings',       [EmailSettingsController::class, 'show']);
     Route::post('/spa/admin/email-settings',      [EmailSettingsController::class, 'update']);

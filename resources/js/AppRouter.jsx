@@ -14,6 +14,7 @@ const AdminProjects = lazy(() => import('@/pages/admin/Projects'));
 const AdminServices = lazy(() => import('@/pages/admin/Services'));
 const AdminSocialLinks = lazy(() => import('@/pages/admin/SocialLinks'));
 const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
+const AdminProfile = lazy(() => import('@/pages/admin/Profile'));
 
 function RouteFallback() {
     return (
@@ -113,6 +114,14 @@ export default function AppRouter() {
                     element={
                         <RequireAuth>
                             <AdminSocialLinks />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/profile"
+                    element={
+                        <RequireAuth>
+                            <AdminProfile />
                         </RequireAuth>
                     }
                 />

@@ -1,4 +1,5 @@
 import AdminLayout from '@/components/admin/AdminLayout';
+import RepeaterField from '@/components/admin/RepeaterField';
 import {
     Calendar,
     Check,
@@ -40,7 +41,37 @@ const EMPTY_FORM = {
     price: '',
     image_url: '',
     is_published: true,
+    required_fields: ['name', 'email'],
+
+    target_audience: '',
+    target_audience_ar: '',
+    agenda: [],
+
+    trainer_name: '',
+    trainer_name_ar: '',
+    trainer_title: '',
+    trainer_title_ar: '',
+    trainer_bio: '',
+    trainer_bio_ar: '',
+    trainer_image_url: '',
+    trainer_credentials: [],
+
+    payment_note: '',
+    payment_note_ar: '',
+
+    testimonials: [],
+    faqs: [],
+
+    cta_heading: '',
+    cta_heading_ar: '',
+    cta_subheading: '',
+    cta_subheading_ar: '',
 };
+
+const EMPTY_AGENDA_ITEM = { title: '', title_ar: '', description: '', description_ar: '' };
+const EMPTY_CREDENTIAL = { text: '', text_ar: '' };
+const EMPTY_TESTIMONIAL = { quote: '', quote_ar: '', name: '', role: '', role_ar: '', avatar_url: '' };
+const EMPTY_FAQ = { question: '', question_ar: '', answer: '', answer_ar: '' };
 
 function toDatetimeLocal(iso) {
     if (!iso) return '';
@@ -113,12 +144,45 @@ export default function AdminEvents() {
             price: event.price ?? '',
             image_url: event.image_url ?? '',
             is_published: !!event.is_published,
+            required_fields: event.required_fields ?? ['name', 'email'],
+
+            target_audience: event.target_audience ?? '',
+            target_audience_ar: event.target_audience_ar ?? '',
+            agenda: event.agenda ?? [],
+
+            trainer_name: event.trainer_name ?? '',
+            trainer_name_ar: event.trainer_name_ar ?? '',
+            trainer_title: event.trainer_title ?? '',
+            trainer_title_ar: event.trainer_title_ar ?? '',
+            trainer_bio: event.trainer_bio ?? '',
+            trainer_bio_ar: event.trainer_bio_ar ?? '',
+            trainer_image_url: event.trainer_image_url ?? '',
+            trainer_credentials: event.trainer_credentials ?? [],
+
+            payment_note: event.payment_note ?? '',
+            payment_note_ar: event.payment_note_ar ?? '',
+
+            testimonials: event.testimonials ?? [],
+            faqs: event.faqs ?? [],
+
+            cta_heading: event.cta_heading ?? '',
+            cta_heading_ar: event.cta_heading_ar ?? '',
+            cta_subheading: event.cta_subheading ?? '',
+            cta_subheading_ar: event.cta_subheading_ar ?? '',
         });
         setFormOpen(true);
     };
 
     const set = (field, value) =>
         setForm((prev) => ({ ...prev, [field]: value }));
+
+    const toggleRequiredField = (field) =>
+        setForm((prev) => ({
+            ...prev,
+            required_fields: prev.required_fields.includes(field)
+                ? prev.required_fields.filter((f) => f !== field)
+                : [...prev.required_fields, field],
+        }));
 
     const closeForm = () => {
         setFormOpen(false);
@@ -197,7 +261,10 @@ export default function AdminEvents() {
                 closeForm();
                 loadEvents();
             } else {
-                setErrorMsg(json?.message || 'Failed to save event.');
+                const firstError = json?.errors
+                    ? Object.values(json.errors)[0]?.[0]
+                    : null;
+                setErrorMsg(firstError || json?.message || 'Failed to save event.');
             }
         } catch {
             setErrorMsg('Network error. Please try again.');
@@ -229,6 +296,13 @@ export default function AdminEvents() {
     };
 
     const togglePublished = async (event) => {
+        // Re-send every editable field (not just a hand-picked subset) so toggling
+        // publish state never silently wipes agenda/trainer/testimonials/faqs/CTA.
+        const {
+            id, created_at, updated_at, slug, submissions_count,
+            ...editableFields
+        } = event;
+
         try {
             const res = await fetch(`/spa/admin/events/${event.id}`, {
                 method: 'POST',
@@ -239,19 +313,7 @@ export default function AdminEvents() {
                     'X-CSRF-TOKEN': getCsrf(),
                 },
                 body: JSON.stringify({
-                    title: event.title,
-                    title_ar: event.title_ar,
-                    type: event.type,
-                    mode: event.mode,
-                    description: event.description,
-                    description_ar: event.description_ar,
-                    location: event.location,
-                    location_ar: event.location_ar,
-                    starts_at: event.starts_at,
-                    ends_at: event.ends_at,
-                    capacity: event.capacity,
-                    price: event.price,
-                    image_url: event.image_url,
+                    ...editableFields,
                     is_published: !event.is_published,
                 }),
             });
@@ -338,7 +400,7 @@ export default function AdminEvents() {
                 {formOpen && (
                     <form
                         onSubmit={handleSave}
-                        className="mb-8 overflow-hidden rounded-2xl border border-[#D1D5E8] bg-white"
+                        className="mb-8 rounded-2xl border border-[#D1D5E8] bg-white"
                     >
                         <div className="flex items-center justify-between border-b border-[#E8EAF6] px-6 py-5">
                             <h2 className="font-bold text-[#0D1B4B]">
@@ -460,6 +522,47 @@ export default function AdminEvents() {
                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                     />
                                 </div>
+                            </div>
+
+                            {/* Required registration fields */}
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                    Required Registration Fields
+                                </label>
+                                <p className="mb-3 text-xs text-[#5A6A9A]">
+                                    Choose which fields a visitor must fill in to register. Number of Attendees is always required.
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {[
+                                        { key: 'name', label: 'Name' },
+                                        { key: 'email', label: 'Email' },
+                                        { key: 'phone', label: 'Phone' },
+                                        { key: 'company', label: 'Company' },
+                                        { key: 'message', label: 'Message' },
+                                    ].map(({ key, label }) => {
+                                        const active = form.required_fields.includes(key);
+                                        return (
+                                            <button
+                                                key={key}
+                                                type="button"
+                                                onClick={() => toggleRequiredField(key)}
+                                                className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-200 ${
+                                                    active
+                                                        ? 'border-[#213C93]/40 bg-[#213C93]/10 text-[#213C93]'
+                                                        : 'border-[#D1D5E8] bg-[#F1F1F0] text-[#5A6A9A] hover:border-[#213C93]/40'
+                                                }`}
+                                            >
+                                                {active && <Check size={13} />}
+                                                {label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {!form.required_fields.includes('email') && !form.required_fields.includes('phone') && (
+                                    <p className="mt-2 text-xs text-red-600">
+                                        At least one of Email or Phone must be required, so you can always reach a registrant.
+                                    </p>
+                                )}
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -656,6 +759,246 @@ export default function AdminEvents() {
                                 </div>
                             </div>
 
+                            <div className="border-t border-dashed border-[#D1D5E8] pt-5">
+                                <h3 className="mb-4 text-sm font-black text-[#0D1B4B]">
+                                    Landing Page Sections
+                                </h3>
+                                <p className="mb-5 -mt-3 text-xs text-[#5A6A9A]">
+                                    Optional — each section only appears on the public event page when it has content.
+                                </p>
+
+                                <div className="space-y-6">
+                                    {/* Target audience */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Who Should Attend (optional)
+                                        </label>
+                                        <div className="grid gap-3 sm:grid-cols-2">
+                                            <textarea
+                                                value={form.target_audience}
+                                                onChange={(e) => set('target_audience', e.target.value)}
+                                                rows={2}
+                                                placeholder="🇬🇧 English"
+                                                className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            />
+                                            <textarea
+                                                dir="rtl"
+                                                value={form.target_audience_ar}
+                                                onChange={(e) => set('target_audience_ar', e.target.value)}
+                                                rows={2}
+                                                placeholder="🇸🇦 Arabic"
+                                                className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Agenda / Learning Outcomes */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Learning Outcomes / Agenda (optional)
+                                        </label>
+                                        <RepeaterField
+                                            items={form.agenda}
+                                            onChange={(items) => set('agenda', items)}
+                                            emptyItem={EMPTY_AGENDA_ITEM}
+                                            addLabel="Add Agenda Item"
+                                            itemLabel={(item, i) => item.title || `Item ${i + 1}`}
+                                            fields={[
+                                                { key: 'title', label: 'Title', type: 'text', bilingual: true },
+                                                { key: 'description', label: 'Description', type: 'textarea', bilingual: true },
+                                            ]}
+                                        />
+                                    </div>
+
+                                    {/* Trainer / Speaker */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Trainer / Speaker (optional)
+                                        </label>
+                                        <div className="space-y-3 rounded-xl border border-[#D1D5E8] bg-white p-4">
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <input
+                                                    type="text"
+                                                    value={form.trainer_name}
+                                                    onChange={(e) => set('trainer_name', e.target.value)}
+                                                    placeholder="🇬🇧 Name"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    dir="rtl"
+                                                    value={form.trainer_name_ar}
+                                                    onChange={(e) => set('trainer_name_ar', e.target.value)}
+                                                    placeholder="🇸🇦 Name"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                            </div>
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <input
+                                                    type="text"
+                                                    value={form.trainer_title}
+                                                    onChange={(e) => set('trainer_title', e.target.value)}
+                                                    placeholder="🇬🇧 Title (e.g. Head of Strategy)"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    dir="rtl"
+                                                    value={form.trainer_title_ar}
+                                                    onChange={(e) => set('trainer_title_ar', e.target.value)}
+                                                    placeholder="🇸🇦 Title"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                            </div>
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <textarea
+                                                    value={form.trainer_bio}
+                                                    onChange={(e) => set('trainer_bio', e.target.value)}
+                                                    rows={3}
+                                                    placeholder="🇬🇧 Bio"
+                                                    className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                                <textarea
+                                                    dir="rtl"
+                                                    value={form.trainer_bio_ar}
+                                                    onChange={(e) => set('trainer_bio_ar', e.target.value)}
+                                                    rows={3}
+                                                    placeholder="🇸🇦 Bio"
+                                                    className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                            </div>
+                                            <input
+                                                type="text"
+                                                value={form.trainer_image_url}
+                                                onChange={(e) => set('trainer_image_url', e.target.value)}
+                                                placeholder="Trainer photo URL (optional)"
+                                                className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            />
+                                            <div>
+                                                <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
+                                                    Credentials
+                                                </label>
+                                                <RepeaterField
+                                                    items={form.trainer_credentials}
+                                                    onChange={(items) => set('trainer_credentials', items)}
+                                                    emptyItem={EMPTY_CREDENTIAL}
+                                                    addLabel="Add Credential"
+                                                    itemLabel={(item, i) => item.text || `Credential ${i + 1}`}
+                                                    fields={[
+                                                        { key: 'text', label: 'Credential', type: 'text', bilingual: true },
+                                                    ]}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Payment note */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Payment Note (optional)
+                                        </label>
+                                        <div className="grid gap-3 sm:grid-cols-2">
+                                            <textarea
+                                                value={form.payment_note}
+                                                onChange={(e) => set('payment_note', e.target.value)}
+                                                rows={2}
+                                                placeholder="🇬🇧 Shown next to the registration form"
+                                                className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            />
+                                            <textarea
+                                                dir="rtl"
+                                                value={form.payment_note_ar}
+                                                onChange={(e) => set('payment_note_ar', e.target.value)}
+                                                rows={2}
+                                                placeholder="🇸🇦 Arabic"
+                                                className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Testimonials */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Testimonials (optional)
+                                        </label>
+                                        <RepeaterField
+                                            items={form.testimonials}
+                                            onChange={(items) => set('testimonials', items)}
+                                            emptyItem={EMPTY_TESTIMONIAL}
+                                            addLabel="Add Testimonial"
+                                            itemLabel={(item, i) => item.name || `Testimonial ${i + 1}`}
+                                            fields={[
+                                                { key: 'quote', label: 'Quote', type: 'textarea', bilingual: true },
+                                                { key: 'name', label: 'Name', type: 'text', bilingual: false, placeholder: 'Attendee name' },
+                                                { key: 'role', label: 'Role / Company', type: 'text', bilingual: true },
+                                                { key: 'avatar_url', label: 'Avatar URL (optional)', type: 'text', bilingual: false },
+                                            ]}
+                                        />
+                                    </div>
+
+                                    {/* FAQ */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            FAQ (optional)
+                                        </label>
+                                        <RepeaterField
+                                            items={form.faqs}
+                                            onChange={(items) => set('faqs', items)}
+                                            emptyItem={EMPTY_FAQ}
+                                            addLabel="Add FAQ"
+                                            itemLabel={(item, i) => item.question || `Question ${i + 1}`}
+                                            fields={[
+                                                { key: 'question', label: 'Question', type: 'text', bilingual: true },
+                                                { key: 'answer', label: 'Answer', type: 'textarea', bilingual: true },
+                                            ]}
+                                        />
+                                    </div>
+
+                                    {/* Final CTA */}
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Final Call-to-Action (optional)
+                                        </label>
+                                        <div className="space-y-3">
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <input
+                                                    type="text"
+                                                    value={form.cta_heading}
+                                                    onChange={(e) => set('cta_heading', e.target.value)}
+                                                    placeholder="🇬🇧 Heading"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    dir="rtl"
+                                                    value={form.cta_heading_ar}
+                                                    onChange={(e) => set('cta_heading_ar', e.target.value)}
+                                                    placeholder="🇸🇦 Heading"
+                                                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                            </div>
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                <textarea
+                                                    value={form.cta_subheading}
+                                                    onChange={(e) => set('cta_subheading', e.target.value)}
+                                                    rows={2}
+                                                    placeholder="🇬🇧 Subheading"
+                                                    className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                                <textarea
+                                                    dir="rtl"
+                                                    value={form.cta_subheading_ar}
+                                                    onChange={(e) => set('cta_subheading_ar', e.target.value)}
+                                                    rows={2}
+                                                    placeholder="🇸🇦 Subheading"
+                                                    className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button
                                 type="button"
                                 onClick={() =>
@@ -680,7 +1023,7 @@ export default function AdminEvents() {
                             </button>
                         </div>
 
-                        <div className="flex justify-end gap-3 border-t border-[#E8EAF6] px-6 py-4">
+                        <div className="sticky bottom-0 z-10 flex justify-end gap-3 rounded-b-2xl border-t border-[#E8EAF6] bg-white/95 px-6 py-4 backdrop-blur supports-backdrop-filter:bg-white/80 shadow-[0_-4px_16px_rgba(13,27,75,0.06)]">
                             <button
                                 type="button"
                                 onClick={closeForm}
@@ -690,7 +1033,11 @@ export default function AdminEvents() {
                             </button>
                             <button
                                 type="submit"
-                                disabled={saving}
+                                disabled={
+                                    saving ||
+                                    (!form.required_fields.includes('email') &&
+                                        !form.required_fields.includes('phone'))
+                                }
                                 className="inline-flex items-center gap-2 rounded-xl bg-[#213C93] px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#2E52C9] disabled:opacity-60"
                             >
                                 {saving ? (

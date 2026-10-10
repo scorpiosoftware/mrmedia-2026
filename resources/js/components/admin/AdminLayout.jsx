@@ -25,6 +25,7 @@ import {
     Mail,
     Share2,
     Sparkles,
+    UserCircle,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -35,6 +36,7 @@ const NAV_ITEMS = [
     { to: '/admin/inbox', label: 'Inbox', Icon: Inbox },
     { to: '/admin/social-links', label: 'Social Media', Icon: Share2 },
     { to: '/admin/email-settings', label: 'Email Settings', Icon: Mail },
+    { to: '/admin/profile', label: 'Profile', Icon: UserCircle },
 ];
 
 export default function AdminLayout({ title, actions, children }) {

@@ -15,13 +15,16 @@ class EventSubmissionController extends Controller
             return response()->json(['message' => 'This event is not open for registration.'], 404);
         }
 
+        $required = $event->required_fields ?: ['name', 'email'];
+        $rule = fn (string $field) => in_array($field, $required, true) ? 'required' : 'nullable';
+
         $data = $request->validate([
-            'name'      => ['required', 'string', 'max:255'],
-            'email'     => ['required', 'email', 'max:255'],
-            'phone'     => ['nullable', 'string', 'max:30'],
-            'company'   => ['nullable', 'string', 'max:255'],
+            'name'      => [$rule('name'), 'string', 'max:255'],
+            'email'     => [$rule('email'), 'email', 'max:255'],
+            'phone'     => [$rule('phone'), 'string', 'max:30'],
+            'company'   => [$rule('company'), 'string', 'max:255'],
             'attendees' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'message'   => ['nullable', 'string', 'max:2000'],
+            'message'   => [$rule('message'), 'string', 'max:2000'],
         ]);
 
         if ($event->capacity) {
