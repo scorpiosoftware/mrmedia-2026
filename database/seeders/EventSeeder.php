@@ -53,13 +53,17 @@ class EventSeeder extends Seeder
             'cta_subheading_ar' => 'انضم إلى أكثر من 500 مسوّق طوّروا مهاراتهم الرقمية مع مستر ميديا.',
         ];
 
-        $event = Event::where('title', 'Digital Marketing Training Session')->first();
+        // Match by slug, not title: the admin panel lets staff rename an event's
+        // title after creation without ever touching its slug (see
+        // EventController::generateUniqueSlug(), only called on store()), so the
+        // slug is the one stable identifier for "this seeded event" across edits.
+        $event = Event::where('slug', 'digital-marketing-training-session')->first();
 
         if ($event) {
-            // The event already exists — its core details (dates, price, capacity,
-            // description, etc.) may have since been edited from the admin panel,
-            // so re-running this seeder must only refresh the landing-page content,
-            // never overwrite those admin edits.
+            // The event already exists — its core details (title, dates, price,
+            // capacity, description, etc.) may have since been edited from the
+            // admin panel, so re-running this seeder must only refresh the
+            // landing-page content, never overwrite those admin edits.
             $event->update($landingPageFields);
 
             return;
