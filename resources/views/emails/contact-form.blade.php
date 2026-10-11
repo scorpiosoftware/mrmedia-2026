@@ -30,17 +30,21 @@
                 <p>{{ $senderName }}</p>
             </div>
             <div class="field">
+                <label>Phone</label>
+                <p>{{ $senderPhone }}</p>
+            </div>
+            <div class="field">
                 <label>Email</label>
-                <p>{{ $senderEmail }}</p>
+                <p>{{ $senderEmail ?: '—' }}</p>
             </div>
             <div class="field">
                 <label>Service Interested In</label>
-                <p>{{ $service }}</p>
+                <p>{{ $service ?: '—' }}</p>
             </div>
             <hr class="divider">
             <div class="field">
                 <label>Message</label>
-                <p>{{ $body }}</p>
+                <p>{{ $body ?: '—' }}</p>
             </div>
         </div>
         <div class="footer">

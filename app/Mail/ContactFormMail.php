@@ -14,19 +14,20 @@ class ContactFormMail extends Mailable
 
     public function __construct(
         public readonly string $senderName,
-        public readonly string $senderEmail,
-        public readonly string $service,
+        public readonly string $senderPhone,
+        public readonly ?string $senderEmail,
+        public readonly ?string $service,
         // Not named `$message` — Laravel injects its own $message (the
         // Illuminate\Mail\Message wrapper) into every mail view, which would
         // silently shadow a Mailable property of the same name.
-        public readonly string $body,
+        public readonly ?string $body,
     ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
             subject: "New Contact Form Message from {$this->senderName}",
-            replyTo: [$this->senderEmail],
+            replyTo: $this->senderEmail ? [$this->senderEmail] : [],
         );
     }
 

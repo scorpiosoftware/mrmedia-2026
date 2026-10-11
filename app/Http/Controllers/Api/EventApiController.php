@@ -80,6 +80,12 @@ class EventApiController extends Controller
             ->filter(fn ($item) => $item['question'] && $item['answer'])
             ->values();
 
+        $sectionTitles = $event->section_titles ?? [];
+        $titles = collect(['agenda', 'trainer', 'payment', 'cta_button'])
+            ->mapWithKeys(fn ($key) => [
+                $key => $pick($sectionTitles[$key] ?? null, $sectionTitles["{$key}_ar"] ?? null) ?: null,
+            ]);
+
         return [
             'id'              => $event->id,
             'slug'            => $event->slug,
@@ -98,6 +104,7 @@ class EventApiController extends Controller
             'remaining'       => $event->capacity
                 ? max(0, $event->capacity - (int) $event->submissions_sum_attendees)
                 : null,
+            'titles'          => $titles,
             'agenda'          => $agenda,
             'trainer'         => $trainer,
             'payment_note'    => $pick($event->payment_note, $event->payment_note_ar),

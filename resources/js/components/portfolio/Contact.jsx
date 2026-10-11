@@ -1,7 +1,29 @@
+import PhoneInput from '@/components/portfolio/PhoneInput';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent } from '@/hooks/use-content';
+import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
+
+const FIELD_CLASS =
+    'rounded-xl border border-[#D1D5E8] bg-white px-4 py-3 text-sm text-[#0D1B4B] transition-all duration-200 placeholder:text-muted-foreground hover:border-[#213C93]/40 focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20';
+
+const LABEL_CLASS =
+    'mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase dark:text-brand-yellow';
+
+const EMPTY_FORM = {
+    name: '',
+    email: '',
+    phoneCountry: DEFAULT_COUNTRY,
+    phoneNumber: '',
+    service: '',
+    message: '',
+    website: '', // honeypot — hidden from real users, only bots fill it in
+};
+
+function RequiredMark() {
+    return <span className="ms-0.5 text-red-500">*</span>;
+}
 
 function getCsrf() {
     return (
@@ -13,13 +35,7 @@ function getCsrf() {
 
 export default function Contact() {
     const t = useContent();
-    const [form, setForm] = useState({
-        name: '',
-        email: '',
-        service: '',
-        message: '',
-        website: '', // honeypot — hidden from real users, only bots fill it in
-    });
+    const [form, setForm] = useState(EMPTY_FORM);
     const [status, setStatus] = useState('idle'); // idle | sending | sent | error
     const [errorMsg, setErrorMsg] = useState('');
     const [ref, isVisible] = useScrollAnimation(0.1);
@@ -31,6 +47,12 @@ export default function Contact() {
         e.preventDefault();
         setStatus('sending');
         setErrorMsg('');
+        const { phoneCountry, phoneNumber, ...rest } = form;
+        const dial = COUNTRIES.find((c) => c.iso === phoneCountry)?.dial ?? '';
+        const payload = {
+            ...rest,
+            phone: `+${dial} ${phoneNumber.trim()}`,
+        };
         try {
             const res = await fetch('/spa/contact', {
                 method: 'POST',
@@ -39,18 +61,12 @@ export default function Contact() {
                     Accept: 'application/json',
                     'X-CSRF-TOKEN': getCsrf(),
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
             });
             const json = await res.json().catch(() => ({}));
             if (res.ok) {
                 setStatus('sent');
-                setForm({
-                    name: '',
-                    email: '',
-                    service: '',
-                    message: '',
-                    website: '',
-                });
+                setForm(EMPTY_FORM);
                 setTimeout(() => setStatus('idle'), 5000);
             } else {
                 setErrorMsg(
@@ -181,12 +197,49 @@ export default function Contact() {
                                             {errorMsg}
                                         </div>
                                     )}
+                                    <div>
+                                        <label className={LABEL_CLASS}>
+                                            {t('contact.form.name')}
+                                            <RequiredMark />
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={form.name}
+                                            onChange={handleChange}
+                                            required
+                                            autoComplete="name"
+                                            className={`w-full ${FIELD_CLASS}`}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className={LABEL_CLASS}>
+                                            {t(
+                                                'contact.form.phone',
+                                                'Phone Number',
+                                            )}
+                                            <RequiredMark />
+                                        </label>
+                                        <PhoneInput
+                                            country={form.phoneCountry}
+                                            number={form.phoneNumber}
+                                            onCountryChange={(iso) =>
+                                                setForm((f) => ({
+                                                    ...f,
+                                                    phoneCountry: iso,
+                                                }))
+                                            }
+                                            onNumberChange={(value) =>
+                                                setForm((f) => ({
+                                                    ...f,
+                                                    phoneNumber: value,
+                                                }))
+                                            }
+                                            required
+                                            inputClassName={FIELD_CLASS}
+                                        />
+                                    </div>
                                     {[
-                                        {
-                                            name: 'name',
-                                            label: t('contact.form.name'),
-                                            type: 'text',
-                                        },
                                         {
                                             name: 'email',
                                             label: t('contact.form.email'),
@@ -199,7 +252,7 @@ export default function Contact() {
                                         },
                                     ].map(({ name, label, type }) => (
                                         <div key={name}>
-                                            <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase dark:text-brand-yellow">
+                                            <label className={LABEL_CLASS}>
                                                 {label}
                                             </label>
                                             <input
@@ -207,13 +260,12 @@ export default function Contact() {
                                                 name={name}
                                                 value={form[name]}
                                                 onChange={handleChange}
-                                                required
-                                                className="w-full rounded-xl border border-[#D1D5E8] bg-white px-4 py-3 text-sm text-[#0D1B4B] transition-all duration-200 placeholder:text-muted-foreground hover:border-[#213C93]/40 focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20"
+                                                className={`w-full ${FIELD_CLASS}`}
                                             />
                                         </div>
                                     ))}
                                     <div>
-                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase dark:text-brand-yellow">
+                                        <label className={LABEL_CLASS}>
                                             {t('contact.form.message')}
                                         </label>
                                         <textarea
@@ -221,8 +273,7 @@ export default function Contact() {
                                             value={form.message}
                                             onChange={handleChange}
                                             rows={4}
-                                            required
-                                            className="w-full resize-none rounded-xl border border-[#D1D5E8] bg-white px-4 py-3 text-sm text-[#0D1B4B] transition-all duration-200 placeholder:text-muted-foreground hover:border-[#213C93]/40 focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20"
+                                            className={`w-full resize-none ${FIELD_CLASS}`}
                                         />
                                     </div>
                                     <div

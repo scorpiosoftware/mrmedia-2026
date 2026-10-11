@@ -18,6 +18,92 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+/** Bilingual per-event override for a landing-page section heading; blank uses the site-wide default. */
+function SectionTitleInputs({ label = 'Section Title', titles, name, defaultHint, onChange }) {
+    return (
+        <div className="mb-3">
+            <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
+                {label}{' '}
+                <span className="font-normal">
+                    {defaultHint ? `— leave blank to use “${defaultHint}”` : '— leave blank to show no title'}
+                </span>
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+                <input
+                    type="text"
+                    value={titles?.[name] ?? ''}
+                    onChange={(e) => onChange(name, e.target.value)}
+                    placeholder="🇬🇧 English"
+                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                />
+                <input
+                    type="text"
+                    dir="rtl"
+                    value={titles?.[`${name}_ar`] ?? ''}
+                    onChange={(e) => onChange(`${name}_ar`, e.target.value)}
+                    placeholder="🇸🇦 Arabic"
+                    className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                />
+            </div>
+        </div>
+    );
+}
+
+function ImageUploadField({ label, url, uploading, error, onUpload, onRemove, note, previewClassName }) {
+    return (
+        <div>
+            <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                {label}
+            </label>
+            <div className="flex items-start gap-4">
+                {url ? (
+                    <img
+                        src={url}
+                        alt=""
+                        className={`${previewClassName} shrink-0 rounded-lg border border-[#D1D5E8] object-cover`}
+                    />
+                ) : (
+                    <div
+                        className={`${previewClassName} flex shrink-0 items-center justify-center rounded-lg border border-dashed border-[#D1D5E8] text-[#5A6A9A]`}
+                    >
+                        <ImageIcon size={20} />
+                    </div>
+                )}
+
+                <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-3">
+                        <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#E8EAF6] px-4 py-2 text-xs font-semibold text-[#213C93] transition-colors hover:bg-[#D1D5E8]">
+                            {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                            {uploading ? 'Uploading…' : 'Upload Image'}
+                            <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                disabled={uploading}
+                                className="hidden"
+                                onChange={(e) => {
+                                    onUpload(e.target.files?.[0]);
+                                    e.target.value = '';
+                                }}
+                            />
+                        </label>
+                        {url && (
+                            <button
+                                type="button"
+                                onClick={onRemove}
+                                className="text-xs font-semibold text-[#5A6A9A] transition-colors hover:text-red-600"
+                            >
+                                Remove
+                            </button>
+                        )}
+                    </div>
+                    <p className="text-xs text-[#5A6A9A]">{note}</p>
+                    {error && <p className="text-xs text-red-600">{error}</p>}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function getCsrf() {
     return (
         document
@@ -66,6 +152,7 @@ const EMPTY_FORM = {
     cta_heading_ar: '',
     cta_subheading: '',
     cta_subheading_ar: '',
+    section_titles: {},
 };
 
 const EMPTY_AGENDA_ITEM = { title: '', title_ar: '', description: '', description_ar: '' };
@@ -101,8 +188,8 @@ export default function AdminEvents() {
     const [editingId, setEditingId] = useState(null);
     const [form, setForm] = useState(EMPTY_FORM);
     const [saving, setSaving] = useState(false);
-    const [uploading, setUploading] = useState(false);
-    const [uploadError, setUploadError] = useState('');
+    const [uploading, setUploading] = useState(null); // field name currently uploading
+    const [uploadErrors, setUploadErrors] = useState({});
 
     const [submissionsFor, setSubmissionsFor] = useState(null); // event object
     const [submissions, setSubmissions] = useState([]);
@@ -169,12 +256,19 @@ export default function AdminEvents() {
             cta_heading_ar: event.cta_heading_ar ?? '',
             cta_subheading: event.cta_subheading ?? '',
             cta_subheading_ar: event.cta_subheading_ar ?? '',
+            section_titles: { ...(event.section_titles ?? {}) },
         });
         setFormOpen(true);
     };
 
     const set = (field, value) =>
         setForm((prev) => ({ ...prev, [field]: value }));
+
+    const setSectionTitle = (key, value) =>
+        setForm((prev) => ({
+            ...prev,
+            section_titles: { ...prev.section_titles, [key]: value },
+        }));
 
     const toggleRequiredField = (field) =>
         setForm((prev) => ({
@@ -188,23 +282,34 @@ export default function AdminEvents() {
         setFormOpen(false);
         setEditingId(null);
         setForm(EMPTY_FORM);
-        setUploadError('');
+        setUploadErrors({});
     };
 
-    const handleImageUpload = async (file) => {
+    const setTestimonialAvatar = (index, url) =>
+        setForm((prev) => ({
+            ...prev,
+            testimonials: prev.testimonials.map((item, i) =>
+                i === index ? { ...item, avatar_url: url } : item,
+            ),
+        }));
+
+    // `field` keys the upload/error state; `apply` stores the resulting URL (defaults to a top-level form field).
+    const handleImageUpload = async (file, field, apply = (url) => set(field, url)) => {
         if (!file) return;
-        setUploadError('');
+        const setError = (msg) =>
+            setUploadErrors((prev) => ({ ...prev, [field]: msg }));
+        setError('');
 
         if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
-            setUploadError('Only JPG, PNG or WebP images are allowed.');
+            setError('Only JPG, PNG or WebP images are allowed.');
             return;
         }
         if (file.size > 2 * 1024 * 1024) {
-            setUploadError('Image must be 2MB or smaller.');
+            setError('Image must be 2MB or smaller.');
             return;
         }
 
-        setUploading(true);
+        setUploading(field);
         try {
             const body = new FormData();
             body.append('image', file);
@@ -219,14 +324,14 @@ export default function AdminEvents() {
             });
             const json = await res.json().catch(() => ({}));
             if (res.ok) {
-                set('image_url', json.url);
+                apply(json.url);
             } else {
-                setUploadError(json?.message || 'Upload failed.');
+                setError(json?.message || 'Upload failed.');
             }
         } catch {
-            setUploadError('Network error during upload.');
+            setError('Network error during upload.');
         } finally {
-            setUploading(false);
+            setUploading(null);
         }
     };
 
@@ -642,80 +747,23 @@ export default function AdminEvents() {
                                 </div>
                             </div>
 
-                            <div>
-                                <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
-                                    Event Image (optional)
-                                </label>
-                                <div className="flex items-start gap-4">
-                                    {form.image_url ? (
-                                        <img
-                                            src={form.image_url}
-                                            alt=""
-                                            className="h-20 w-32 shrink-0 rounded-lg border border-[#D1D5E8] object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex h-20 w-32 shrink-0 items-center justify-center rounded-lg border border-dashed border-[#D1D5E8] text-[#5A6A9A]">
-                                            <ImageIcon size={20} />
-                                        </div>
-                                    )}
-
-                                    <div className="flex-1 space-y-2">
-                                        <div className="flex items-center gap-3">
-                                            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#E8EAF6] px-4 py-2 text-xs font-semibold text-[#213C93] transition-colors hover:bg-[#D1D5E8]">
-                                                {uploading ? (
-                                                    <Loader2
-                                                        size={14}
-                                                        className="animate-spin"
-                                                    />
-                                                ) : (
-                                                    <Upload size={14} />
-                                                )}
-                                                {uploading
-                                                    ? 'Uploading…'
-                                                    : 'Upload Image'}
-                                                <input
-                                                    type="file"
-                                                    accept="image/jpeg,image/png,image/webp"
-                                                    disabled={uploading}
-                                                    className="hidden"
-                                                    onChange={(e) => {
-                                                        handleImageUpload(
-                                                            e.target.files?.[0],
-                                                        );
-                                                        e.target.value = '';
-                                                    }}
-                                                />
-                                            </label>
-                                            {form.image_url && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() =>
-                                                        set('image_url', '')
-                                                    }
-                                                    className="text-xs font-semibold text-[#5A6A9A] transition-colors hover:text-red-600"
-                                                >
-                                                    Remove
-                                                </button>
-                                            )}
-                                        </div>
-                                        <p className="text-xs text-[#5A6A9A]">
-                                            Recommended size{' '}
-                                            <strong className="font-semibold text-[#213C93]">
-                                                1600 × 900 px
-                                            </strong>{' '}
-                                            (16:9) — JPG, PNG or WebP, up to
-                                            2MB. Images are cropped to fill a
-                                            16:9 banner, so keep the subject
-                                            centred.
-                                        </p>
-                                        {uploadError && (
-                                            <p className="text-xs text-red-600">
-                                                {uploadError}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                            <ImageUploadField
+                                label="Event Image (optional)"
+                                url={form.image_url}
+                                uploading={uploading === 'image_url'}
+                                error={uploadErrors.image_url}
+                                onUpload={(file) => handleImageUpload(file, 'image_url')}
+                                onRemove={() => set('image_url', '')}
+                                previewClassName="h-20 w-32"
+                                note={
+                                    <>
+                                        Recommended size{' '}
+                                        <strong className="font-semibold text-[#213C93]">1600 × 900 px</strong>{' '}
+                                        (16:9) — JPG, PNG or WebP, up to 2MB. Images are cropped to fill a 16:9
+                                        banner, so keep the subject centred.
+                                    </>
+                                }
+                            />
 
                             {/* Description (EN / AR) */}
                             <div>
@@ -797,6 +845,13 @@ export default function AdminEvents() {
                                         <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
                                             Learning Outcomes / Agenda (optional)
                                         </label>
+                                        <SectionTitleInputs
+                                            label="Section Title"
+                                            titles={form.section_titles}
+                                            name="agenda"
+                                            defaultHint="Learning Outcomes & Agenda"
+                                            onChange={setSectionTitle}
+                                        />
                                         <RepeaterField
                                             items={form.agenda}
                                             onChange={(items) => set('agenda', items)}
@@ -815,6 +870,13 @@ export default function AdminEvents() {
                                         <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
                                             Trainer / Speaker (optional)
                                         </label>
+                                        <SectionTitleInputs
+                                            label="Section Title"
+                                            titles={form.section_titles}
+                                            name="trainer"
+                                            defaultHint="Your Trainer"
+                                            onChange={setSectionTitle}
+                                        />
                                         <div className="space-y-3 rounded-xl border border-[#D1D5E8] bg-white p-4">
                                             <div className="grid gap-3 sm:grid-cols-2">
                                                 <input
@@ -867,12 +929,23 @@ export default function AdminEvents() {
                                                     className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                                 />
                                             </div>
-                                            <input
-                                                type="text"
-                                                value={form.trainer_image_url}
-                                                onChange={(e) => set('trainer_image_url', e.target.value)}
-                                                placeholder="Trainer photo URL (optional)"
-                                                className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-2.5 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                            <ImageUploadField
+                                                label="Trainer Photo (optional)"
+                                                url={form.trainer_image_url}
+                                                uploading={uploading === 'trainer_image_url'}
+                                                error={uploadErrors.trainer_image_url}
+                                                onUpload={(file) => handleImageUpload(file, 'trainer_image_url')}
+                                                onRemove={() => set('trainer_image_url', '')}
+                                                previewClassName="h-20 w-20"
+                                                note={
+                                                    <>
+                                                        Recommended size{' '}
+                                                        <strong className="font-semibold text-[#213C93]">600 × 600 px</strong>{' '}
+                                                        (1:1 square) — JPG, PNG or WebP, up to 2MB. Shown as a square
+                                                        with rounded corners, so keep the face centred. Falls back to
+                                                        the trainer's initial when no photo is set.
+                                                    </>
+                                                }
                                             />
                                             <div>
                                                 <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
@@ -897,6 +970,13 @@ export default function AdminEvents() {
                                         <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
                                             Payment Note (optional)
                                         </label>
+                                        <SectionTitleInputs
+                                            label="Payment Note Title"
+                                            titles={form.section_titles}
+                                            name="payment"
+                                            defaultHint={null}
+                                            onChange={setSectionTitle}
+                                        />
                                         <div className="grid gap-3 sm:grid-cols-2">
                                             <textarea
                                                 value={form.payment_note}
@@ -931,7 +1011,33 @@ export default function AdminEvents() {
                                                 { key: 'quote', label: 'Quote', type: 'textarea', bilingual: true },
                                                 { key: 'name', label: 'Name', type: 'text', bilingual: false, placeholder: 'Attendee name' },
                                                 { key: 'role', label: 'Role / Company', type: 'text', bilingual: true },
-                                                { key: 'avatar_url', label: 'Avatar URL (optional)', type: 'text', bilingual: false },
+                                                {
+                                                    key: 'avatar_url',
+                                                    render: (item, index) => (
+                                                        <ImageUploadField
+                                                            label="Photo (optional)"
+                                                            url={item.avatar_url}
+                                                            uploading={uploading === `testimonial-${index}`}
+                                                            error={uploadErrors[`testimonial-${index}`]}
+                                                            onUpload={(file) =>
+                                                                handleImageUpload(file, `testimonial-${index}`, (url) =>
+                                                                    setTestimonialAvatar(index, url),
+                                                                )
+                                                            }
+                                                            onRemove={() => setTestimonialAvatar(index, '')}
+                                                            previewClassName="h-16 w-16"
+                                                            note={
+                                                                <>
+                                                                    Recommended size{' '}
+                                                                    <strong className="font-semibold text-[#213C93]">300 × 300 px</strong>{' '}
+                                                                    (1:1 square) — JPG, PNG or WebP, up to 2MB. Shown as a small
+                                                                    circle, so keep the face centred. Falls back to the person's
+                                                                    initial when no photo is set.
+                                                                </>
+                                                            }
+                                                        />
+                                                    ),
+                                                },
                                             ]}
                                         />
                                     </div>
@@ -959,6 +1065,13 @@ export default function AdminEvents() {
                                         <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
                                             Final Call-to-Action (optional)
                                         </label>
+                                        <SectionTitleInputs
+                                            label="Button Label"
+                                            titles={form.section_titles}
+                                            name="cta_button"
+                                            defaultHint="Register Now"
+                                            onChange={setSectionTitle}
+                                        />
                                         <div className="space-y-3">
                                             <div className="grid gap-3 sm:grid-cols-2">
                                                 <input

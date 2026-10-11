@@ -43,6 +43,7 @@ class Event extends Model
         'cta_heading_ar',
         'cta_subheading',
         'cta_subheading_ar',
+        'section_titles',
     ];
 
     protected $casts = [
@@ -55,6 +56,7 @@ class Event extends Model
         'trainer_credentials'  => 'array',
         'testimonials'         => 'array',
         'faqs'                 => 'array',
+        'section_titles'       => 'array',
     ];
 
     public function submissions(): HasMany

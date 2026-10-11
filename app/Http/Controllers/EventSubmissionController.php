@@ -21,7 +21,8 @@ class EventSubmissionController extends Controller
         $data = $request->validate([
             'name'      => [$rule('name'), 'string', 'max:255'],
             'email'     => [$rule('email'), 'email', 'max:255'],
-            'phone'     => [$rule('phone'), 'string', 'max:30'],
+            // Country code + local number, e.g. "+964 7701234567".
+            'phone'     => [$rule('phone'), 'string', 'max:30', 'regex:/^\+\d{1,4} [\d\s-]{4,20}$/'],
             'company'   => [$rule('company'), 'string', 'max:255'],
             'attendees' => ['nullable', 'integer', 'min:1', 'max:100'],
             'message'   => [$rule('message'), 'string', 'max:2000'],

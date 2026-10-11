@@ -55,6 +55,10 @@ class EventController extends Controller
     public function destroy(Event $event): JsonResponse
     {
         $this->forgetStoredImage($event->image_url);
+        $this->forgetStoredImage($event->trainer_image_url);
+        foreach ($event->testimonials ?? [] as $testimonial) {
+            $this->forgetStoredImage($testimonial['avatar_url'] ?? null);
+        }
 
         $event->delete();
 
@@ -202,6 +206,10 @@ class EventController extends Controller
             'cta_heading_ar'   => ['nullable', 'string', 'max:255'],
             'cta_subheading'   => ['nullable', 'string', 'max:1000'],
             'cta_subheading_ar' => ['nullable', 'string', 'max:1000'],
+
+            // Per-event section heading overrides (blank → site-wide default label)
+            'section_titles'   => ['nullable', 'array:agenda,agenda_ar,trainer,trainer_ar,payment,payment_ar,cta_button,cta_button_ar'],
+            'section_titles.*' => ['nullable', 'string', 'max:255'],
         ]);
 
         $required = $data['required_fields'] ?? [];

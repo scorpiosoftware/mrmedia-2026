@@ -130,6 +130,7 @@ class SiteContentSeeder extends Seeder
             ['key' => 'contact.phone',         'section' => 'contact', 'en_value' => '+966 50 000 0000',  'ar_value' => '+٩٦٦ ٥٠ ٠٠٠ ٠٠٠٠',  'type' => 'text',     'sort_order' => 5],
             ['key' => 'contact.address',       'section' => 'contact', 'en_value' => 'Riyadh, Saudi Arabia', 'ar_value' => 'الرياض، المملكة العربية السعودية', 'type' => 'text', 'sort_order' => 6],
             ['key' => 'contact.form.name',     'section' => 'contact', 'en_value' => 'Your Name',         'ar_value' => 'اسمك',                'type' => 'text',     'sort_order' => 7],
+            ['key' => 'contact.form.phone',    'section' => 'contact', 'en_value' => 'Phone Number',      'ar_value' => 'رقم الهاتف',          'type' => 'text',     'sort_order' => 7],
             ['key' => 'contact.form.email',    'section' => 'contact', 'en_value' => 'Email Address',     'ar_value' => 'البريد الإلكتروني',   'type' => 'text',     'sort_order' => 8],
             ['key' => 'contact.form.service',  'section' => 'contact', 'en_value' => 'Service Needed',    'ar_value' => 'الخدمة المطلوبة',     'type' => 'text',     'sort_order' => 9],
             ['key' => 'contact.form.message',  'section' => 'contact', 'en_value' => 'Your Message',      'ar_value' => 'رسالتك',              'type' => 'text',     'sort_order' => 10],

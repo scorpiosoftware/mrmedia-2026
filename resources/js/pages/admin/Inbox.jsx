@@ -6,6 +6,7 @@ import {
     Loader2,
     Mail,
     MailOpen,
+    Phone,
     Trash2,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -161,7 +162,10 @@ export default function AdminInbox() {
 
             {loading ? (
                 <div className="flex justify-center py-24">
-                    <Loader2 size={28} className="animate-spin text-[#213C93]" />
+                    <Loader2
+                        size={28}
+                        className="animate-spin text-[#213C93]"
+                    />
                 </div>
             ) : messages.length === 0 ? (
                 <div className="py-24 text-center text-[#5A6A9A]">
@@ -216,9 +220,11 @@ export default function AdminInbox() {
                                                 >
                                                     {message.name}
                                                 </h3>
-                                                <span className="rounded-full bg-[#E8EAF6] px-2.5 py-0.5 text-xs font-semibold text-[#213C93]">
-                                                    {message.service}
-                                                </span>
+                                                {message.service && (
+                                                    <span className="rounded-full bg-[#E8EAF6] px-2.5 py-0.5 text-xs font-semibold text-[#213C93]">
+                                                        {message.service}
+                                                    </span>
+                                                )}
                                                 {!message.mail_delivered &&
                                                     !message.is_spam && (
                                                         <span
@@ -236,17 +242,26 @@ export default function AdminInbox() {
                                                     )}
                                             </div>
                                             <p className="truncate text-xs text-[#5A6A9A]">
-                                                {message.email} ·{' '}
-                                                {formatDate(message.created_at)}
+                                                {[
+                                                    message.phone,
+                                                    message.email,
+                                                    formatDate(
+                                                        message.created_at,
+                                                    ),
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(' · ')}
                                             </p>
                                         </div>
                                     </button>
 
                                     {expanded && (
                                         <div className="border-t border-[#E8EAF6] px-5 py-4">
-                                            <p className="mb-4 text-sm whitespace-pre-wrap text-[#0D1B4B]">
-                                                {message.message}
-                                            </p>
+                                            {message.message && (
+                                                <p className="mb-4 text-sm whitespace-pre-wrap text-[#0D1B4B]">
+                                                    {message.message}
+                                                </p>
+                                            )}
 
                                             <dl className="mb-4 grid gap-x-6 gap-y-1 text-xs text-[#5A6A9A] sm:grid-cols-2">
                                                 <div>
@@ -280,13 +295,24 @@ export default function AdminInbox() {
                                             </dl>
 
                                             <div className="flex flex-wrap gap-2">
-                                                <a
-                                                    href={`mailto:${message.email}`}
-                                                    className="inline-flex items-center gap-2 rounded-xl bg-[#213C93] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2E52C9]"
-                                                >
-                                                    <Mail size={13} />
-                                                    Reply
-                                                </a>
+                                                {message.phone && (
+                                                    <a
+                                                        href={`tel:${message.phone.replace(/[^\d+]/g, '')}`}
+                                                        className="inline-flex items-center gap-2 rounded-xl bg-[#213C93] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2E52C9]"
+                                                    >
+                                                        <Phone size={13} />
+                                                        Call
+                                                    </a>
+                                                )}
+                                                {message.email && (
+                                                    <a
+                                                        href={`mailto:${message.email}`}
+                                                        className="inline-flex items-center gap-2 rounded-xl bg-[#213C93] px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-[#2E52C9]"
+                                                    >
+                                                        <Mail size={13} />
+                                                        Reply
+                                                    </a>
+                                                )}
                                                 <button
                                                     onClick={() =>
                                                         toggleRead(

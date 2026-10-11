@@ -17,9 +17,11 @@ class ContactController extends Controller
     {
         $data = $request->validate([
             'name'    => ['required', 'string', 'max:255'],
-            'email'   => ['required', 'email', 'max:255'],
-            'service' => ['required', 'string', 'max:255'],
-            'message' => ['required', 'string', 'max:5000'],
+            // Country code + local number, e.g. "+964 7701234567".
+            'phone'   => ['required', 'string', 'max:32', 'regex:/^\+\d{1,4} [\d\s-]{4,20}$/'],
+            'email'   => ['nullable', 'email', 'max:255'],
+            'service' => ['nullable', 'string', 'max:255'],
+            'message' => ['nullable', 'string', 'max:5000'],
             // Honeypot: a field real users never see, so anything in it is a bot.
             'website' => ['nullable', 'string', 'max:255'],
         ]);
@@ -28,9 +30,10 @@ class ContactController extends Controller
 
         $contactMessage = ContactMessage::create([
             'name'       => $data['name'],
-            'email'      => $data['email'],
-            'service'    => $data['service'],
-            'message'    => $data['message'],
+            'phone'      => $data['phone'],
+            'email'      => $data['email'] ?? null,
+            'service'    => $data['service'] ?? null,
+            'message'    => $data['message'] ?? null,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
             'is_spam'    => $isSpam,
@@ -67,6 +70,7 @@ class ContactController extends Controller
             Mail::to($settings->to_address)->send(
                 new ContactFormMail(
                     senderName:  $contactMessage->name,
+                    senderPhone: $contactMessage->phone,
                     senderEmail: $contactMessage->email,
                     service:     $contactMessage->service,
                     body:        $contactMessage->message,

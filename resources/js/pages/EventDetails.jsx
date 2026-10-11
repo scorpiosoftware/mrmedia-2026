@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '@/components/portfolio/Footer';
 import Navbar from '@/components/portfolio/Navbar';
+import PhoneInput from '@/components/portfolio/PhoneInput';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 import { useContent, useLocale } from '@/hooks/use-content';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
+import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import {
     Award, AlertCircle, Calendar, CalendarX, CheckCircle2, ChevronDown, ChevronLeft,
     Globe, MapPin, Quote, Send, Users,
@@ -14,7 +16,9 @@ function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 }
 
-const EMPTY_FORM = { name: '', email: '', phone: '', company: '', attendees: 1, message: '' };
+const EMPTY_FORM = {
+    name: '', email: '', phoneCountry: DEFAULT_COUNTRY, phoneNumber: '', company: '', attendees: 1, message: '',
+};
 
 function formatDate(value, locale) {
     if (!value) return '';
@@ -56,6 +60,12 @@ function RegisterForm({ event }) {
         e.preventDefault();
         setStatus('sending');
         setErrorMsg('');
+        const { phoneCountry, phoneNumber, ...rest } = form;
+        const dial = COUNTRIES.find((c) => c.iso === phoneCountry)?.dial ?? '';
+        const payload = {
+            ...rest,
+            phone: phoneNumber.trim() ? `+${dial} ${phoneNumber.trim()}` : '',
+        };
         try {
             const res = await fetch(`/spa/events/${event.id}/submit`, {
                 method: 'POST',
@@ -64,7 +74,7 @@ function RegisterForm({ event }) {
                     'Accept': 'application/json',
                     'X-CSRF-TOKEN': getCsrf(),
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(payload),
             });
             const json = await res.json().catch(() => ({}));
             if (res.ok) {
@@ -137,13 +147,13 @@ function RegisterForm({ event }) {
                         {t('events.form.phone')}
                         <RequiredMark required={isRequired('phone')} />
                     </label>
-                    <input
-                        type="tel"
-                        name="phone"
-                        value={form.phone}
-                        onChange={handleChange}
+                    <PhoneInput
+                        country={form.phoneCountry}
+                        number={form.phoneNumber}
+                        onCountryChange={(iso) => setForm((prev) => ({ ...prev, phoneCountry: iso }))}
+                        onNumberChange={(value) => setForm((prev) => ({ ...prev, phoneNumber: value }))}
                         required={isRequired('phone')}
-                        className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                        inputClassName="rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
                     />
                 </div>
                 <div>
@@ -220,7 +230,7 @@ function AgendaSection({ event, t }) {
         <section className="py-16 sm:py-20 bg-white dark:bg-brand-dark">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                 <h2 className="text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
-                    {t('events.agenda_label')}
+                    {event.titles?.agenda || t('events.agenda_label')}
                 </h2>
                 <p className="mt-2 text-center text-muted-foreground dark:text-white/60">
                     {t('events.agenda_subtitle')}
@@ -255,7 +265,7 @@ function TrainerSection({ event, t }) {
         <section className="py-16 sm:py-20 bg-[#F7F7F6] dark:bg-primary-dark/40">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                 <h2 className="mb-10 text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
-                    {t('events.trainer_label')}
+                    {event.titles?.trainer || t('events.trainer_label')}
                 </h2>
                 <div className="flex flex-col items-center gap-6 rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_rgba(33,60,147,0.08)] border border-[#D1D5E8] dark:border-primary-light/40 sm:flex-row sm:items-start">
                     {trainer.image_url ? (
@@ -389,7 +399,7 @@ function FinalCta({ event, t }) {
                     onClick={scrollToRegister}
                     className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#213C93] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
                 >
-                    {t('events.register_cta')}
+                    {event.titles?.cta_button || t('events.register_cta')}
                 </a>
             </div>
         </section>
@@ -603,9 +613,16 @@ export default function EventDetails() {
                                     )}
 
                                     {event.payment_note && (
-                                        <p className="mt-5 text-center text-xs text-muted-foreground dark:text-white/50">
-                                            {event.payment_note}
-                                        </p>
+                                        <div className="mt-5 text-center">
+                                            {event.titles?.payment && (
+                                                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#213C93] dark:text-brand-yellow">
+                                                    {event.titles.payment}
+                                                </p>
+                                            )}
+                                            <p className="text-xs text-muted-foreground dark:text-white/50">
+                                                {event.payment_note}
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
                             </div>

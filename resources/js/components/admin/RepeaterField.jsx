@@ -3,7 +3,8 @@ import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
 /**
  * Generic admin repeater for array-of-object fields (agenda items, testimonials,
  * FAQs, trainer credentials, …). Each field can be `bilingual: true`, in which
- * case it renders `key` and `key + '_ar'` side by side.
+ * case it renders `key` and `key + '_ar'` side by side. A field with a
+ * `render(item, index)` function is rendered by the caller instead.
  */
 export default function RepeaterField({
     items = [],
@@ -66,7 +67,9 @@ export default function RepeaterField({
                         </div>
                     </div>
 
-                    {fields.map((field) => (
+                    {fields.map((field) => field.render ? (
+                        <div key={field.key}>{field.render(item, index)}</div>
+                    ) : (
                         <div key={field.key}>
                             <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
                                 {field.label}
