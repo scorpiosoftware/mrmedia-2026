@@ -54,6 +54,7 @@ class Event extends Model
         'price'                => 'decimal:2',
         'group_discount_percent'       => 'decimal:2',
         'group_discount_min_attendees' => 'integer',
+        'version'                      => 'integer',
         'is_published'         => 'boolean',
         'required_fields'      => 'array',
         'agenda'               => 'array',
