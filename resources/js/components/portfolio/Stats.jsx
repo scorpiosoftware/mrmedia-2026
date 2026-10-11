@@ -1,3 +1,4 @@
+import CountUp from '@/components/portfolio/CountUp';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent } from '@/hooks/use-content';
 
@@ -13,16 +14,23 @@ export default function Stats() {
     const [ref, isVisible] = useScrollAnimation(0.2);
 
     return (
-        <section className="relative bg-brand-dark dark:bg-primary-dark py-20 overflow-hidden transition-colors duration-300">
+        <section className="relative overflow-hidden bg-brand-dark py-20 transition-colors duration-300 dark:bg-primary-dark">
             {/* Background glow blobs */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div
-                    className="absolute -top-16 left-1/4 w-96 h-48 rounded-full blur-3xl"
-                    style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--color-brand-blue) 55%, transparent) 0%, transparent 70%)' }}
+                    className="mm-drift absolute -top-16 left-1/4 h-48 w-96 rounded-full blur-3xl"
+                    style={{
+                        background:
+                            'radial-gradient(circle, color-mix(in srgb, var(--color-brand-blue) 55%, transparent) 0%, transparent 70%)',
+                    }}
                 />
                 <div
-                    className="absolute -bottom-16 right-1/4 w-72 h-36 rounded-full blur-3xl"
-                    style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--color-brand-gold) 22%, transparent) 0%, transparent 70%)' }}
+                    className="mm-drift absolute right-1/4 -bottom-16 h-36 w-72 rounded-full blur-3xl"
+                    style={{
+                        animationDelay: '-9s',
+                        background:
+                            'radial-gradient(circle, color-mix(in srgb, var(--color-brand-gold) 22%, transparent) 0%, transparent 70%)',
+                    }}
                 />
                 {/* Subtle grid */}
                 <div
@@ -34,30 +42,40 @@ export default function Stats() {
                 />
             </div>
 
-            <div ref={ref} className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+            <div
+                ref={ref}
+                className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+            >
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
                     {STATS.map(({ num, label }, i) => (
                         <div
                             key={num}
-                            className="text-center transition-all duration-700"
+                            className="mm-beam mm-spotlight rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-8 text-center backdrop-blur-sm transition-all duration-700 [--mm-beam-inset:-1px] hover:bg-white/[0.07]"
                             style={{
-                                opacity:   isVisible ? 1 : 0,
-                                transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
+                                '--mm-beam-speed': '6s',
+                                // Offset each card's beam so they don't orbit in lockstep
+                                '--mm-beam-delay': `${i * -1.5}s`,
+                                '--mm-spot-color':
+                                    'color-mix(in srgb, var(--color-brand-yellow) 14%, transparent)',
+                                opacity: isVisible ? 1 : 0,
+                                transform: isVisible
+                                    ? 'translateY(0)'
+                                    : 'translateY(24px)',
                                 transitionDelay: `${i * 130}ms`,
                             }}
                         >
                             {/* Number with glow */}
                             <p
-                                className="text-5xl font-black sm:text-6xl text-glow-gold"
+                                className="text-glow-gold text-5xl font-black sm:text-6xl"
                                 style={{ color: 'var(--color-brand-yellow)' }}
                             >
-                                {t(num)}
+                                <CountUp value={t(num)} start={isVisible} />
                             </p>
 
                             {/* Divider line */}
                             <div className="mx-auto mt-3 mb-3 h-px w-12 bg-linear-to-r from-transparent via-brand-gold/60 to-transparent" />
 
-                            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+                            <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
                                 {t(label)}
                             </p>
                         </div>

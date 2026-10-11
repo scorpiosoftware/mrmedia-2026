@@ -163,6 +163,7 @@
     --sidebar-accent-foreground:#FFFFFF;
     --sidebar-border:    #2E52C9;
     --sidebar-ring:      #DDB50E;
+    --mm-spot-default:   color-mix(in srgb, #2E52C9 16%, transparent);
 }
 
 /* ─────────────────────────────────────────
@@ -196,6 +197,7 @@
     --sidebar-accent-foreground:#F1F1F0;
     --sidebar-border:    #2E52C9;
     --sidebar-ring:      #FCD532;
+    --mm-spot-default:   color-mix(in srgb, #FCD532 12%, transparent);
 }
 
 /* ─────────────────────────────────────────
@@ -422,4 +424,206 @@
     .glow-gold-sm { box-shadow: 0 0 24px 4px color-mix(in srgb, var(--color-brand-gold) 36%, transparent); }
     .glow-blue    { box-shadow: 0 0 48px 8px color-mix(in srgb, var(--color-brand-blue) 28%, transparent); }
     .glow-gold    { box-shadow: 0 0 48px 8px color-mix(in srgb, var(--color-brand-gold) 32%, transparent); }
+}
+
+/* ─────────────────────────────────────────
+   Motion & glow effects (pure CSS — no libraries)
+   ───────────────────────────────────────── */
+
+/* Animatable angle so a conic gradient can rotate around a border */
+@property --mm-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+@keyframes mm-angle-spin {
+    to { --mm-angle: 360deg; }
+}
+@keyframes mm-chip-sweep {
+    0%, 70% { transform: translateX(-120%) skewX(-20deg); }
+    100%    { transform: translateX(320%) skewX(-20deg); }
+}
+@keyframes mm-text-shine {
+    from { background-position: 200% center; }
+    to   { background-position: -200% center; }
+}
+@keyframes mm-scroll-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+@keyframes mm-scroll-cue {
+    0%   { opacity: 0; transform: translateY(0); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(12px); }
+}
+@keyframes mm-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33%      { transform: translate3d(6%, -8%, 0) scale(1.08); }
+    66%      { transform: translate3d(-5%, 6%, 0) scale(0.95); }
+}
+
+@layer utilities {
+    /*
+     * Moving border "beam": a bright arc that travels around the element's edge.
+     * `.mm-beam` runs constantly; `.mm-beam-hover` only lights up (and only animates) on hover/focus.
+     * Set `--mm-beam-width` / `--mm-beam-speed` / `--mm-beam-delay` inline to tune.
+     */
+    .mm-beam,
+    .mm-beam-hover {
+        position: relative;
+        isolation: isolate;
+    }
+    .mm-beam::before,
+    .mm-beam-hover::before {
+        content: '';
+        position: absolute;
+        /* Bordered elements set --mm-beam-inset: -1px so the beam sits on top of their border */
+        inset: var(--mm-beam-inset, 0px);
+        z-index: 2;
+        padding: var(--mm-beam-width, 1.5px);
+        border-radius: inherit;
+        pointer-events: none;
+        background: conic-gradient(
+            from var(--mm-angle),
+            transparent 0deg 220deg,
+            color-mix(in srgb, var(--color-primary-light) 80%, transparent) 270deg,
+            var(--color-brand-gold) 320deg,
+            var(--color-brand-yellow) 340deg,
+            transparent 360deg
+        );
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        animation: mm-angle-spin var(--mm-beam-speed, 4s) linear var(--mm-beam-delay, 0s) infinite;
+    }
+    .mm-beam-hover::before {
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        animation-play-state: paused;
+    }
+    .mm-beam-hover:hover::before,
+    .mm-beam-hover:focus-visible::before {
+        opacity: 1;
+        animation-play-state: running;
+    }
+
+    /* Cursor spotlight: a soft glow that follows the pointer (position fed by usePointerGlow). */
+    .mm-spotlight {
+        position: relative;
+        isolation: isolate;
+    }
+    .mm-spotlight::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        background: radial-gradient(
+            var(--mm-spot-size, 320px) circle at var(--mx, 50%) var(--my, 50%),
+            var(--mm-spot-color, var(--mm-spot-default)),
+            transparent 70%
+        );
+    }
+    .mm-spotlight:hover::after {
+        opacity: 1;
+    }
+
+    /* Light sweep across a pill/badge every few seconds */
+    .mm-chip {
+        position: relative;
+        overflow: hidden;
+        isolation: isolate;
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-brand-blue) 14%, transparent),
+                    0 0 18px color-mix(in srgb, var(--color-brand-blue) 12%, transparent);
+    }
+    .dark .mm-chip {
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-brand-yellow) 25%, transparent),
+                    0 0 18px color-mix(in srgb, var(--color-brand-yellow) 14%, transparent);
+    }
+    .mm-chip::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        width: 40%;
+        pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+        animation: mm-chip-sweep 4.5s ease-in-out infinite;
+    }
+    .dark .mm-chip::after {
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.25), transparent);
+    }
+
+    /* Glowing gradient underline for section titles */
+    .mm-title-line {
+        height: 3px;
+        width: 72px;
+        margin-inline: auto;
+        border-radius: 9999px;
+        background: linear-gradient(90deg, var(--color-brand-blue), var(--color-brand-gold), var(--color-brand-yellow), var(--color-brand-gold), var(--color-brand-blue));
+        background-size: 200% 100%;
+        box-shadow: 0 0 14px color-mix(in srgb, var(--color-brand-gold) 55%, transparent);
+        animation: shimmer-gold 3s linear infinite;
+    }
+
+    /* Shimmering text fill (white → gold → white) for headings on dark backgrounds */
+    .mm-text-shine {
+        background: linear-gradient(110deg, #fff 35%, var(--color-brand-yellow) 50%, #fff 65%);
+        background-size: 250% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: mm-text-shine 6s linear infinite;
+    }
+
+    /* Slow drifting glow blob for section backgrounds */
+    .mm-drift {
+        animation: mm-drift 18s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    /* Mouse-wheel scroll cue */
+    .mm-scroll-cue {
+        animation: mm-scroll-cue 1.8s ease-in-out infinite;
+    }
+
+    /* Page scroll progress bar — CSS scroll-driven, hidden where unsupported */
+    .mm-scroll-progress {
+        display: none;
+    }
+    @supports (animation-timeline: scroll()) {
+        .mm-scroll-progress {
+            display: block;
+            position: fixed;
+            inset-inline: 0;
+            top: 0;
+            z-index: 60;
+            height: 3px;
+            transform-origin: left;
+            pointer-events: none;
+            background: linear-gradient(90deg, var(--color-brand-blue), var(--color-primary-light), var(--color-brand-gold), var(--color-brand-yellow));
+            box-shadow: 0 0 12px color-mix(in srgb, var(--color-brand-gold) 70%, transparent);
+            animation: mm-scroll-grow linear both;
+            animation-timeline: scroll(root);
+        }
+        [dir='rtl'] .mm-scroll-progress {
+            transform-origin: right;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .mm-beam::before,
+        .mm-chip::after,
+        .mm-title-line,
+        .mm-text-shine,
+        .mm-drift,
+        .mm-scroll-cue {
+            animation: none;
+        }
+        .mm-spotlight::after {
+            display: none;
+        }
+    }
 }

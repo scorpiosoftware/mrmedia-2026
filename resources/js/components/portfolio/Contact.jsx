@@ -101,7 +101,7 @@ export default function Contact() {
                             transitionDelay: '0ms',
                         }}
                     >
-                        <span className="mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
+                        <span className="mm-chip mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
                             {t('contact.section_badge')}
                         </span>
                         <h2 className="mb-4 text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
@@ -171,7 +171,7 @@ export default function Contact() {
                             transitionDelay: '100ms',
                         }}
                     >
-                        <div className="rounded-3xl border border-border bg-brand-bg p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark">
+                        <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] dark:border-primary-light/40 dark:bg-primary-dark">
                             {status === 'sent' ? (
                                 <div className="flex h-full items-center justify-center py-16 text-center">
                                     <div>

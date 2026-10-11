@@ -26,7 +26,7 @@ export default function Hero() {
     return (
         <section
             id="hero"
-            className="bg-brand-gradient relative flex min-h-screen items-center overflow-hidden"
+            className="bg-brand-gradient mm-spotlight relative flex min-h-screen items-center overflow-hidden [--mm-spot-color:rgb(255_255_255/0.08)] [--mm-spot-size:600px]"
         >
             {/* ── Background layer ── */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -198,11 +198,13 @@ export default function Hero() {
                                 animation:
                                     'slide-up-fade 0.75s cubic-bezier(0.16,1,0.3,1) both',
                                 animationDelay: '0.28s',
-                                textShadow:
-                                    '0 2px 40px color-mix(in srgb, var(--color-brand-blue) 40%, transparent)',
+                                // drop-shadow (not text-shadow) so the glow sits behind the shimmering text fill
+                                filter: 'drop-shadow(0 2px 24px color-mix(in srgb, var(--color-brand-blue) 55%, transparent))',
                             }}
                         >
-                            {t('hero.title')}
+                            <span className="mm-text-shine">
+                                {t('hero.title')}
+                            </span>
                         </h1>
 
                         {/* Subtitle */}
@@ -239,7 +241,7 @@ export default function Hero() {
 
                             <button
                                 onClick={() => scrollTo('portfolio')}
-                                className="group inline-flex items-center gap-2 rounded-full border-2 border-white/25 px-9 py-4 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-white/55 hover:bg-white/10 hover:shadow-[0_0_32px_rgba(255,255,255,0.14)]"
+                                className="group mm-beam inline-flex items-center gap-2 rounded-full border-2 border-white/25 px-9 py-4 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 [--mm-beam-inset:-2px] [--mm-beam-width:2px] hover:scale-105 hover:border-white/55 hover:bg-white/10 hover:shadow-[0_0_32px_rgba(255,255,255,0.14)]"
                             >
                                 <Play
                                     size={18}
@@ -269,7 +271,7 @@ export default function Hero() {
                                 aria-hidden="true"
                                 className="mm-spin-cw pointer-events-none absolute -end-6 -top-6 h-28 w-28 rounded-full border border-brand-gold/40"
                             />
-                            <div className="group relative aspect-square overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-[0_24px_80px_color-mix(in_srgb,var(--color-brand-dark)_55%,transparent)] backdrop-blur-sm">
+                            <div className="group mm-beam relative aspect-square overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-[0_24px_80px_color-mix(in_srgb,var(--color-brand-dark)_55%,transparent)] backdrop-blur-sm [--mm-beam-speed:6s] [--mm-beam-width:2px]">
                                 <img
                                     src={heroImage}
                                     alt={t('hero.title')}
@@ -286,6 +288,29 @@ export default function Hero() {
                     )}
                 </div>
             </div>
+
+            {/* Scroll cue */}
+            <button
+                type="button"
+                onClick={(e) =>
+                    e.currentTarget
+                        .closest('section')
+                        ?.nextElementSibling?.scrollIntoView({
+                            behavior: 'smooth',
+                        })
+                }
+                aria-label="Scroll down"
+                className="absolute bottom-20 left-1/2 z-10 hidden -translate-x-1/2 sm:block"
+                style={{
+                    animation:
+                        'slide-up-fade 0.8s cubic-bezier(0.16,1,0.3,1) both',
+                    animationDelay: '1s',
+                }}
+            >
+                <span className="flex h-10 w-6 justify-center rounded-full border-2 border-white/35 pt-2 shadow-[0_0_16px_rgba(255,255,255,0.12)] transition-colors duration-300 hover:border-brand-yellow/70">
+                    <span className="mm-scroll-cue h-2 w-1 rounded-full bg-brand-yellow shadow-[0_0_8px_var(--color-brand-yellow)]" />
+                </span>
+            </button>
 
             {/* Wave divider */}
             <div className="absolute right-0 bottom-0 left-0">

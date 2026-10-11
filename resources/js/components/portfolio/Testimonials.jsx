@@ -26,12 +26,13 @@ export default function Testimonials() {
                         transform: headerVisible ? 'translateY(0)' : 'translateY(24px)',
                     }}
                 >
-                    <span className="inline-block mb-3 rounded-full bg-brand-blue/10 dark:bg-brand-blue/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
+                    <span className="mm-chip inline-block mb-3 rounded-full bg-brand-blue/10 dark:bg-brand-blue/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
                         {t('testimonials.section_badge')}
                     </span>
                     <h2 className="text-3xl font-black text-brand-dark dark:text-white sm:text-4xl lg:text-5xl">
                         {t('testimonials.title')}
                     </h2>
+                    <div aria-hidden="true" className="mm-title-line mt-5" />
                 </div>
 
                 {/* Cards */}
@@ -39,7 +40,7 @@ export default function Testimonials() {
                     {ITEMS.map(({ quote, name, role }, i) => (
                         <div
                             key={name}
-                            className="group flex flex-col rounded-2xl bg-white dark:bg-primary-dark p-8 border border-border dark:border-primary-light/40 cursor-default transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/30 dark:hover:border-brand-yellow/40 hover:shadow-[0_12px_48px_color-mix(in_srgb,var(--color-brand-blue)_14%,transparent)]"
+                            className="group mm-beam-hover mm-spotlight flex flex-col rounded-2xl [--mm-beam-inset:-1px] bg-white dark:bg-primary-dark p-8 border border-border dark:border-primary-light/40 cursor-default transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/30 dark:hover:border-brand-yellow/40 hover:shadow-[0_12px_48px_color-mix(in_srgb,var(--color-brand-blue)_14%,transparent)]"
                             style={{
                                 opacity:   gridVisible ? 1 : 0,
                                 transform: gridVisible ? 'translateY(0)' : 'translateY(32px)',

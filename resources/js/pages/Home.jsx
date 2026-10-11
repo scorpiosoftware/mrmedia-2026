@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import About from '@/components/portfolio/About';
 import Contact from '@/components/portfolio/Contact';
 import Events from '@/components/portfolio/Events';
@@ -14,6 +14,7 @@ import Stats from '@/components/portfolio/Stats';
 import Testimonials from '@/components/portfolio/Testimonials';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
+import { usePointerGlow } from '@/hooks/use-pointer-glow';
 import { useApp } from '@/context/AppContext';
 import { useContent, useSiteIdentity } from '@/hooks/use-content';
 
@@ -45,10 +46,12 @@ function useMinimumLoading(loading, minMs) {
 
 export default function Home() {
     const location = useLocation();
+    const navigate = useNavigate();
     const t = useContent();
     const site = useSiteIdentity();
     const { contentLoading } = useApp();
     const showSkeleton = useMinimumLoading(contentLoading, MIN_SKELETON_MS);
+    usePointerGlow();
 
     useDocumentMeta({
         title: site.tagline ? `${site.name} | ${site.tagline}` : site.name,
@@ -58,6 +61,16 @@ export default function Home() {
         ),
     });
 
+    // The page height changes as sections load, so the browser's own scroll restoration
+    // lands at a random section on refresh — start from the top instead.
+    useEffect(() => {
+        const previous = window.history.scrollRestoration;
+        window.history.scrollRestoration = 'manual';
+        return () => {
+            window.history.scrollRestoration = previous;
+        };
+    }, []);
+
     // Scroll to a section after navigating here from another page (e.g. an event's detail page)
     // (waits for the real sections to render, since the skeleton has no section ids)
     useEffect(() => {
@@ -66,8 +79,13 @@ export default function Home() {
             requestAnimationFrame(() =>
                 document.getElementById(id)?.scrollIntoView(),
             );
+            // History state survives a refresh — clear it so a reload doesn't jump here again.
+            navigate(`${location.pathname}${location.search}`, {
+                replace: true,
+                state: null,
+            });
         }
-    }, [location.state, showSkeleton]);
+    }, [location, navigate, showSkeleton]);
 
     // During a language switch the previous content is still loaded, so the hero skeleton can match its layout.
     if (showSkeleton)
@@ -75,6 +93,7 @@ export default function Home() {
 
     return (
         <>
+            <div aria-hidden="true" className="mm-scroll-progress" />
             <Navbar />
             <main>
                 <Hero />

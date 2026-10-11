@@ -27,7 +27,7 @@ export default function About() {
                         }}
                     >
                         {/* Main visual card */}
-                        <div className="group relative overflow-hidden rounded-3xl bg-brand-gradient aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] transition-shadow duration-500 hover:shadow-[0_28px_80px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]">
+                        <div className="group mm-beam relative overflow-hidden rounded-3xl bg-brand-gradient [--mm-beam-speed:7s] [--mm-beam-width:2px] aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] transition-shadow duration-500 hover:shadow-[0_28px_80px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]">
                             {aboutImage ? (
                                 <>
                                     {/* Optional photo set in the dashboard (Content → About) */}
@@ -84,7 +84,7 @@ export default function About() {
                             transitionDelay: '160ms',
                         }}
                     >
-                        <span className="inline-block mb-3 rounded-full bg-secondary dark:bg-brand-blue/40 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
+                        <span className="mm-chip inline-block mb-3 rounded-full bg-secondary dark:bg-brand-blue/40 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
                             {t('about.section_badge')}
                         </span>
                         <h2 className="mb-6 text-3xl font-black text-brand-dark dark:text-white sm:text-4xl lg:text-5xl">

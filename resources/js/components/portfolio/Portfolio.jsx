@@ -44,12 +44,13 @@ export default function Portfolio() {
                             : 'translateY(24px)',
                     }}
                 >
-                    <span className="mb-3 inline-block rounded-full bg-brand-blue/10 px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-brand-blue/30 dark:text-brand-yellow">
+                    <span className="mm-chip mb-3 inline-block rounded-full bg-brand-blue/10 px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-brand-blue/30 dark:text-brand-yellow">
                         {t('portfolio.section_badge')}
                     </span>
                     <h2 className="text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
                         {t('portfolio.title')}
                     </h2>
+                    <div aria-hidden="true" className="mm-title-line mt-5" />
                     <p className="mx-auto mt-4 max-w-2xl text-muted-foreground dark:text-white/60">
                         {t('portfolio.subtitle')}
                     </p>
@@ -121,7 +122,7 @@ export default function Portfolio() {
                                               'aria-label': project.title,
                                           }
                                         : {})}
-                                    className={`group relative block aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/5 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_60px_color-mix(in_srgb,var(--color-brand-dark)_35%,transparent)] hover:ring-2 hover:ring-brand-gold/70 focus-visible:-translate-y-2 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:ring-white/10 ${
+                                    className={`group mm-beam-hover mm-spotlight relative block aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/5 transition-all duration-500 ease-out [--mm-beam-width:2px] [--mm-spot-color:rgb(255_255_255/0.14)] hover:-translate-y-2 hover:shadow-[0_24px_60px_color-mix(in_srgb,var(--color-brand-dark)_35%,transparent)] hover:ring-brand-gold/30 focus-visible:-translate-y-2 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:ring-white/10 ${
                                         hasLink ? 'cursor-pointer' : ''
                                     }`}
                                     style={{ backgroundColor: project.color }}

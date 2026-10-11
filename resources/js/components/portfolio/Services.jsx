@@ -28,12 +28,13 @@ export default function Services() {
                             : 'translateY(24px)',
                     }}
                 >
-                    <span className="mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
+                    <span className="mm-chip mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
                         {t('services.section_badge')}
                     </span>
                     <h2 className="text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
                         {t('services.title')}
                     </h2>
+                    <div aria-hidden="true" className="mm-title-line mt-5" />
                     <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
                         {t('services.subtitle')}
                     </p>
@@ -58,7 +59,7 @@ export default function Services() {
                         return (
                             <div
                                 key={service.id}
-                                className="group relative cursor-default rounded-2xl border border-border bg-brand-bg p-8 transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/50 hover:bg-white hover:shadow-[0_12px_48px_color-mix(in_srgb,var(--color-brand-blue)_18%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark dark:hover:border-brand-yellow/50 dark:hover:bg-brand-blue"
+                                className="group mm-beam-hover mm-spotlight relative cursor-default rounded-2xl border border-border bg-brand-bg p-8 transition-all duration-500 [--mm-beam-inset:-1px] hover:-translate-y-2 hover:border-brand-blue/50 hover:bg-white hover:shadow-[0_12px_48px_color-mix(in_srgb,var(--color-brand-blue)_18%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark dark:hover:border-brand-yellow/50 dark:hover:bg-brand-blue"
                                 style={{
                                     opacity: gridVisible ? 1 : 0,
                                     transform: gridVisible

@@ -46,12 +46,13 @@ export default function Events() {
                         transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
                     }}
                 >
-                    <span className="inline-block mb-3 rounded-full bg-brand-blue/10 dark:bg-brand-blue/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
+                    <span className="mm-chip inline-block mb-3 rounded-full bg-brand-blue/10 dark:bg-brand-blue/30 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
                         {t('events.section_badge')}
                     </span>
                     <h2 className="text-3xl font-black text-brand-dark dark:text-white sm:text-4xl lg:text-5xl">
                         {t('events.title')}
                     </h2>
+                    <div aria-hidden="true" className="mm-title-line mt-5" />
                     <p className="mt-4 max-w-2xl mx-auto text-muted-foreground dark:text-white/60">
                         {t('events.subtitle')}
                     </p>
@@ -74,7 +75,7 @@ export default function Events() {
                                 <Link
                                     key={event.id}
                                     to={`/events/${event.slug}`}
-                                    className="group flex flex-col rounded-2xl bg-white dark:bg-primary-dark border border-border dark:border-primary-light/40 overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]"
+                                    className="group mm-beam-hover mm-spotlight flex flex-col rounded-2xl [--mm-beam-inset:-1px] bg-white dark:bg-primary-dark border border-border dark:border-primary-light/40 overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.12)]"
                                     style={{
                                         opacity:   isVisible ? 1 : 0,
                                         transform: isVisible ? 'translateY(0)' : 'translateY(28px)',
