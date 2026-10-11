@@ -1,5 +1,15 @@
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Check, Plus, Save, Search, Trash2, X } from 'lucide-react';
+import {
+    Check,
+    Image as ImageIcon,
+    Loader2,
+    Plus,
+    Save,
+    Search,
+    Trash2,
+    Upload,
+    X,
+} from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const SECTION_LABELS = {
@@ -18,7 +28,7 @@ const TYPE_LABELS = {
     text: 'Text',
     textarea: 'Long Text',
     html: 'HTML',
-    image: 'Image URL',
+    image: 'Image',
 };
 
 // Contact details that can have several entries: the original `contact.{kind}`
@@ -29,6 +39,131 @@ const CONTACT_LIST_KINDS = [
     { kind: 'address', label: 'Address' },
 ];
 const EXTRA_CONTACT_KEY = /^contact\.(email|phone|address)_\d+$/;
+
+// Size guidance for each image slot, matched to how the website displays it.
+const IMAGE_TIPS = {
+    'about.image': {
+        size: '1200 × 900 px',
+        ratio: '4:3',
+        note: 'Cropped to fill a 4:3 card. A stats badge covers the bottom, so keep faces and key details in the upper-middle area. Optional — without an image the animated logo card is shown.',
+    },
+};
+const DEFAULT_IMAGE_TIP = {
+    size: '1200 × 900 px',
+    ratio: '4:3',
+    note: 'Images are cropped to fill their frame, so keep the subject centred.',
+};
+
+/** Upload control for `image` content rows — same rules as project & event images. One image serves both languages. */
+function ContentImageField({ item, onChange }) {
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState('');
+    const url = item.en_value || '';
+    const tip = IMAGE_TIPS[item.key] ?? DEFAULT_IMAGE_TIP;
+
+    const upload = async (file) => {
+        if (!file) return;
+        setError('');
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            setError('Only JPG, PNG or WebP images are allowed.');
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            setError('Image must be 2MB or smaller.');
+            return;
+        }
+        setUploading(true);
+        try {
+            const body = new FormData();
+            body.append('image', file);
+            const res = await fetch('/spa/admin/content/upload-image', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body,
+            });
+            const json = await res.json().catch(() => ({}));
+            if (res.ok) onChange(json.url);
+            else
+                setError(
+                    json?.errors?.image?.[0] ||
+                        json?.message ||
+                        'Upload failed.',
+                );
+        } catch {
+            setError('Network error during upload.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            {url ? (
+                <img
+                    src={url}
+                    alt=""
+                    className="h-27 w-36 shrink-0 rounded-lg border border-[#D1D5E8] object-cover"
+                />
+            ) : (
+                <div className="flex h-27 w-36 shrink-0 items-center justify-center rounded-lg border border-dashed border-[#D1D5E8] text-[#5A6A9A]">
+                    <ImageIcon size={22} />
+                </div>
+            )}
+            <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-3">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#E8EAF6] px-4 py-2 text-xs font-semibold text-[#213C93] transition-colors hover:bg-[#D1D5E8]">
+                        {uploading ? (
+                            <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                            <Upload size={14} />
+                        )}
+                        {uploading
+                            ? 'Uploading…'
+                            : url
+                              ? 'Replace Image'
+                              : 'Upload Image'}
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            disabled={uploading}
+                            className="hidden"
+                            onChange={(e) => {
+                                upload(e.target.files?.[0]);
+                                e.target.value = '';
+                            }}
+                        />
+                    </label>
+                    {url && (
+                        <button
+                            type="button"
+                            onClick={() => onChange('')}
+                            className="text-xs font-semibold text-[#5A6A9A] transition-colors hover:text-red-600"
+                        >
+                            Remove
+                        </button>
+                    )}
+                </div>
+                <p className="text-xs text-[#5A6A9A]">
+                    Recommended size{' '}
+                    <strong className="font-semibold text-[#213C93]">
+                        {tip.size}
+                    </strong>{' '}
+                    ({tip.ratio}) — JPG, PNG or WebP, up to 2MB, max 6000 px per
+                    side. {tip.note}
+                </p>
+                <p className="text-xs text-[#5A6A9A]">
+                    The same image is used on the English and Arabic site. Click
+                    “Save All” to publish.
+                </p>
+                {error && <p className="text-xs text-red-600">{error}</p>}
+            </div>
+        </div>
+    );
+}
 
 function getCsrf() {
     return (
@@ -350,141 +485,167 @@ export default function ContentEditor() {
                                             </div>
                                         </div>
 
-                                        <div className="grid gap-3 sm:grid-cols-2">
-                                            {/* English */}
-                                            <div>
-                                                <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
-                                                    🇬🇧 English
-                                                </label>
-                                                {isLong ? (
-                                                    <textarea
-                                                        value={
-                                                            item.en_value ?? ''
-                                                        }
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                item.id,
-                                                                'en_value',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onFocus={() =>
-                                                            setEditingId(
-                                                                item.id,
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setEditingId(
-                                                                (id) =>
-                                                                    id ===
-                                                                    item.id
-                                                                        ? null
-                                                                        : id,
-                                                            )
-                                                        }
-                                                        rows={3}
-                                                        className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
-                                                    />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={
-                                                            item.en_value ?? ''
-                                                        }
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                item.id,
-                                                                'en_value',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onFocus={() =>
-                                                            setEditingId(
-                                                                item.id,
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setEditingId(
-                                                                (id) =>
-                                                                    id ===
-                                                                    item.id
-                                                                        ? null
-                                                                        : id,
-                                                            )
-                                                        }
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
-                                                    />
-                                                )}
-                                            </div>
+                                        {item.type === 'image' ? (
+                                            <ContentImageField
+                                                item={item}
+                                                onChange={(url) => {
+                                                    updateItem(
+                                                        item.id,
+                                                        'en_value',
+                                                        url,
+                                                    );
+                                                    updateItem(
+                                                        item.id,
+                                                        'ar_value',
+                                                        url,
+                                                    );
+                                                }}
+                                            />
+                                        ) : (
+                                            <div className="grid gap-3 sm:grid-cols-2">
+                                                {/* English */}
+                                                <div>
+                                                    <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
+                                                        🇬🇧 English
+                                                    </label>
+                                                    {isLong ? (
+                                                        <textarea
+                                                            value={
+                                                                item.en_value ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateItem(
+                                                                    item.id,
+                                                                    'en_value',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            onFocus={() =>
+                                                                setEditingId(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            onBlur={() =>
+                                                                setEditingId(
+                                                                    (id) =>
+                                                                        id ===
+                                                                        item.id
+                                                                            ? null
+                                                                            : id,
+                                                                )
+                                                            }
+                                                            rows={3}
+                                                            className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            value={
+                                                                item.en_value ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateItem(
+                                                                    item.id,
+                                                                    'en_value',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            onFocus={() =>
+                                                                setEditingId(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            onBlur={() =>
+                                                                setEditingId(
+                                                                    (id) =>
+                                                                        id ===
+                                                                        item.id
+                                                                            ? null
+                                                                            : id,
+                                                                )
+                                                            }
+                                                            className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                        />
+                                                    )}
+                                                </div>
 
-                                            {/* Arabic */}
-                                            <div>
-                                                <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
-                                                    🇸🇦 Arabic
-                                                </label>
-                                                {isLong ? (
-                                                    <textarea
-                                                        dir="rtl"
-                                                        value={
-                                                            item.ar_value ?? ''
-                                                        }
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                item.id,
-                                                                'ar_value',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onFocus={() =>
-                                                            setEditingId(
-                                                                item.id,
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setEditingId(
-                                                                (id) =>
-                                                                    id ===
-                                                                    item.id
-                                                                        ? null
-                                                                        : id,
-                                                            )
-                                                        }
-                                                        rows={3}
-                                                        className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
-                                                    />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        dir="rtl"
-                                                        value={
-                                                            item.ar_value ?? ''
-                                                        }
-                                                        onChange={(e) =>
-                                                            updateItem(
-                                                                item.id,
-                                                                'ar_value',
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onFocus={() =>
-                                                            setEditingId(
-                                                                item.id,
-                                                            )
-                                                        }
-                                                        onBlur={() =>
-                                                            setEditingId(
-                                                                (id) =>
-                                                                    id ===
-                                                                    item.id
-                                                                        ? null
-                                                                        : id,
-                                                            )
-                                                        }
-                                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
-                                                    />
-                                                )}
+                                                {/* Arabic */}
+                                                <div>
+                                                    <label className="mb-1.5 block text-xs font-semibold text-[#5A6A9A]">
+                                                        🇸🇦 Arabic
+                                                    </label>
+                                                    {isLong ? (
+                                                        <textarea
+                                                            dir="rtl"
+                                                            value={
+                                                                item.ar_value ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateItem(
+                                                                    item.id,
+                                                                    'ar_value',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            onFocus={() =>
+                                                                setEditingId(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            onBlur={() =>
+                                                                setEditingId(
+                                                                    (id) =>
+                                                                        id ===
+                                                                        item.id
+                                                                            ? null
+                                                                            : id,
+                                                                )
+                                                            }
+                                                            rows={3}
+                                                            className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type="text"
+                                                            dir="rtl"
+                                                            value={
+                                                                item.ar_value ??
+                                                                ''
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateItem(
+                                                                    item.id,
+                                                                    'ar_value',
+                                                                    e.target
+                                                                        .value,
+                                                                )
+                                                            }
+                                                            onFocus={() =>
+                                                                setEditingId(
+                                                                    item.id,
+                                                                )
+                                                            }
+                                                            onBlur={() =>
+                                                                setEditingId(
+                                                                    (id) =>
+                                                                        id ===
+                                                                        item.id
+                                                                            ? null
+                                                                            : id,
+                                                                )
+                                                            }
+                                                            className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-3 py-2 font-arabic text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                                        />
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
                                 );
                             })}

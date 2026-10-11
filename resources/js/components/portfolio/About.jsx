@@ -13,6 +13,7 @@ const VALUES = [
 export default function About() {
     const t = useContent();
     const [ref, isVisible] = useScrollAnimation(0.1);
+    const aboutImage = t('about.image');
 
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -31,20 +32,36 @@ export default function About() {
                         }}
                     >
                         {/* Main visual card */}
-                        <div className="relative overflow-hidden rounded-3xl bg-brand-gradient aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] transition-shadow duration-500 hover:shadow-[0_28px_80px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]">
-                            {/* Spinning ring inside card */}
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <div className="w-64 h-64 rounded-full border border-white/10 mm-spin-cw" />
-                                <div className="absolute w-44 h-44 rounded-full border border-brand-gold/15 mm-spin-ccw" />
-                            </div>
+                        <div className="group relative overflow-hidden rounded-3xl bg-brand-gradient aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] transition-shadow duration-500 hover:shadow-[0_28px_80px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]">
+                            {aboutImage ? (
+                                <>
+                                    {/* Optional photo set in the dashboard (Content → About) */}
+                                    <img
+                                        src={aboutImage}
+                                        alt={t('about.title')}
+                                        loading="lazy"
+                                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                                    />
+                                    {/* Keeps the stats badge readable over any photo */}
+                                    <div className="absolute inset-0 bg-linear-to-t from-brand-dark/80 via-brand-dark/10 to-transparent" />
+                                </>
+                            ) : (
+                                <>
+                                    {/* Spinning ring inside card */}
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div className="w-64 h-64 rounded-full border border-white/10 mm-spin-cw" />
+                                        <div className="absolute w-44 h-44 rounded-full border border-brand-gold/15 mm-spin-ccw" />
+                                    </div>
 
-                            <img
-                                src={LOGO_SRC}
-                                alt=""
-                                aria-hidden="true"
-                                className="w-56 object-contain select-none mm-float-slow opacity-10"
-                                style={{ animationDelay: '2s' }}
-                            />
+                                    <img
+                                        src={LOGO_SRC}
+                                        alt=""
+                                        aria-hidden="true"
+                                        className="w-56 object-contain select-none mm-float-slow opacity-10"
+                                        style={{ animationDelay: '2s' }}
+                                    />
+                                </>
+                            )}
 
                             {/* Inner badge */}
                             <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/10 backdrop-blur-sm p-5 border border-white/20">

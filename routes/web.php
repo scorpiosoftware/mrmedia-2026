@@ -64,6 +64,7 @@ Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'st
 Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/content',  [ContentApiController::class, 'adminIndex']);
     Route::post('/spa/admin/content', [ContentApiController::class, 'adminUpdate']);
+    Route::post('/spa/admin/content/upload-image', [ContentApiController::class, 'uploadImage'])->middleware('throttle:20,1');
     Route::post('/spa/admin/content/contact-entry',          [ContentApiController::class, 'addContactEntry']);
     Route::delete('/spa/admin/content/{siteContent}',        [ContentApiController::class, 'destroyContactEntry']);
 

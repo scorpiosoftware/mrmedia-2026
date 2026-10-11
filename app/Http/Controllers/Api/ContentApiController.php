@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Concerns\StoresUploadedImages;
 use App\Http\Controllers\Controller;
 use App\Models\SiteContent;
 use Illuminate\Http\Request;
 
 class ContentApiController extends Controller
 {
+    // Provides uploadImage() — POST /spa/admin/content/upload-image, same rules as projects & events.
+    use StoresUploadedImages;
+
+    private const UPLOAD_DIR = 'content';
+
     /** GET /api/content?locale=en — returns { key: value } map for the given locale */
     public function index(Request $request)
     {
