@@ -1,19 +1,14 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent } from '@/hooks/use-content';
+import { useContent, useContentList } from '@/hooks/use-content';
 import { LOGO_SRC } from '@/lib/brand-logos';
 import { ArrowRight, CheckCircle } from 'lucide-react';
-
-const VALUES = [
-    { en: 'Strategy-first thinking',   ar: 'تفكير استراتيجي أولاً' },
-    { en: 'Bold creative execution',   ar: 'تنفيذ إبداعي جريء' },
-    { en: 'Data-driven decisions',     ar: 'قرارات مبنية على البيانات' },
-    { en: 'Client-centric approach',   ar: 'نهج يمحور العميل' },
-];
 
 export default function About() {
     const t = useContent();
     const [ref, isVisible] = useScrollAnimation(0.1);
     const aboutImage = t('about.image');
+    // Editable in Content → About (about.value_1, _2, …); blank entries are skipped.
+    const values = useContentList('about.value');
 
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -110,22 +105,24 @@ export default function About() {
                         </div>
 
                         {/* Values list — staggered inside the slide */}
-                        <ul className="mb-8 grid grid-cols-2 gap-3">
-                            {VALUES.map((v, i) => (
-                                <li
-                                    key={i}
-                                    className="flex items-center gap-2 text-sm text-brand-dark dark:text-white/80 font-medium transition-all duration-500"
-                                    style={{
-                                        opacity:   isVisible ? 1 : 0,
-                                        transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
-                                        transitionDelay: `${300 + i * 80}ms`,
-                                    }}
-                                >
-                                    <CheckCircle size={16} className="text-brand-blue dark:text-brand-yellow shrink-0" />
-                                    {v.en}
-                                </li>
-                            ))}
-                        </ul>
+                        {values.length > 0 && (
+                            <ul className="mb-8 grid grid-cols-2 gap-3">
+                                {values.map((value, i) => (
+                                    <li
+                                        key={i}
+                                        className="flex items-center gap-2 text-sm text-brand-dark dark:text-white/80 font-medium transition-all duration-500"
+                                        style={{
+                                            opacity:   isVisible ? 1 : 0,
+                                            transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
+                                            transitionDelay: `${300 + i * 80}ms`,
+                                        }}
+                                    >
+                                        <CheckCircle size={16} className="text-brand-blue dark:text-brand-yellow shrink-0" />
+                                        {value}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
 
                         <button
                             onClick={() => scrollTo('contact')}
