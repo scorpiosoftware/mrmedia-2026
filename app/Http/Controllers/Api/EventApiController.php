@@ -99,6 +99,11 @@ class EventApiController extends Controller
             'ends_at'         => $event->ends_at,
             'capacity'        => $event->capacity,
             'price'           => $event->price !== null ? (float) $event->price : null,
+            // Only advertised when there's something to discount.
+            'group_discount'  => $event->price > 0 && $event->group_discount_percent > 0 ? [
+                'percent'       => (float) $event->group_discount_percent,
+                'min_attendees' => $event->group_discount_min_attendees,
+            ] : null,
             'image_url'       => $event->image_url,
             'required_fields' => $event->required_fields ?: ['name', 'email'],
             'remaining'       => $event->capacity

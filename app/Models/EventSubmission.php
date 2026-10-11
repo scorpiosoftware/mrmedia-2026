@@ -14,7 +14,16 @@ class EventSubmission extends Model
         'phone',
         'company',
         'attendees',
+        'unit_price',
+        'discount_percent',
+        'total_price',
         'message',
+    ];
+
+    protected $casts = [
+        'unit_price'       => 'decimal:2',
+        'discount_percent' => 'decimal:2',
+        'total_price'      => 'decimal:2',
     ];
 
     public function event(): BelongsTo

@@ -21,6 +21,8 @@ class Event extends Model
         'ends_at',
         'capacity',
         'price',
+        'group_discount_percent',
+        'group_discount_min_attendees',
         'image_url',
         'is_published',
         'required_fields',
@@ -50,6 +52,8 @@ class Event extends Model
         'starts_at'            => 'datetime',
         'ends_at'              => 'datetime',
         'price'                => 'decimal:2',
+        'group_discount_percent'       => 'decimal:2',
+        'group_discount_min_attendees' => 'integer',
         'is_published'         => 'boolean',
         'required_fields'      => 'array',
         'agenda'               => 'array',
@@ -58,6 +62,30 @@ class Event extends Model
         'faqs'                 => 'array',
         'section_titles'       => 'array',
     ];
+
+    /**
+     * Price breakdown for one registration. The group discount applies to the whole
+     * registration once it reaches the minimum number of attendees.
+     * Mirrored on the registration form (EventDetails.jsx → priceFor) for the live summary.
+     *
+     * @return array{unit_price: ?float, discount_percent: float, total_price: ?float}
+     */
+    public function priceFor(int $attendees): array
+    {
+        if ($this->price === null) {
+            return ['unit_price' => null, 'discount_percent' => 0.0, 'total_price' => null];
+        }
+
+        $unit = (float) $this->price;
+        $percent = (float) $this->group_discount_percent;
+        $discount = $percent > 0 && $attendees >= $this->group_discount_min_attendees ? $percent : 0.0;
+
+        return [
+            'unit_price'       => $unit,
+            'discount_percent' => $discount,
+            'total_price'      => round($unit * $attendees * (1 - $discount / 100), 2),
+        ];
+    }
 
     public function submissions(): HasMany
     {

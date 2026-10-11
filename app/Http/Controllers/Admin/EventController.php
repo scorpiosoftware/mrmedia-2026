@@ -96,6 +96,8 @@ class EventController extends Controller
             'ends_at'         => ['nullable', 'date', 'after_or_equal:starts_at'],
             'capacity'        => ['nullable', 'integer', 'min:1'],
             'price'           => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
+            'group_discount_percent'       => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'group_discount_min_attendees' => ['nullable', 'integer', 'min:2', 'max:100'],
             'image_url'       => ['nullable', 'string', 'max:2048'],
             'is_published'    => ['boolean'],
 
@@ -156,6 +158,9 @@ class EventController extends Controller
             'section_titles'   => ['nullable', 'array:agenda,agenda_ar,trainer,trainer_ar,payment,payment_ar,cta_button,cta_button_ar'],
             'section_titles.*' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Blank minimum falls back to the column default (2 attendees).
+        $data['group_discount_min_attendees'] = $data['group_discount_min_attendees'] ?? 2;
 
         $required = $data['required_fields'] ?? [];
         if (! in_array('email', $required, true) && ! in_array('phone', $required, true)) {

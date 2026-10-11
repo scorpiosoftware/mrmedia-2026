@@ -37,13 +37,17 @@ class EventSubmissionController extends Controller
             }
         }
 
+        $attendees = $data['attendees'] ?? 1;
+
+        // Priced server-side from the event, never from the request.
         $event->submissions()->create([
             'name'      => $data['name'],
             'email'     => $data['email'],
             'phone'     => $data['phone'] ?? null,
             'company'   => $data['company'] ?? null,
-            'attendees' => $data['attendees'] ?? 1,
+            'attendees' => $attendees,
             'message'   => $data['message'] ?? null,
+            ...$event->priceFor($attendees),
         ]);
 
         return response()->json(['message' => 'Submission received successfully.']);

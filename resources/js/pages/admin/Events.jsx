@@ -125,6 +125,8 @@ const EMPTY_FORM = {
     ends_at: '',
     capacity: '',
     price: '',
+    group_discount_percent: '',
+    group_discount_min_attendees: 2,
     image_url: '',
     is_published: true,
     required_fields: ['name', 'email'],
@@ -229,6 +231,9 @@ export default function AdminEvents() {
             ends_at: toDatetimeLocal(event.ends_at),
             capacity: event.capacity ?? '',
             price: event.price ?? '',
+            group_discount_percent: event.group_discount_percent ?? '',
+            group_discount_min_attendees:
+                event.group_discount_min_attendees ?? 2,
             image_url: event.image_url ?? '',
             is_published: !!event.is_published,
             required_fields: event.required_fields ?? ['name', 'email'],
@@ -356,6 +361,14 @@ export default function AdminEvents() {
                     capacity:
                         form.capacity === '' ? null : Number(form.capacity),
                     price: form.price === '' ? null : Number(form.price),
+                    group_discount_percent:
+                        form.group_discount_percent === ''
+                            ? null
+                            : Number(form.group_discount_percent),
+                    group_discount_min_attendees:
+                        form.group_discount_min_attendees === ''
+                            ? null
+                            : Number(form.group_discount_min_attendees),
                     ends_at: form.ends_at || null,
                 }),
             });
@@ -628,6 +641,59 @@ export default function AdminEvents() {
                                     />
                                 </div>
                             </div>
+
+                            {/* Group discount — only meaningful for paid events */}
+                            {Number(form.price) > 0 && (
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Group Discount % (optional)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            max={100}
+                                            step="0.01"
+                                            value={form.group_discount_percent}
+                                            onChange={(e) =>
+                                                set(
+                                                    'group_discount_percent',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="No discount"
+                                            className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                            Applies From (attendees)
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min={2}
+                                            max={100}
+                                            value={
+                                                form.group_discount_min_attendees
+                                            }
+                                            onChange={(e) =>
+                                                set(
+                                                    'group_discount_min_attendees',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            placeholder="2"
+                                            className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                        />
+                                    </div>
+                                    <p className="text-xs text-[#5A6A9A] sm:col-span-2">
+                                        Taken off the whole registration when one
+                                        submission registers at least this many
+                                        attendees. The registration form shows
+                                        the live total.
+                                    </p>
+                                </div>
+                            )}
 
                             {/* Required registration fields */}
                             <div>
@@ -1376,6 +1442,21 @@ export default function AdminEvents() {
                                                             ? ''
                                                             : 's'}
                                                     </span>
+                                                    {s.total_price !== null && (
+                                                        <span
+                                                            className="rounded-full bg-[#FCD532]/30 px-2 py-0.5 text-xs font-semibold text-[#0D1B4B]"
+                                                            title={`${Number(s.unit_price).toLocaleString()} IQD × ${s.attendees}`}
+                                                        >
+                                                            {Number(
+                                                                s.total_price,
+                                                            ).toLocaleString()}{' '}
+                                                            IQD
+                                                            {Number(
+                                                                s.discount_percent,
+                                                            ) > 0 &&
+                                                                ` (−${Number(s.discount_percent)}%)`}
+                                                        </span>
+                                                    )}
                                                     <button
                                                         onClick={() =>
                                                             deleteSubmission(s)

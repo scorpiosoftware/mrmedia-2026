@@ -101,6 +101,11 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.registration_label', 'section' => 'events', 'en_value' => 'Registration', 'ar_value' => 'التسجيل', 'type' => 'text', 'sort_order' => 34],
             ['key' => 'events.testimonials_label', 'section' => 'events', 'en_value' => 'What Past Attendees Say', 'ar_value' => 'ماذا يقول المشاركون السابقون', 'type' => 'text', 'sort_order' => 35],
             ['key' => 'events.faq_label',          'section' => 'events', 'en_value' => 'Frequently Asked Questions', 'ar_value' => 'الأسئلة الشائعة', 'type' => 'text', 'sort_order' => 36],
+            ['key' => 'events.form.discount',      'section' => 'events', 'en_value' => 'Group discount', 'ar_value' => 'خصم المجموعة', 'type' => 'text', 'sort_order' => 38],
+            ['key' => 'events.form.total',         'section' => 'events', 'en_value' => 'Total', 'ar_value' => 'الإجمالي', 'type' => 'text', 'sort_order' => 39],
+            ['key' => 'events.form.per_person',    'section' => 'events', 'en_value' => 'per person', 'ar_value' => 'للشخص', 'type' => 'text', 'sort_order' => 40],
+            ['key' => 'events.group_discount_hint', 'section' => 'events', 'en_value' => 'Save {percent}% when registering {min} or more attendees', 'ar_value' => 'وفّر {percent}% عند تسجيل {min} أشخاص أو أكثر', 'type' => 'text', 'sort_order' => 41],
+            ['key' => 'events.form.max_attendees', 'section' => 'events', 'en_value' => 'Up to {count} seats available', 'ar_value' => 'المقاعد المتاحة: حتى {count}', 'type' => 'text', 'sort_order' => 42],
 
             // ── About
             ['key' => 'about.section_badge', 'section' => 'about', 'en_value' => 'Who We Are',        'ar_value' => 'من نحن',               'type' => 'text',     'sort_order' => 1],

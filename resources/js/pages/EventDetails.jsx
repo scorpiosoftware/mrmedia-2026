@@ -9,7 +9,7 @@ import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import {
     Award, AlertCircle, Calendar, CalendarX, CheckCircle2, ChevronDown, ChevronLeft,
-    Globe, MapPin, Quote, Send, Users,
+    Globe, MapPin, Quote, Send, Tag, Users,
 } from 'lucide-react';
 
 function getCsrf() {
@@ -32,6 +32,74 @@ function formatDate(value, locale) {
     }).format(new Date(value));
 }
 
+/** Same rule as Event::priceFor() on the server — the server's figure is the one that's saved. */
+function priceFor(event, attendees) {
+    const unit = Number(event.price) || 0;
+    const subtotal = unit * attendees;
+    const discount = event.group_discount;
+    const percent = discount && attendees >= discount.min_attendees ? discount.percent : 0;
+    const total = Math.round(subtotal * (1 - percent / 100) * 100) / 100;
+    return { unit, subtotal, percent, saved: subtotal - total, total };
+}
+
+function formatMoney(amount, t) {
+    return `${Number(amount).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${t('events.currency')}`;
+}
+
+function groupDiscountHint(event, t) {
+    if (!event.group_discount) return '';
+    return t('events.group_discount_hint')
+        .replace('{percent}', event.group_discount.percent)
+        .replace('{min}', event.group_discount.min_attendees);
+}
+
+function PriceSummary({ event, attendees }) {
+    const t = useContent();
+    const { unit, subtotal, percent, saved, total } = priceFor(event, attendees);
+    const nextTier = event.group_discount && !percent ? event.group_discount : null;
+
+    return (
+        <div className="rounded-2xl border border-border dark:border-primary-light/40 bg-brand-bg dark:bg-primary-dark/60 p-4 text-sm" aria-live="polite">
+            <div className="flex items-center justify-between text-muted-foreground dark:text-white/60">
+                <span>
+                    {formatMoney(unit, t)} × {attendees}
+                </span>
+                <span className={percent ? 'line-through opacity-70' : ''}>{formatMoney(subtotal, t)}</span>
+            </div>
+
+            {percent > 0 && (
+                <div
+                    key={percent}
+                    className="mt-2 flex items-center justify-between font-semibold text-emerald-600 dark:text-emerald-400"
+                    style={{ animation: 'slide-up-fade 0.35s cubic-bezier(0.16,1,0.3,1) both' }}
+                >
+                    <span className="inline-flex items-center gap-1.5">
+                        <Tag size={14} />
+                        {t('events.form.discount')} ({percent}%)
+                    </span>
+                    <span>−{formatMoney(saved, t)}</span>
+                </div>
+            )}
+
+            <div className="mt-3 flex items-center justify-between border-t border-border dark:border-primary-light/40 pt-3">
+                <span className="text-xs font-bold uppercase tracking-widest text-brand-dark dark:text-white">
+                    {t('events.form.total')}
+                </span>
+                <span key={total} className="text-xl font-black text-brand-blue dark:text-brand-yellow" style={{ animation: 'scale-in-fade 0.3s ease-out both' }}>
+                    {formatMoney(total, t)}
+                </span>
+            </div>
+
+            {nextTier && (
+                <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground dark:text-white/50">
+                    <Tag size={12} className="shrink-0 text-brand-gold" />
+                    {groupDiscountHint(event, t)}
+                </p>
+            )}
+        </div>
+    );
+}
+
 function scrollToRegister(e) {
     e.preventDefault();
     document.getElementById('register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -50,10 +118,20 @@ function RegisterForm({ event }) {
 
     const requiredFields = event.required_fields ?? ['name', 'email'];
     const isRequired = (field) => requiredFields.includes(field);
+    // One registration can't take more seats than are left (the server enforces the same), nor more than 100.
+    const maxAttendees = Math.max(1, Math.min(100, event.remaining ?? 100));
+    // The field can be briefly empty while typing; price it as 1 until a number is entered.
+    const attendees = Math.min(maxAttendees, Math.max(1, Math.floor(form.attendees) || 1));
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm((prev) => ({ ...prev, [name]: name === 'attendees' ? Number(value) : value }));
+        if (name === 'attendees') {
+            // Typing past the limit snaps back to it, so the price summary never quotes unavailable seats.
+            const count = value === '' ? '' : Math.min(maxAttendees, Math.max(1, Math.floor(Number(value)) || 1));
+            setForm((prev) => ({ ...prev, attendees: count }));
+            return;
+        }
+        setForm((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -164,14 +242,21 @@ function RegisterForm({ event }) {
                         type="number"
                         name="attendees"
                         min={1}
-                        max={100}
+                        max={maxAttendees}
                         value={form.attendees}
                         onChange={handleChange}
                         required
                         className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                     />
+                    {event.remaining != null && (
+                        <p className={`mt-1.5 text-xs ${attendees >= maxAttendees ? 'font-semibold text-amber-600 dark:text-brand-yellow' : 'text-muted-foreground dark:text-white/50'}`}>
+                            {t('events.form.max_attendees').replace('{count}', maxAttendees)}
+                        </p>
+                    )}
                 </div>
             </div>
+
+            {event.price > 0 && <PriceSummary event={event} attendees={attendees} />}
 
             <div>
                 <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
@@ -597,13 +682,26 @@ export default function EventDetails() {
                                     {t('events.registration_label')}
                                 </h2>
                                 <div className="rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] border border-border dark:border-primary-light/40">
-                                    <div className="mb-6 flex items-center justify-between border-b border-border dark:border-primary-light/40 pb-6">
-                                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground dark:text-white/50">
-                                            {t('events.price_label')}
-                                        </span>
-                                        <span className="text-2xl font-black text-brand-blue dark:text-brand-yellow">
-                                            {event.price ? `${Number(event.price).toLocaleString()} ${t('events.currency')}` : t('events.free')}
-                                        </span>
+                                    <div className="mb-6 border-b border-border dark:border-primary-light/40 pb-6">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground dark:text-white/50">
+                                                {t('events.price_label')}
+                                            </span>
+                                            <span className="text-2xl font-black text-brand-blue dark:text-brand-yellow">
+                                                {event.price ? formatMoney(event.price, t) : t('events.free')}
+                                                {event.price > 0 && (
+                                                    <span className="ms-1.5 text-xs font-semibold text-muted-foreground dark:text-white/50">
+                                                        {t('events.form.per_person')}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </div>
+                                        {event.group_discount && (
+                                            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                                                <Tag size={12} />
+                                                {groupDiscountHint(event, t)}
+                                            </p>
+                                        )}
                                     </div>
 
                                     {isFull ? (
