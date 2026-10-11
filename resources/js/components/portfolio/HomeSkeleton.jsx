@@ -65,27 +65,52 @@ function NavbarSkeleton() {
     );
 }
 
-function HeroSkeleton() {
+/** `split` mirrors the hero's two-column layout used when a hero image is set. */
+function HeroSkeleton({ split = false }) {
     return (
         <section className="bg-brand-gradient relative flex min-h-screen items-center overflow-hidden">
             <NavbarSkeleton />
             <div className={`relative w-full ${CONTAINER} pt-28 pb-28`}>
-                <div className="flex flex-col items-center text-center">
-                    <Bone light className="mb-8 h-10 w-60 rounded-full" />
-                    <Bone
-                        light
-                        className="mb-4 h-12 w-full max-w-3xl sm:h-16 md:h-20"
-                    />
-                    <Bone
-                        light
-                        className="mb-6 h-12 w-2/3 max-w-xl sm:h-16 md:h-20"
-                    />
-                    <Bone light className="mb-2 h-4 w-full max-w-2xl sm:h-5" />
-                    <Bone light className="mb-12 h-4 w-3/4 max-w-xl sm:h-5" />
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <Bone light className="h-14 w-52 rounded-full" />
-                        <Bone light className="h-14 w-44 rounded-full" />
+                <div
+                    className={
+                        split
+                            ? 'grid items-center gap-12 lg:grid-cols-2 lg:gap-16'
+                            : undefined
+                    }
+                >
+                    <div
+                        className={`flex flex-col items-center text-center ${split ? 'lg:items-start' : ''}`}
+                    >
+                        <Bone light className="mb-8 h-10 w-60 rounded-full" />
+                        <Bone
+                            light
+                            className="mb-4 h-12 w-full max-w-3xl sm:h-16 md:h-20"
+                        />
+                        <Bone
+                            light
+                            className="mb-6 h-12 w-2/3 max-w-xl sm:h-16 md:h-20"
+                        />
+                        <Bone
+                            light
+                            className="mb-2 h-4 w-full max-w-2xl sm:h-5"
+                        />
+                        <Bone
+                            light
+                            className="mb-12 h-4 w-3/4 max-w-xl sm:h-5"
+                        />
+                        <div
+                            className={`flex flex-wrap justify-center gap-4 ${split ? 'lg:justify-start' : ''}`}
+                        >
+                            <Bone light className="h-14 w-52 rounded-full" />
+                            <Bone light className="h-14 w-44 rounded-full" />
+                        </div>
                     </div>
+                    {split && (
+                        <Bone
+                            light
+                            className="mx-auto aspect-square w-full max-w-md rounded-3xl lg:max-w-none"
+                        />
+                    )}
                 </div>
             </div>
             {/* Same wave divider as the real hero */}
@@ -390,12 +415,12 @@ function FooterSkeleton() {
     );
 }
 
-export default function HomeSkeleton() {
+export default function HomeSkeleton({ heroImage = false }) {
     return (
         <div role="status" aria-busy="true" aria-live="polite">
             <span className="sr-only">Loading…</span>
             <main aria-hidden="true">
-                <HeroSkeleton />
+                <HeroSkeleton split={heroImage} />
                 <StatsSkeleton />
                 <ServicesSkeleton />
                 <MarqueeSkeleton />

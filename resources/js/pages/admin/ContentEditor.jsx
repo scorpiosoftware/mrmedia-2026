@@ -42,6 +42,11 @@ const EXTRA_CONTACT_KEY = /^contact\.(email|phone|address)_\d+$/;
 
 // Size guidance for each image slot, matched to how the website displays it.
 const IMAGE_TIPS = {
+    'hero.image': {
+        size: '1200 × 1200 px',
+        ratio: '1:1 square',
+        note: 'Optional — when set, the hero switches to two columns: text on one side, this image on the other (stacked on phones). Cropped to a square with rounded corners, so keep the subject centred. Transparent PNGs (e.g. a product or person cut-out) work well over the brand gradient.',
+    },
     'about.image': {
         size: '1200 × 900 px',
         ratio: '4:3',

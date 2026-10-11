@@ -69,7 +69,9 @@ export default function Home() {
         }
     }, [location.state, showSkeleton]);
 
-    if (showSkeleton) return <HomeSkeleton />;
+    // During a language switch the previous content is still loaded, so the hero skeleton can match its layout.
+    if (showSkeleton)
+        return <HomeSkeleton heroImage={Boolean(t('hero.image'))} />;
 
     return (
         <>

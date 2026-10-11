@@ -25,6 +25,7 @@ class SiteContentSeeder extends Seeder
             ['key' => 'hero.subtitle',  'section' => 'hero', 'en_value' => 'Mr.MEDIA is a full-service marketing agency helping brands grow through strategy, creativity and digital excellence.', 'ar_value' => 'مستر ميديا وكالة تسويق متكاملة تساعد العلامات التجارية على النمو من خلال الاستراتيجية والإبداع والتميز الرقمي.', 'type' => 'textarea', 'sort_order' => 3],
             ['key' => 'hero.cta_primary',   'section' => 'hero', 'en_value' => 'Start Your Project', 'ar_value' => 'ابدأ مشروعك', 'type' => 'text', 'sort_order' => 4],
             ['key' => 'hero.cta_secondary', 'section' => 'hero', 'en_value' => 'View Our Work',      'ar_value' => 'شاهد أعمالنا','type' => 'text', 'sort_order' => 5],
+            ['key' => 'hero.image',     'section' => 'hero', 'en_value' => '', 'ar_value' => '', 'type' => 'image', 'sort_order' => 6],
 
             // ── Stats
             ['key' => 'stats.clients',       'section' => 'stats', 'en_value' => '150+',               'ar_value' => '+150',                  'type' => 'text',     'sort_order' => 1],
