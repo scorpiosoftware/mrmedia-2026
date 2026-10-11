@@ -338,6 +338,11 @@
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(-50%, 0, 0); }
 }
+/* Skeleton loader shimmer: a soft highlight sweeping across placeholder blocks. */
+@keyframes mm-skeleton-shimmer {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(100%); }
+}
 @keyframes mm-number-pop {
     0%   { opacity: 0; transform: translateY(16px) scale(0.9); }
     60%  { transform: translateY(-4px) scale(1.04); }
@@ -369,6 +374,39 @@
     .mm-border-glow { animation: mm-border-glow 2.2s ease-in-out infinite; }
 
     /* Gold shimmer button */
+    /* Skeleton bones — `.mm-bone` on light surfaces, `.mm-bone-light` on dark/gradient ones */
+    .mm-bone,
+    .mm-bone-light {
+        position: relative;
+        overflow: hidden;
+        background-color: color-mix(in srgb, var(--color-brand-blue) 9%, transparent);
+    }
+    .mm-bone-light {
+        background-color: rgb(255 255 255 / 0.12);
+    }
+    .dark .mm-bone {
+        background-color: rgb(255 255 255 / 0.08);
+    }
+    .mm-bone::after,
+    .mm-bone-light::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+        animation: mm-skeleton-shimmer 1.6s ease-in-out infinite;
+    }
+    .mm-bone-light::after,
+    .dark .mm-bone::after {
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14), transparent);
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .mm-bone::after,
+        .mm-bone-light::after {
+            animation: none;
+        }
+    }
+
     .btn-gold-shimmer {
         background: linear-gradient(90deg, var(--color-brand-gold) 0%, var(--color-brand-yellow) 30%, #fff9 48%, var(--color-brand-yellow) 66%, var(--color-brand-gold) 100%);
         background-size: 220% 100%;
