@@ -1,5 +1,5 @@
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Check, Save, Search, X } from 'lucide-react';
+import { Check, Plus, Save, Search, Trash2, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const SECTION_LABELS = {
@@ -21,6 +21,15 @@ const TYPE_LABELS = {
     image: 'Image URL',
 };
 
+// Contact details that can have several entries: the original `contact.{kind}`
+// row is entry #1; extra entries are stored as `contact.{kind}_2`, `_3`, …
+const CONTACT_LIST_KINDS = [
+    { kind: 'email', label: 'Email' },
+    { kind: 'phone', label: 'Phone' },
+    { kind: 'address', label: 'Address' },
+];
+const EXTRA_CONTACT_KEY = /^contact\.(email|phone|address)_\d+$/;
+
 function getCsrf() {
     return (
         document
@@ -38,6 +47,17 @@ export default function ContentEditor() {
     const [saving, setSaving] = useState(false);
     const [savedMsg, setSavedMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
+    const [focusId, setFocusId] = useState(null); // newly added row to scroll to + focus
+
+    // Once a newly added contact entry has rendered, bring it into view and focus its English field.
+    useEffect(() => {
+        if (focusId === null) return;
+        const row = document.getElementById(`content-row-${focusId}`);
+        if (!row) return;
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        row.querySelector('input, textarea')?.focus({ preventScroll: true });
+        setFocusId(null);
+    }, [focusId, items]);
 
     // Load all content rows
     useEffect(() => {
@@ -89,6 +109,69 @@ export default function ContentEditor() {
             ),
         );
         setSavedMsg('');
+    };
+
+    const addContactEntry = async (kind) => {
+        setErrorMsg('');
+        try {
+            const res = await fetch('/spa/admin/content/contact-entry', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body: JSON.stringify({ kind }),
+            });
+            const row = await res.json().catch(() => null);
+            if (!res.ok || !row) {
+                setErrorMsg(row?.message || 'Failed to add entry.');
+                return;
+            }
+            // Insert after the last existing entry of the same kind so it shows up
+            // next to its siblings; other unsaved edits in `items` are kept.
+            setItems((prev) => {
+                const base = `contact.${kind}`;
+                const lastIndex = prev.reduce(
+                    (last, item, i) =>
+                        item.key === base || item.key.startsWith(`${base}_`)
+                            ? i
+                            : last,
+                    -1,
+                );
+                const next = [...prev];
+                next.splice(lastIndex + 1, 0, row);
+                return next;
+            });
+            setEditingId(row.id);
+            setFocusId(row.id);
+        } catch {
+            setErrorMsg('Network error. Please try again.');
+        }
+    };
+
+    const deleteContactEntry = async (item) => {
+        if (!confirm(`Delete ${item.key}?`)) return;
+        setErrorMsg('');
+        try {
+            const res = await fetch(`/spa/admin/content/${item.id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+            });
+            if (res.ok) {
+                setItems((prev) => prev.filter((i) => i.id !== item.id));
+            } else {
+                const json = await res.json().catch(() => ({}));
+                setErrorMsg(json?.message || 'Failed to delete entry.');
+            }
+        } catch {
+            setErrorMsg('Network error. Please try again.');
+        }
     };
 
     const handleSave = async () => {
@@ -209,6 +292,25 @@ export default function ContentEditor() {
                             <span className="h-px flex-1 bg-[#D1D5E8]" />
                         </h2>
 
+                        {section === 'contact' && (
+                            <div className="sticky top-[calc(var(--admin-header-h,0px)+0.75rem)] z-30 mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-dashed border-[#D1D5E8] bg-white/95 px-4 py-3 shadow-[0_4px_16px_rgba(33,60,147,0.08)] backdrop-blur">
+                                <span className="me-1 text-xs text-[#5A6A9A]">
+                                    Add another contact detail:
+                                </span>
+                                {CONTACT_LIST_KINDS.map(({ kind, label }) => (
+                                    <button
+                                        key={kind}
+                                        type="button"
+                                        onClick={() => addContactEntry(kind)}
+                                        className="inline-flex items-center gap-1.5 rounded-full bg-[#E8EAF6] px-3 py-1.5 text-xs font-semibold text-[#213C93] transition-colors hover:bg-[#D1D5E8]"
+                                    >
+                                        <Plus size={12} />
+                                        {label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+
                         <div className="space-y-3">
                             {rows.map((item) => {
                                 const isLong =
@@ -217,16 +319,35 @@ export default function ContentEditor() {
                                 return (
                                     <div
                                         key={item.id}
+                                        id={`content-row-${item.id}`}
                                         className="rounded-2xl border border-[#D1D5E8] bg-white p-5 transition-colors hover:border-[#213C93]/30"
                                     >
                                         <div className="mb-3 flex items-center justify-between gap-2">
                                             <code className="rounded-md bg-[#E8EAF6] px-2 py-0.5 font-mono text-xs break-all text-[#213C93]">
                                                 {item.key}
                                             </code>
-                                            <span className="flex-shrink-0 rounded-full bg-[#F1F1F0] px-2 py-0.5 text-xs text-[#5A6A9A]">
-                                                {TYPE_LABELS[item.type] ??
-                                                    item.type}
-                                            </span>
+                                            <div className="flex flex-shrink-0 items-center gap-2">
+                                                <span className="rounded-full bg-[#F1F1F0] px-2 py-0.5 text-xs text-[#5A6A9A]">
+                                                    {TYPE_LABELS[item.type] ??
+                                                        item.type}
+                                                </span>
+                                                {EXTRA_CONTACT_KEY.test(
+                                                    item.key,
+                                                ) && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            deleteContactEntry(
+                                                                item,
+                                                            )
+                                                        }
+                                                        title="Delete this entry"
+                                                        className="rounded-lg p-1.5 text-[#5A6A9A] transition-colors hover:bg-red-50 hover:text-red-600"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
 
                                         <div className="grid gap-3 sm:grid-cols-2">

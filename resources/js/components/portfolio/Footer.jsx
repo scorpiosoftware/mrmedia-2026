@@ -1,4 +1,4 @@
-import { useContent } from '@/hooks/use-content';
+import { useContent, useContentList } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
 import { getSocialIcon, getSocialLabel } from '@/lib/social-platforms';
 
@@ -7,6 +7,11 @@ const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio'
 
 export default function Footer() {
     const t = useContent();
+    const contactDetails = [
+        ...useContentList('contact.email'),
+        ...useContentList('contact.phone'),
+        ...useContentList('contact.address'),
+    ];
     const { items: socialLinks } = usePublicList('/api/social-links');
 
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -71,9 +76,9 @@ export default function Footer() {
                             {t('contact.section_badge')}
                         </p>
                         <ul className="space-y-3 text-sm text-white/60">
-                            <li>{t('contact.email')}</li>
-                            <li>{t('contact.phone')}</li>
-                            <li>{t('contact.address')}</li>
+                            {contactDetails.map((value, i) => (
+                                <li key={i}>{value}</li>
+                            ))}
                         </ul>
                     </div>
                 </div>

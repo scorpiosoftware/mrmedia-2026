@@ -96,69 +96,89 @@ export default function Portfolio() {
                         ))}
 
                     {visible.map((project, i) => {
-                        const Card = project.external_url ? 'a' : 'div';
+                        const hasLink = Boolean(project.external_url);
+                        const Card = hasLink ? 'a' : 'div';
                         return (
-                            <Card
+                            /* Wrapper owns the staggered entrance so its delay never slows down hover */
+                            <div
                                 key={project.id}
-                                {...(project.external_url
-                                    ? {
-                                          href: project.external_url,
-                                          target: '_blank',
-                                          rel: 'noopener noreferrer',
-                                      }
-                                    : {})}
-                                className="group relative aspect-4/3 cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_48px_rgba(0,0,0,0.22)]"
                                 style={{
-                                    backgroundColor: project.color,
                                     opacity: gridVisible ? 1 : 0,
                                     transform: gridVisible
                                         ? 'translateY(0) scale(1)'
                                         : 'translateY(28px) scale(0.97)',
-                                    transition: `opacity 0.55s ease, transform 0.55s ease, box-shadow 0.4s ease, translate 0.4s ease`,
+                                    transition:
+                                        'opacity 0.6s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1)',
                                     transitionDelay: `${i * 80}ms`,
                                 }}
                             >
-                                {project.image_url ? (
-                                    <img
-                                        src={project.image_url}
-                                        alt={project.title}
-                                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    /* Background watermark fallback when no image is set */
-                                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                                <Card
+                                    {...(hasLink
+                                        ? {
+                                              href: project.external_url,
+                                              target: '_blank',
+                                              rel: 'noopener noreferrer',
+                                              'aria-label': project.title,
+                                          }
+                                        : {})}
+                                    className={`group relative block aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/5 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(13,27,75,0.35)] hover:ring-2 hover:ring-[#DDB50E]/70 focus-visible:-translate-y-2 focus-visible:ring-2 focus-visible:ring-[#DDB50E] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:ring-white/10 ${
+                                        hasLink ? 'cursor-pointer' : ''
+                                    }`}
+                                    style={{ backgroundColor: project.color }}
+                                >
+                                    {project.image_url ? (
                                         <img
-                                            src={LOGO_SRC}
-                                            alt=""
-                                            aria-hidden="true"
-                                            className="mm-float-slow w-36 object-contain opacity-10 transition-all duration-500 select-none group-hover:scale-110 group-hover:opacity-20"
-                                            style={{
-                                                animationDelay: `${(project.id * 1.1) % 4}s`,
-                                            }}
+                                            src={project.image_url}
+                                            alt={project.title}
+                                            className="absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-75 motion-reduce:transition-none"
                                         />
-                                    </div>
-                                )}
-
-                                {/* Caption overlay — always visible, no hover required */}
-                                <div className="absolute inset-0 flex items-end bg-linear-to-t from-black/70 via-black/20 to-transparent p-6">
-                                    <div className="flex w-full items-end justify-between">
-                                        <div>
-                                            <p className="mb-1 text-xs font-bold tracking-widest text-[#FCD532] uppercase">
-                                                {project.category}
-                                            </p>
-                                            <h3 className="text-lg font-bold text-white">
-                                                {project.title}
-                                            </h3>
-                                        </div>
-                                        <div className="flex h-10 w-10 shrink-0 scale-90 items-center justify-center rounded-full bg-[#DDB50E] shadow-[0_0_20px_rgba(221,181,14,0.6)] transition-transform duration-400 group-hover:scale-100">
-                                            <ArrowUpRight
-                                                size={18}
-                                                className="text-[#0D1B4B]"
+                                    ) : (
+                                        /* Background watermark fallback when no image is set */
+                                        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+                                            <img
+                                                src={LOGO_SRC}
+                                                alt=""
+                                                aria-hidden="true"
+                                                className="mm-float-slow w-36 object-contain opacity-10 transition-all duration-500 select-none group-hover:scale-110 group-hover:opacity-20"
+                                                style={{
+                                                    animationDelay: `${(project.id * 1.1) % 4}s`,
+                                                }}
                                             />
                                         </div>
+                                    )}
+
+                                    {/* Base gradient — always on so the caption stays readable */}
+                                    <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
+
+                                    {/* Brand tint that fades in on hover */}
+                                    <div className="absolute inset-0 bg-linear-to-br from-[#213C93]/50 via-[#0D1B4B]/30 to-black/40 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+
+                                    {/* Centred link button — pops in on hover; always shown on touch screens */}
+                                    {hasLink && (
+                                        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                                            <span className="relative flex h-16 w-16 scale-50 -rotate-45 items-center justify-center rounded-full bg-[#DDB50E] opacity-0 shadow-[0_0_32px_rgba(221,181,14,0.65)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-100 group-hover:rotate-0 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:rotate-0 group-focus-visible:opacity-100 motion-reduce:transition-none [@media(hover:none)]:scale-90 [@media(hover:none)]:rotate-0 [@media(hover:none)]:opacity-100">
+                                                {/* Soft pulsing ring */}
+                                                <span className="absolute inset-0 rounded-full bg-[#DDB50E] opacity-0 group-hover:animate-ping group-hover:opacity-40" />
+                                                <ArrowUpRight
+                                                    size={26}
+                                                    className="relative text-[#0D1B4B] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                                />
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Caption — lifts slightly on hover */}
+                                    <div className="absolute inset-x-0 bottom-0 p-6 transition-transform duration-500 ease-out group-hover:-translate-y-1">
+                                        <p className="mb-1 flex items-center gap-2 text-xs font-bold tracking-widest text-[#FCD532] uppercase">
+                                            <span className="h-0.5 w-4 rounded-full bg-[#FCD532] transition-all duration-500 group-hover:w-8" />
+                                            {project.category}
+                                        </p>
+                                        <h3 className="text-lg font-bold text-white">
+                                            {project.title}
+                                        </h3>
                                     </div>
-                                </div>
-                            </Card>
+                                </Card>
+                            </div>
                         );
                     })}
                 </div>

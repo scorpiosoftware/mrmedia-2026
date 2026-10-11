@@ -1,6 +1,6 @@
 import PhoneInput from '@/components/portfolio/PhoneInput';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent } from '@/hooks/use-content';
+import { useContent, useContentList } from '@/hooks/use-content';
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
@@ -35,6 +35,9 @@ function getCsrf() {
 
 export default function Contact() {
     const t = useContent();
+    const emails = useContentList('contact.email');
+    const phones = useContentList('contact.phone');
+    const addresses = useContentList('contact.address');
     const [form, setForm] = useState(EMPTY_FORM);
     const [status, setStatus] = useState('idle'); // idle | sending | sent | error
     const [errorMsg, setErrorMsg] = useState('');
@@ -113,38 +116,47 @@ export default function Contact() {
                                 {
                                     id: 'email',
                                     Icon: Mail,
-                                    value: t('contact.email'),
+                                    values: emails,
                                 },
                                 {
                                     id: 'phone',
                                     Icon: Phone,
-                                    value: t('contact.phone'),
+                                    values: phones,
                                 },
                                 {
                                     id: 'address',
                                     Icon: MapPin,
-                                    value: t('contact.address'),
+                                    values: addresses,
                                 },
-                            ].map(({ id, Icon, value }, i) => (
-                                <div
-                                    key={id}
-                                    className="flex items-center gap-4 transition-all duration-500"
-                                    style={{
-                                        opacity: isVisible ? 1 : 0,
-                                        transform: isVisible
-                                            ? 'translateX(0)'
-                                            : 'translateX(-24px)',
-                                        transitionDelay: `${150 + i * 100}ms`,
-                                    }}
-                                >
-                                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#213C93] text-white transition-all duration-300 hover:bg-[#DDB50E] hover:text-[#0D1B4B] hover:shadow-[0_0_20px_rgba(221,181,14,0.45)]">
-                                        <Icon size={18} />
+                            ]
+                                .filter(({ values }) => values.length)
+                                .map(({ id, Icon, values }, i) => (
+                                    <div
+                                        key={id}
+                                        className="flex items-center gap-4 transition-all duration-500"
+                                        style={{
+                                            opacity: isVisible ? 1 : 0,
+                                            transform: isVisible
+                                                ? 'translateX(0)'
+                                                : 'translateX(-24px)',
+                                            transitionDelay: `${150 + i * 100}ms`,
+                                        }}
+                                    >
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#213C93] text-white transition-all duration-300 hover:bg-[#DDB50E] hover:text-[#0D1B4B] hover:shadow-[0_0_20px_rgba(221,181,14,0.45)]">
+                                            <Icon size={18} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            {values.map((value, j) => (
+                                                <p
+                                                    key={j}
+                                                    className="font-medium text-[#0D1B4B] dark:text-white/80"
+                                                >
+                                                    {value}
+                                                </p>
+                                            ))}
+                                        </div>
                                     </div>
-                                    <p className="font-medium text-[#0D1B4B] dark:text-white/80">
-                                        {value}
-                                    </p>
-                                </div>
-                            ))}
+                                ))}
                         </div>
                     </div>
 

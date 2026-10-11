@@ -112,6 +112,9 @@ class SpaController extends Controller
             $content['footer.social.linkedin'] ?? null,
         ]));
 
+        // Schema.org accepts a single value or a list; only emit a list when there's more than one.
+        $listOrSingle = fn (array $values) => count($values) > 1 ? $values : ($values[0] ?? null);
+
         return array_filter([
             '@context'     => 'https://schema.org',
             '@type'        => 'Organization',
@@ -119,9 +122,9 @@ class SpaController extends Controller
             'url'          => url('/'),
             'logo'         => asset('images/logo.png'),
             'description'  => $content['hero.subtitle'] ?? null,
-            'email'        => $content['contact.email'] ?? null,
-            'telephone'    => $content['contact.phone'] ?? null,
-            'address'      => $content['contact.address'] ?? null,
+            'email'        => $listOrSingle(SiteContent::contactList($content, 'email')),
+            'telephone'    => $listOrSingle(SiteContent::contactList($content, 'phone')),
+            'address'      => $listOrSingle(SiteContent::contactList($content, 'address')),
             'sameAs'       => $sameAs ?: null,
         ]);
     }

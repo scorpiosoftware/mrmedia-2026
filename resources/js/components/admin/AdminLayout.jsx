@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { LOGO_SRC } from '@/lib/brand-logos';
@@ -42,6 +43,20 @@ const NAV_ITEMS = [
 export default function AdminLayout({ title, actions, children }) {
     const { user, logout } = useApp();
     const navigate = useNavigate();
+    const headerRef = useRef(null);
+    const [headerHeight, setHeaderHeight] = useState(0);
+
+    // Expose the sticky header's live height (it changes as actions/messages wrap)
+    // as --admin-header-h, so page-level sticky bars can sit just below it.
+    useEffect(() => {
+        const header = headerRef.current;
+        if (!header) return;
+        const observer = new ResizeObserver(() =>
+            setHeaderHeight(header.offsetHeight),
+        );
+        observer.observe(header);
+        return () => observer.disconnect();
+    }, []);
 
     const handleLogout = async () => {
         await logout();
@@ -119,8 +134,13 @@ export default function AdminLayout({ title, actions, children }) {
                     </SidebarFooter>
                 </Sidebar>
 
-                <SidebarInset className="bg-[#F1F1F0]">
-                    <header className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-[#D1D5E8] bg-white/80 px-4 py-4 backdrop-blur sm:px-6">
+                <SidebarInset
+                    className="bg-[#F1F1F0]"
+                    style={{ '--admin-header-h': `${headerHeight}px` }}
+                >
+                    <header
+                        ref={headerRef}
+                        className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-[#D1D5E8] bg-white/80 px-4 py-4 backdrop-blur sm:px-6">
                         <div className="flex min-w-0 items-center gap-3">
                             <SidebarTrigger className="-ml-1" />
                             <h1 className="truncate text-lg font-bold text-[#0D1B4B]">
