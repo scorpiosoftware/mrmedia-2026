@@ -12,6 +12,7 @@ const AdminInbox = lazy(() => import('@/pages/admin/Inbox'));
 const AdminEvents = lazy(() => import('@/pages/admin/Events'));
 const AdminProjects = lazy(() => import('@/pages/admin/Projects'));
 const AdminServices = lazy(() => import('@/pages/admin/Services'));
+const AdminMarquee = lazy(() => import('@/pages/admin/MarqueeBanner'));
 const AdminSocialLinks = lazy(() => import('@/pages/admin/SocialLinks'));
 const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
 const AdminProfile = lazy(() => import('@/pages/admin/Profile'));
@@ -106,6 +107,14 @@ export default function AppRouter() {
                     element={
                         <RequireAuth>
                             <AdminInbox />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/marquee"
+                    element={
+                        <RequireAuth>
+                            <AdminMarquee />
                         </RequireAuth>
                     }
                 />

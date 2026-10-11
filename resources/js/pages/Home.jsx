@@ -5,6 +5,7 @@ import Contact from '@/components/portfolio/Contact';
 import Events from '@/components/portfolio/Events';
 import Footer from '@/components/portfolio/Footer';
 import Hero from '@/components/portfolio/Hero';
+import MarqueeBanner from '@/components/portfolio/MarqueeBanner';
 import Navbar from '@/components/portfolio/Navbar';
 import Portfolio from '@/components/portfolio/Portfolio';
 import Services from '@/components/portfolio/Services';
@@ -41,6 +42,7 @@ export default function Home() {
                 <Hero />
                 <Stats />
                 <Services />
+                <MarqueeBanner />
                 <Portfolio />
                 <Events />
                 <About />

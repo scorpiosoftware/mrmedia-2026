@@ -332,6 +332,11 @@
     0%, 100% { border-color: rgba(221,181,14,0.35); box-shadow: 0 0 10px rgba(221,181,14,0.15); }
     50%       { border-color: rgba(252,213,50,0.85); box-shadow: 0 0 24px rgba(252,213,50,0.35); }
 }
+/* Scrolling banner: the track holds two identical copies, so shifting by -50% loops seamlessly. */
+@keyframes mm-marquee {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-50%, 0, 0); }
+}
 @keyframes mm-number-pop {
     0%   { opacity: 0; transform: translateY(16px) scale(0.9); }
     60%  { transform: translateY(-4px) scale(1.04); }
