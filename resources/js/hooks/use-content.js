@@ -1,3 +1,4 @@
+import { LOGO_DARK_SRC, LOGO_SRC } from '@/lib/brand-logos';
 import { useApp } from '@/context/AppContext';
 
 /**
@@ -42,7 +43,8 @@ export function useContentList(baseKey) {
 export function useSiteIdentity() {
     const { siteSettings = {}, locale } = useApp();
     const pick = (en, ar) => (locale === 'ar' && ar ? ar : en) || '';
-    const name = pick(siteSettings.site_name, siteSettings.site_name_ar) || 'Mr.MEDIA';
+    const name =
+        pick(siteSettings.site_name, siteSettings.site_name_ar) || 'Mr.MEDIA';
     return {
         name,
         nameParts: splitBrandName(name),
@@ -57,8 +59,26 @@ export function useSiteIdentity() {
  */
 export function splitBrandName(name) {
     const dot = name.indexOf('.');
-    if (dot > 0 && dot < name.length - 1) return [name.slice(0, dot + 1), name.slice(dot + 1)];
+    if (dot > 0 && dot < name.length - 1)
+        return [name.slice(0, dot + 1), name.slice(dot + 1)];
     const space = name.lastIndexOf(' ');
     if (space > 0) return [name.slice(0, space + 1), name.slice(space + 1)];
     return [name, ''];
+}
+
+/**
+ * Logos from Site Settings, falling back to the built-in Mr.MEDIA artwork.
+ * - `light`  — for light backgrounds (e.g. the navbar once scrolled).
+ * - `onDark` — for dark/coloured backgrounds (navbar at the top, cards, banner).
+ * - `dark`   — same as onDark, but defaults to the glossy built-in mark (hero watermark).
+ * When only one logo is uploaded it's used everywhere, so it never mixes with the built-in mark.
+ */
+export function useBrandLogos() {
+    const { siteSettings = {} } = useApp();
+    const { logo_url: light, logo_dark_url: dark } = siteSettings;
+    return {
+        light: light || dark || LOGO_SRC,
+        dark: dark || light || LOGO_DARK_SRC,
+        onDark: dark || light || LOGO_SRC,
+    };
 }

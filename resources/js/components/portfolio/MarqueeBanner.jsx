@@ -1,5 +1,4 @@
-import { useLocale } from '@/hooks/use-content';
-import { LOGO_SRC } from '@/lib/brand-logos';
+import { useBrandLogos, useLocale } from '@/hooks/use-content';
 import { Asterisk, Diamond, Sparkle, Star } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
@@ -13,6 +12,7 @@ const FONT_SIZES = {
 const MIN_ITEMS_PER_COPY = 10;
 
 function Separator({ type, size, color }) {
+    const logos = useBrandLogos();
     const props = { size, color, className: 'shrink-0', 'aria-hidden': true };
     switch (type) {
         case 'star':
@@ -36,7 +36,7 @@ function Separator({ type, size, color }) {
         case 'logo':
             return (
                 <img
-                    src={LOGO_SRC}
+                    src={logos.onDark}
                     alt=""
                     aria-hidden="true"
                     className="shrink-0 object-contain"

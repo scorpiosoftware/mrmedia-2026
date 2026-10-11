@@ -1,7 +1,6 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent } from '@/hooks/use-content';
+import { useBrandLogos, useContent } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
-import { LOGO_SRC } from '@/lib/brand-logos';
 import { ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,6 +14,7 @@ const FILTER_KEYS = {
 
 export default function Portfolio() {
     const t = useContent();
+    const logos = useBrandLogos();
     const { items: projects, loading } = usePublicList('/api/projects');
     const [active, setActive] = useState('all');
     const [headerRef, headerVisible] = useScrollAnimation(0.2);
@@ -136,7 +136,7 @@ export default function Portfolio() {
                                         /* Background watermark fallback when no image is set */
                                         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
                                             <img
-                                                src={LOGO_SRC}
+                                                src={logos.onDark}
                                                 alt=""
                                                 aria-hidden="true"
                                                 className="mm-float-slow w-36 object-contain opacity-10 transition-all duration-500 select-none group-hover:scale-110 group-hover:opacity-20"

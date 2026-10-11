@@ -1,10 +1,10 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent, useContentList } from '@/hooks/use-content';
-import { LOGO_SRC } from '@/lib/brand-logos';
+import { useBrandLogos, useContent, useContentList } from '@/hooks/use-content';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function About() {
     const t = useContent();
+    const logos = useBrandLogos();
     const [ref, isVisible] = useScrollAnimation(0.1);
     const aboutImage = t('about.image');
     // Editable in Content → About (about.value_1, _2, …); blank entries are skipped.
@@ -49,7 +49,7 @@ export default function About() {
                                     </div>
 
                                     <img
-                                        src={LOGO_SRC}
+                                        src={logos.onDark}
                                         alt=""
                                         aria-hidden="true"
                                         className="w-56 object-contain select-none mm-float-slow opacity-10"

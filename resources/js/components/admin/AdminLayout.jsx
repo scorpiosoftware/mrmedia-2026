@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { LOGO_SRC } from '@/lib/brand-logos';
+import { useBrandLogos } from '@/hooks/use-content';
 import {
     Sidebar,
     SidebarContent,
@@ -46,6 +46,7 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ title, actions, children }) {
     const { user, logout } = useApp();
+    const logos = useBrandLogos();
     const navigate = useNavigate();
     const headerRef = useRef(null);
     const [headerHeight, setHeaderHeight] = useState(0);
@@ -80,7 +81,7 @@ export default function AdminLayout({ title, actions, children }) {
                                 <SidebarMenuButton size="lg" asChild>
                                     <NavLink to="/admin/content">
                                         <img
-                                            src={LOGO_SRC}
+                                            src={logos.onDark}
                                             alt=""
                                             className="h-6 w-6 object-contain"
                                         />

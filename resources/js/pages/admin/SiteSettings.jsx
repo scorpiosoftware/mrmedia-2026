@@ -1,15 +1,19 @@
 import AdminLayout from '@/components/admin/AdminLayout';
+import { LOGO_DARK_SRC, LOGO_SRC } from '@/lib/brand-logos';
 import { THEME_COLOR_KEYS, themeVars } from '@/lib/site-theme';
 import {
     ArrowUpRight,
     Check,
     Globe,
+    Image as ImageIcon,
     Loader2,
     Monitor,
     Moon,
     Palette,
     Save,
     Sun,
+    Trash2,
+    Upload,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -78,6 +82,226 @@ function Choice({ options, value, onChange }) {
                     )}
                 </button>
             ))}
+        </div>
+    );
+}
+
+// Requirements per branding slot — shown as tips and enforced by the server.
+const BRANDING_SLOTS = [
+    {
+        field: 'logo_url',
+        label: 'Logo — Light Backgrounds',
+        endpoint: '/spa/admin/site-settings/upload-logo',
+        fallback: LOGO_SRC,
+        previewBg: 'bg-white',
+        tip: (
+            <>
+                Shown on white/light areas, like the navbar once the page
+                scrolls. Recommended{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    512 × 512 px
+                </strong>{' '}
+                or larger, at least 128 × 128 px. Use a{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    transparent PNG or WebP
+                </strong>{' '}
+                with a dark/coloured mark. It's fitted inside a square, so a
+                square-ish logo with little empty margin looks best.
+            </>
+        ),
+    },
+    {
+        field: 'logo_dark_url',
+        label: 'Logo — Dark Backgrounds',
+        endpoint: '/spa/admin/site-settings/upload-logo',
+        fallback: LOGO_DARK_SRC,
+        previewBg: 'bg-[#0D1B4B]',
+        tip: (
+            <>
+                Shown on dark/coloured areas: the top of the navbar, dark mode,
+                the hero, About card and banner. Recommended{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    512 × 512 px
+                </strong>{' '}
+                or larger, at least 128 × 128 px. Use a{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    transparent PNG or WebP
+                </strong>{' '}
+                with a light/white mark. Leave empty to reuse the
+                light-background logo.
+            </>
+        ),
+    },
+    {
+        field: 'favicon_url',
+        label: 'Site Icon (Favicon)',
+        endpoint: '/spa/admin/site-settings/upload-favicon',
+        fallback: '/favicon.svg',
+        previewBg: 'bg-[#F1F1F0]',
+        favicon: true,
+        tip: (
+            <>
+                The small icon in browser tabs, bookmarks and phone home
+                screens. Must be a{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    square PNG
+                </strong>
+                , at least 48 × 48 px —{' '}
+                <strong className="font-semibold text-[#213C93]">
+                    512 × 512 px
+                </strong>{' '}
+                recommended. Keep it simple and bold: it's shown as small as 16
+                px.
+            </>
+        ),
+    },
+];
+
+/** One branding upload: preview on a matching background, upload/replace/remove, tips and errors. */
+function BrandingUpload({ slot, value, onChange }) {
+    const [uploading, setUploading] = useState(false);
+    const [error, setError] = useState('');
+
+    const upload = async (file) => {
+        if (!file) return;
+        setError('');
+        const allowed = slot.favicon
+            ? ['image/png']
+            : ['image/jpeg', 'image/png', 'image/webp'];
+        if (!allowed.includes(file.type)) {
+            setError(
+                slot.favicon
+                    ? 'The site icon must be a PNG file.'
+                    : 'Only JPG, PNG or WebP images are allowed.',
+            );
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            setError('Image must be 2MB or smaller.');
+            return;
+        }
+        setUploading(true);
+        try {
+            const body = new FormData();
+            body.append('image', file);
+            const res = await fetch(slot.endpoint, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body,
+            });
+            const json = await res.json().catch(() => ({}));
+            if (res.ok) onChange(json.url);
+            else
+                setError(
+                    json?.errors?.image?.[0] ||
+                        json?.message ||
+                        'Upload failed.',
+                );
+        } catch {
+            setError('Network error during upload.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const src = value || slot.fallback;
+
+    return (
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+            {slot.favicon ? (
+                /* Favicon shown inside a mock browser tab */
+                <div className="w-44 shrink-0 overflow-hidden rounded-lg border border-[#D1D5E8] bg-[#E8EAF6]">
+                    <div className="flex gap-1 px-2 pt-2">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#5A6A9A]/40" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#5A6A9A]/40" />
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#5A6A9A]/40" />
+                    </div>
+                    <div className="mx-2 mt-1.5 flex items-center gap-1.5 rounded-t-md bg-white px-2 py-1.5">
+                        <img
+                            src={src}
+                            alt=""
+                            className="h-4 w-4 shrink-0 object-contain"
+                        />
+                        <span className="truncate text-[10px] font-semibold text-[#0D1B4B]">
+                            Website tab
+                        </span>
+                    </div>
+                    <div className="flex h-14 items-center justify-center bg-white">
+                        <img
+                            src={src}
+                            alt=""
+                            className="h-10 w-10 rounded-lg object-contain"
+                        />
+                    </div>
+                </div>
+            ) : (
+                <div
+                    className={`flex h-28 w-44 shrink-0 items-center justify-center rounded-lg border border-[#D1D5E8] p-3 ${slot.previewBg}`}
+                >
+                    <img
+                        src={src}
+                        alt=""
+                        className="max-h-full max-w-full object-contain"
+                    />
+                </div>
+            )}
+
+            <div className="flex-1 space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                    <p className="me-auto text-sm font-bold text-[#0D1B4B]">
+                        {slot.label}
+                        {!value && (
+                            <span className="ms-2 text-xs font-normal text-[#5A6A9A]">
+                                (using default)
+                            </span>
+                        )}
+                    </p>
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#E8EAF6] px-3.5 py-2 text-xs font-semibold text-[#213C93] transition-colors hover:bg-[#D1D5E8]">
+                        {uploading ? (
+                            <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                            <Upload size={14} />
+                        )}
+                        {uploading
+                            ? 'Uploading…'
+                            : value
+                              ? 'Replace'
+                              : 'Upload'}
+                        <input
+                            type="file"
+                            accept={
+                                slot.favicon
+                                    ? 'image/png'
+                                    : 'image/jpeg,image/png,image/webp'
+                            }
+                            disabled={uploading}
+                            className="hidden"
+                            onChange={(e) => {
+                                upload(e.target.files?.[0]);
+                                e.target.value = '';
+                            }}
+                        />
+                    </label>
+                    {value && (
+                        <button
+                            type="button"
+                            onClick={() => onChange(null)}
+                            title="Remove and use the default"
+                            className="rounded-lg p-2 text-[#5A6A9A] transition-colors hover:bg-red-50 hover:text-red-600"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                    )}
+                </div>
+                <p className="text-xs leading-relaxed text-[#5A6A9A]">
+                    {slot.tip} Max 2MB and 6000 px per side.
+                </p>
+                {error && <p className="text-xs text-red-600">{error}</p>}
+            </div>
         </div>
     );
 }
@@ -364,6 +588,30 @@ export default function SiteSettings() {
                                     : form.site_name}
                             </p>
                         </div>
+                    </Card>
+
+                    {/* Branding */}
+                    <Card
+                        Icon={ImageIcon}
+                        title="Logos & Site Icon"
+                        subtitle="Upload, then click Save to publish. Removing one goes back to the default artwork."
+                    >
+                        {BRANDING_SLOTS.map((slot, i) => (
+                            <div
+                                key={slot.field}
+                                className={
+                                    i
+                                        ? 'border-t border-[#E8EAF6] pt-5'
+                                        : undefined
+                                }
+                            >
+                                <BrandingUpload
+                                    slot={slot}
+                                    value={form[slot.field]}
+                                    onChange={(url) => set(slot.field, url)}
+                                />
+                            </div>
+                        ))}
                     </Card>
 
                     {/* Defaults */}

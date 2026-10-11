@@ -25,6 +25,12 @@ class SpaController extends Controller
         ]);
     }
 
+    /** Uploaded logo (Site Settings) or the built-in one — used for link previews and search-engine data. */
+    private function logoUrl(): string
+    {
+        return $this->absoluteUrl(SiteSetting::current()->logo_url) ?? asset('images/logo.png');
+    }
+
     private function siteName(): string
     {
         return SiteSetting::current()->site_name;
@@ -57,7 +63,7 @@ class SpaController extends Controller
             'title'       => $tagline ? "{$siteName} | {$tagline}" : $siteName,
             'description' => $description,
             'canonical'   => $canonical,
-            'ogImage'     => asset('images/logo.png'),
+            'ogImage'     => $this->logoUrl(),
             'ogType'      => 'website',
             'robots'      => 'index, follow',
             'jsonLd'      => $this->organizationJsonLd($content),
@@ -81,7 +87,7 @@ class SpaController extends Controller
             ? Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($event->description))), 160)
             : "Join {$event->title}, hosted by {$siteName}.";
 
-        $image = $this->absoluteUrl($event->image_url) ?? asset('images/logo.png');
+        $image = $this->absoluteUrl($event->image_url) ?? $this->logoUrl();
 
         return [
             'title'       => "{$event->title} | {$siteName}",
@@ -100,7 +106,7 @@ class SpaController extends Controller
             'title'       => $title,
             'description' => null,
             'canonical'   => $canonical,
-            'ogImage'     => asset('images/logo.png'),
+            'ogImage'     => $this->logoUrl(),
             'ogType'      => 'website',
             'robots'      => $robots,
             'jsonLd'      => null,
@@ -132,7 +138,7 @@ class SpaController extends Controller
             '@type'        => 'Organization',
             'name'         => $this->siteName(),
             'url'          => url('/'),
-            'logo'         => asset('images/logo.png'),
+            'logo'         => $this->logoUrl(),
             'description'  => $content['hero.subtitle'] ?? null,
             'email'        => $listOrSingle(SiteContent::contactList($content, 'email')),
             'telephone'    => $listOrSingle(SiteContent::contactList($content, 'phone')),

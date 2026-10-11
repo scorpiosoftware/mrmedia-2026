@@ -11,7 +11,7 @@
     $themeStyle  = collect($themeVars)->map(fn ($v, $k) => "{$k}: {$v}")->implode('; ');
     $description = $description ?? null;
     $canonical   = $canonical ?? url()->current();
-    $ogImage     = $ogImage ?? asset('images/logo.png');
+    $ogImage     = $ogImage ?? ($siteSettings['logo_url'] ?? null) ?? asset('images/logo.png');
     $ogType      = $ogType ?? 'website';
     $robots      = $robots ?? 'index, follow';
     $jsonLd      = $jsonLd ?? null;
@@ -53,9 +53,15 @@
             <script type="application/ld+json">{!! json_encode($jsonLd, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
         @endif
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @if (! empty($siteSettings['favicon_url']))
+            {{-- Uploaded in Site Settings --}}
+            <link rel="icon" href="{{ $siteSettings['favicon_url'] }}" type="image/png">
+            <link rel="apple-touch-icon" href="{{ $siteSettings['favicon_url'] }}">
+        @else
+            <link rel="icon" href="/favicon.ico" sizes="any">
+            <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+            <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        @endif
 
         {{-- Site settings for first paint (default language/appearance, theme, name) --}}
         <script>window.__SITE_SETTINGS__ = {!! json_encode($siteSettings, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!};</script>

@@ -46,7 +46,13 @@ class SiteSetting extends Model
         'default_appearance',
         'theme',
         'custom_colors',
+        'logo_url',
+        'logo_dark_url',
+        'favicon_url',
     ];
+
+    /** Branding image fields, each uploaded through Site Settings. */
+    public const BRANDING_FIELDS = ['logo_url', 'logo_dark_url', 'favicon_url'];
 
     protected $casts = [
         'custom_colors' => 'array',
@@ -128,6 +134,9 @@ class SiteSetting extends Model
             'default_appearance' => $this->default_appearance,
             'theme'              => $this->theme,
             'colors'             => $this->colors(),
+            'logo_url'           => $this->logo_url,
+            'logo_dark_url'      => $this->logo_dark_url,
+            'favicon_url'        => $this->favicon_url,
         ];
     }
 }

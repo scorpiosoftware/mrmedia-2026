@@ -1,5 +1,4 @@
-import { useContent } from '@/hooks/use-content';
-import { LOGO_DARK_SRC } from '@/lib/brand-logos';
+import { useBrandLogos, useContent } from '@/hooks/use-content';
 import { ArrowRight, Play } from 'lucide-react';
 
 /* Deterministic particle positions so there are no hydration mismatches */
@@ -17,6 +16,7 @@ const DOT_GRID_B = Array.from({ length: 16 });
 
 export default function Hero() {
     const t = useContent();
+    const logos = useBrandLogos();
     // Optional image (Content → Hero). When set, the hero splits into text + image columns.
     const heroImage = t('hero.image');
     const split = Boolean(heroImage);
@@ -132,7 +132,7 @@ export default function Hero() {
                         style={{ opacity: 0.13, animationDelay: '3s' }}
                     >
                         <img
-                            src={LOGO_DARK_SRC}
+                            src={logos.dark}
                             alt=""
                             aria-hidden="true"
                             className="w-72 object-contain sm:w-96 md:w-120"

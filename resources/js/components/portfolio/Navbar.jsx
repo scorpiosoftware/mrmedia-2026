@@ -2,8 +2,7 @@ import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
-import { LOGO_SRC } from '@/lib/brand-logos';
+import { useBrandLogos, useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
 const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', events: 'events', about: 'about', contact: 'contact' };
@@ -11,6 +10,7 @@ const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio'
 export default function Navbar() {
     const t = useContent();
     const site = useSiteIdentity();
+    const logos = useBrandLogos();
     const locale = useLocale();
     const { setLocale, isDarkMode, toggleDarkMode } = useApp();
     const navigate = useNavigate();
@@ -80,7 +80,7 @@ export default function Navbar() {
                             }`}
                         >
                             <img
-                                src={LOGO_SRC}
+                                src={!scrolled || isDarkMode ? logos.onDark : logos.light}
                                 alt={site.name}
                                 className="w-9 h-9 object-contain"
                             />
