@@ -1,5 +1,6 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent, useLocale } from '@/hooks/use-content';
+import { seatsStatus } from '@/lib/event-seats';
 import { ArrowUpRight, Calendar, CalendarX, MapPin, Monitor, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -70,7 +71,7 @@ export default function Events() {
                 ) : (
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {events.map((event, i) => {
-                            const isFull = event.remaining !== null && event.remaining <= 0;
+                            const seats = seatsStatus(event, t);
                             return (
                                 <Link
                                     key={event.id}
@@ -122,10 +123,18 @@ export default function Events() {
                                                     <span className="truncate">{event.location}</span>
                                                 </div>
                                             )}
-                                            {event.remaining !== null && (
-                                                <div className="flex items-center gap-2">
+                                            {seats && (
+                                                <div
+                                                    className={`flex items-center gap-2 ${
+                                                        seats.full
+                                                            ? 'font-semibold text-red-600 dark:text-red-400'
+                                                            : seats.low
+                                                              ? 'font-semibold text-amber-600 dark:text-brand-yellow'
+                                                              : 'text-emerald-700 dark:text-emerald-400'
+                                                    }`}
+                                                >
                                                     <Users size={14} className="shrink-0" />
-                                                    {isFull ? t('events.full') : `${event.remaining} / ${event.capacity}`}
+                                                    {seats.text}
                                                 </div>
                                             )}
                                         </div>

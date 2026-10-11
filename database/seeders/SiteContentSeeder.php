@@ -106,6 +106,8 @@ class SiteContentSeeder extends Seeder
             ['key' => 'events.form.per_person',    'section' => 'events', 'en_value' => 'per person', 'ar_value' => 'للشخص', 'type' => 'text', 'sort_order' => 40],
             ['key' => 'events.group_discount_hint', 'section' => 'events', 'en_value' => 'Save {percent}% when registering {min} or more attendees', 'ar_value' => 'وفّر {percent}% عند تسجيل {min} أشخاص أو أكثر', 'type' => 'text', 'sort_order' => 41],
             ['key' => 'events.form.max_attendees', 'section' => 'events', 'en_value' => 'Up to {count} seats available', 'ar_value' => 'المقاعد المتاحة: حتى {count}', 'type' => 'text', 'sort_order' => 42],
+            ['key' => 'events.seats_available',    'section' => 'events', 'en_value' => '{count} seats available', 'ar_value' => 'المقاعد المتاحة: {count}', 'type' => 'text', 'sort_order' => 43],
+            ['key' => 'events.seats_low',          'section' => 'events', 'en_value' => 'Only {count} left!', 'ar_value' => 'متبقٍ {count} فقط!', 'type' => 'text', 'sort_order' => 44],
 
             // ── About
             ['key' => 'about.section_badge', 'section' => 'about', 'en_value' => 'Who We Are',        'ar_value' => 'من نحن',               'type' => 'text',     'sort_order' => 1],
