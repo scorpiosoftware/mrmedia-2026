@@ -4,7 +4,7 @@ import Footer from '@/components/portfolio/Footer';
 import Navbar from '@/components/portfolio/Navbar';
 import PhoneInput from '@/components/portfolio/PhoneInput';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
-import { useContent, useLocale } from '@/hooks/use-content';
+import { useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import {
@@ -93,12 +93,12 @@ function RegisterForm({ event }) {
         return (
             <div className="text-center py-10">
                 <div
-                    className="h-16 w-16 rounded-full bg-[#213C93] flex items-center justify-center mx-auto mb-4 shadow-[0_0_32px_rgba(33,60,147,0.45)]"
+                    className="h-16 w-16 rounded-full bg-brand-blue flex items-center justify-center mx-auto mb-4 shadow-[0_0_32px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]"
                     style={{ animation: 'scale-in-fade 0.5s cubic-bezier(0.16,1,0.3,1) both' }}
                 >
                     <Send size={24} className="text-white" />
                 </div>
-                <p className="text-lg font-bold text-[#0D1B4B] dark:text-white">{t('events.success_title')}</p>
+                <p className="text-lg font-bold text-brand-dark dark:text-white">{t('events.success_title')}</p>
                 <p className="text-muted-foreground dark:text-white/60 mt-1">{t('events.success_message')}</p>
             </div>
         );
@@ -115,7 +115,7 @@ function RegisterForm({ event }) {
 
             <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                    <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                         {t('events.form.name')}
                         <RequiredMark required={isRequired('name')} />
                     </label>
@@ -125,11 +125,11 @@ function RegisterForm({ event }) {
                         value={form.name}
                         onChange={handleChange}
                         required={isRequired('name')}
-                        className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                        className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                         {t('events.form.email')}
                         <RequiredMark required={isRequired('email')} />
                     </label>
@@ -139,11 +139,11 @@ function RegisterForm({ event }) {
                         value={form.email}
                         onChange={handleChange}
                         required={isRequired('email')}
-                        className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                        className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                         {t('events.form.phone')}
                         <RequiredMark required={isRequired('phone')} />
                     </label>
@@ -153,11 +153,11 @@ function RegisterForm({ event }) {
                         onCountryChange={(iso) => setForm((prev) => ({ ...prev, phoneCountry: iso }))}
                         onNumberChange={(value) => setForm((prev) => ({ ...prev, phoneNumber: value }))}
                         required={isRequired('phone')}
-                        inputClassName="rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                        inputClassName="rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                         {t('events.form.attendees')}
                     </label>
                     <input
@@ -168,13 +168,13 @@ function RegisterForm({ event }) {
                         value={form.attendees}
                         onChange={handleChange}
                         required
-                        className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                        className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                     />
                 </div>
             </div>
 
             <div>
-                <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                     {t('events.form.company')}
                     <RequiredMark required={isRequired('company')} />
                 </label>
@@ -184,12 +184,12 @@ function RegisterForm({ event }) {
                     value={form.company}
                     onChange={handleChange}
                     required={isRequired('company')}
-                    className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20"
+                    className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                 />
             </div>
 
             <div>
-                <label className="block text-xs font-semibold text-[#213C93] dark:text-brand-yellow mb-2 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-brand-blue dark:text-brand-yellow mb-2 uppercase tracking-wider">
                     {t('events.form.message')}
                     <RequiredMark required={isRequired('message')} />
                 </label>
@@ -199,14 +199,14 @@ function RegisterForm({ event }) {
                     onChange={handleChange}
                     rows={3}
                     required={isRequired('message')}
-                    className="w-full rounded-xl border border-[#D1D5E8] dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-[#0D1B4B] dark:text-white focus:border-[#213C93] dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-[#213C93]/20 dark:focus:ring-brand-yellow/20 resize-none"
+                    className="w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-4 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20 resize-none"
                 />
             </div>
 
             <button
                 type="submit"
                 disabled={status === 'sending'}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-[#213C93] py-3.5 text-sm font-bold text-white hover:bg-[#2E52C9] hover:shadow-[0_8px_32px_rgba(33,60,147,0.35)] disabled:opacity-70 disabled:hover:shadow-none transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand-blue py-3.5 text-sm font-bold text-white hover:bg-primary-light hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] disabled:opacity-70 disabled:hover:shadow-none transition-all duration-300"
             >
                 {status === 'sending' ? (
                     <>
@@ -229,7 +229,7 @@ function AgendaSection({ event, t }) {
     return (
         <section className="py-16 sm:py-20 bg-white dark:bg-brand-dark">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-                <h2 className="text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
+                <h2 className="text-center text-2xl font-black text-brand-dark dark:text-white sm:text-3xl">
                     {event.titles?.agenda || t('events.agenda_label')}
                 </h2>
                 <p className="mt-2 text-center text-muted-foreground dark:text-white/60">
@@ -239,12 +239,12 @@ function AgendaSection({ event, t }) {
                     {event.agenda.map((item, i) => (
                         <div
                             key={i}
-                            className="flex gap-3 rounded-2xl bg-[#F1F1F0] dark:bg-primary-dark p-5 border border-[#D1D5E8] dark:border-primary-light/40"
+                            className="flex gap-3 rounded-2xl bg-brand-bg dark:bg-primary-dark p-5 border border-border dark:border-primary-light/40"
                         >
-                            <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-[#213C93] dark:text-brand-yellow" />
+                            <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-brand-blue dark:text-brand-yellow" />
                             <div>
                                 {item.title && (
-                                    <p className="font-bold text-[#0D1B4B] dark:text-white">{item.title}</p>
+                                    <p className="font-bold text-brand-dark dark:text-white">{item.title}</p>
                                 )}
                                 {item.description && (
                                     <p className="mt-1 text-sm text-muted-foreground dark:text-white/70">{item.description}</p>
@@ -262,12 +262,12 @@ function TrainerSection({ event, t }) {
     const trainer = event.trainer;
     if (!trainer?.name) return null;
     return (
-        <section className="py-16 sm:py-20 bg-[#F7F7F6] dark:bg-primary-dark/40">
+        <section className="py-16 sm:py-20 bg-brand-bg-alt dark:bg-primary-dark/40">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-                <h2 className="mb-10 text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
+                <h2 className="mb-10 text-center text-2xl font-black text-brand-dark dark:text-white sm:text-3xl">
                     {event.titles?.trainer || t('events.trainer_label')}
                 </h2>
-                <div className="flex flex-col items-center gap-6 rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_rgba(33,60,147,0.08)] border border-[#D1D5E8] dark:border-primary-light/40 sm:flex-row sm:items-start">
+                <div className="flex flex-col items-center gap-6 rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] border border-border dark:border-primary-light/40 sm:flex-row sm:items-start">
                     {trainer.image_url ? (
                         <img
                             src={trainer.image_url}
@@ -275,14 +275,14 @@ function TrainerSection({ event, t }) {
                             className="h-28 w-28 shrink-0 rounded-2xl object-cover"
                         />
                     ) : (
-                        <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl bg-[#213C93] text-3xl font-black text-white">
+                        <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl bg-brand-blue text-3xl font-black text-white">
                             {trainer.name.charAt(0)}
                         </div>
                     )}
                     <div className="text-center sm:text-start">
-                        <p className="text-lg font-black text-[#0D1B4B] dark:text-white">{trainer.name}</p>
+                        <p className="text-lg font-black text-brand-dark dark:text-white">{trainer.name}</p>
                         {trainer.title && (
-                            <p className="text-sm font-semibold text-[#213C93] dark:text-brand-yellow">{trainer.title}</p>
+                            <p className="text-sm font-semibold text-brand-blue dark:text-brand-yellow">{trainer.title}</p>
                         )}
                         {trainer.bio && (
                             <p className="mt-3 leading-relaxed text-muted-foreground dark:text-white/70">{trainer.bio}</p>
@@ -290,8 +290,8 @@ function TrainerSection({ event, t }) {
                         {trainer.credentials?.length > 0 && (
                             <ul className="mt-4 flex flex-wrap justify-center gap-x-5 gap-y-2 sm:justify-start">
                                 {trainer.credentials.map((c, i) => (
-                                    <li key={i} className="flex items-center gap-1.5 text-sm text-[#0D1B4B] dark:text-white/80">
-                                        <Award size={14} className="shrink-0 text-[#DDB50E]" />
+                                    <li key={i} className="flex items-center gap-1.5 text-sm text-brand-dark dark:text-white/80">
+                                        <Award size={14} className="shrink-0 text-brand-gold" />
                                         {c}
                                     </li>
                                 ))}
@@ -309,27 +309,27 @@ function TestimonialsSection({ event, t }) {
     return (
         <section className="py-16 sm:py-20 bg-white dark:bg-brand-dark">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <h2 className="mb-10 text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
+                <h2 className="mb-10 text-center text-2xl font-black text-brand-dark dark:text-white sm:text-3xl">
                     {t('events.testimonials_label')}
                 </h2>
                 <div className="grid gap-5 sm:grid-cols-2">
                     {event.testimonials.map((item, i) => (
                         <div
                             key={i}
-                            className="rounded-2xl bg-[#F1F1F0] dark:bg-primary-dark p-6 border border-[#D1D5E8] dark:border-primary-light/40"
+                            className="rounded-2xl bg-brand-bg dark:bg-primary-dark p-6 border border-border dark:border-primary-light/40"
                         >
-                            <Quote size={22} className="mb-3 text-[#213C93]/30 dark:text-brand-yellow/30" />
-                            <p className="leading-relaxed text-[#0D1B4B] dark:text-white/85">{item.quote}</p>
+                            <Quote size={22} className="mb-3 text-brand-blue/30 dark:text-brand-yellow/30" />
+                            <p className="leading-relaxed text-brand-dark dark:text-white/85">{item.quote}</p>
                             <div className="mt-4 flex items-center gap-3">
                                 {item.avatar_url ? (
                                     <img src={item.avatar_url} alt={item.name ?? ''} className="h-9 w-9 rounded-full object-cover" />
                                 ) : (
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#213C93] text-xs font-bold text-white">
+                                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue text-xs font-bold text-white">
                                         {(item.name ?? '?').charAt(0)}
                                     </div>
                                 )}
                                 <div>
-                                    {item.name && <p className="text-sm font-bold text-[#0D1B4B] dark:text-white">{item.name}</p>}
+                                    {item.name && <p className="text-sm font-bold text-brand-dark dark:text-white">{item.name}</p>}
                                     {item.role && <p className="text-xs text-muted-foreground dark:text-white/60">{item.role}</p>}
                                 </div>
                             </div>
@@ -344,16 +344,16 @@ function TestimonialsSection({ event, t }) {
 function FaqItem({ item }) {
     const [open, setOpen] = useState(false);
     return (
-        <div className="rounded-2xl border border-[#D1D5E8] dark:border-primary-light/40 bg-[#F1F1F0] dark:bg-primary-dark overflow-hidden">
+        <div className="rounded-2xl border border-border dark:border-primary-light/40 bg-brand-bg dark:bg-primary-dark overflow-hidden">
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
                 className="flex w-full items-center justify-between gap-4 px-5 py-4 text-start"
             >
-                <span className="font-semibold text-[#0D1B4B] dark:text-white">{item.question}</span>
+                <span className="font-semibold text-brand-dark dark:text-white">{item.question}</span>
                 <ChevronDown
                     size={18}
-                    className={`shrink-0 text-[#213C93] dark:text-brand-yellow transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                    className={`shrink-0 text-brand-blue dark:text-brand-yellow transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
                 />
             </button>
             {open && (
@@ -368,9 +368,9 @@ function FaqItem({ item }) {
 function FaqSection({ event, t }) {
     if (!event.faqs?.length) return null;
     return (
-        <section className="py-16 sm:py-20 bg-[#F7F7F6] dark:bg-primary-dark/40">
+        <section className="py-16 sm:py-20 bg-brand-bg-alt dark:bg-primary-dark/40">
             <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-                <h2 className="mb-10 text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
+                <h2 className="mb-10 text-center text-2xl font-black text-brand-dark dark:text-white sm:text-3xl">
                     {t('events.faq_label')}
                 </h2>
                 <div className="space-y-3">
@@ -397,7 +397,7 @@ function FinalCta({ event, t }) {
                 <a
                     href="#register"
                     onClick={scrollToRegister}
-                    className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#213C93] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+                    className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-brand-blue transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
                 >
                     {event.titles?.cta_button || t('events.register_cta')}
                 </a>
@@ -437,8 +437,10 @@ export default function EventDetails() {
 
     const isFull = event?.remaining !== null && event?.remaining !== undefined && event.remaining <= 0;
 
+    const site = useSiteIdentity();
+
     useDocumentMeta({
-        title: event ? `${event.title} | Mr.MEDIA` : undefined,
+        title: event ? `${event.title} | ${site.name}` : undefined,
         description: event?.description
             ? event.description.replace(/\s+/g, ' ').trim().slice(0, 160)
             : undefined,
@@ -450,15 +452,15 @@ export default function EventDetails() {
             <main className="min-h-screen bg-white dark:bg-brand-dark transition-colors duration-300">
                 {loading ? (
                     <div className="flex min-h-screen items-center justify-center">
-                        <div className="h-10 w-10 rounded-full border-4 border-[#213C93] border-t-transparent animate-spin" />
+                        <div className="h-10 w-10 rounded-full border-4 border-brand-blue border-t-transparent animate-spin" />
                     </div>
                 ) : notFound || !event ? (
                     <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-                        <CalendarX size={48} className="mb-4 text-[#5A6A9A] opacity-40" />
-                        <p className="mb-6 text-lg font-bold text-[#0D1B4B] dark:text-white">{t('events.not_found')}</p>
+                        <CalendarX size={48} className="mb-4 text-muted-foreground opacity-40" />
+                        <p className="mb-6 text-lg font-bold text-brand-dark dark:text-white">{t('events.not_found')}</p>
                         <button
                             onClick={backToEvents}
-                            className="inline-flex items-center gap-2 rounded-xl bg-[#213C93] px-6 py-3 text-sm font-bold text-white hover:bg-[#2E52C9] transition-colors"
+                            className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-6 py-3 text-sm font-bold text-white hover:bg-primary-light transition-colors"
                         >
                             <ChevronLeft size={16} className="rtl:rotate-180" />
                             {t('events.back_to_events')}
@@ -471,11 +473,11 @@ export default function EventDetails() {
                             <div className="absolute inset-0 pointer-events-none overflow-hidden">
                                 <div
                                     className="absolute -top-32 -right-32 w-125 h-125 rounded-full mm-float mm-glow-blue"
-                                    style={{ background: 'radial-gradient(circle, rgba(46,82,201,0.5) 0%, rgba(33,60,147,0.18) 45%, transparent 70%)' }}
+                                    style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--color-primary-light) 50%, transparent) 0%, color-mix(in srgb, var(--color-brand-blue) 18%, transparent) 45%, transparent 70%)' }}
                                 />
                                 <div
                                     className="absolute -bottom-32 -left-32 w-100 h-100 rounded-full mm-float-rev mm-glow-gold"
-                                    style={{ background: 'radial-gradient(circle, rgba(221,181,14,0.22) 0%, transparent 70%)' }}
+                                    style={{ background: 'radial-gradient(circle, color-mix(in srgb, var(--color-brand-gold) 22%, transparent) 0%, transparent 70%)' }}
                                 />
                             </div>
 
@@ -491,7 +493,7 @@ export default function EventDetails() {
                                 <div className="mb-4 flex flex-wrap items-center gap-2">
                                     <span
                                         className={`inline-block w-fit rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-                                            event.type === 'training' ? 'bg-[#FCD532]/20 text-[#FCD532]' : 'bg-white/15 text-white'
+                                            event.type === 'training' ? 'bg-brand-yellow/20 text-brand-yellow' : 'bg-white/15 text-white'
                                         }`}
                                     >
                                         {event.type === 'training' ? t('events.badge_training') : t('events.badge_event')}
@@ -508,18 +510,18 @@ export default function EventDetails() {
 
                                 <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-white/85">
                                     <div className="flex items-center gap-2">
-                                        <Calendar size={16} className="shrink-0 text-[#FCD532]" />
+                                        <Calendar size={16} className="shrink-0 text-brand-yellow" />
                                         {formatDate(event.starts_at, locale)}
                                     </div>
                                     {event.location && (
                                         <div className="flex items-center gap-2">
-                                            <MapPin size={16} className="shrink-0 text-[#FCD532]" />
+                                            <MapPin size={16} className="shrink-0 text-brand-yellow" />
                                             {event.location}
                                         </div>
                                     )}
                                     {event.remaining !== null && (
                                         <div className="flex items-center gap-2">
-                                            <Users size={16} className="shrink-0 text-[#FCD532]" />
+                                            <Users size={16} className="shrink-0 text-brand-yellow" />
                                             {isFull ? t('events.full') : `${event.remaining} / ${event.capacity}`}
                                         </div>
                                     )}
@@ -529,7 +531,7 @@ export default function EventDetails() {
                                     <a
                                         href="#register"
                                         onClick={scrollToRegister}
-                                        className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#213C93] transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
+                                        className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-brand-blue transition-all duration-300 hover:shadow-[0_8px_32px_rgba(0,0,0,0.25)]"
                                     >
                                         {t('events.register_cta')}
                                     </a>
@@ -555,7 +557,7 @@ export default function EventDetails() {
                                         <div>
                                             {event.description && (
                                                 <>
-                                                    <h2 className="mb-4 text-xl font-black text-[#0D1B4B] dark:text-white">
+                                                    <h2 className="mb-4 text-xl font-black text-brand-dark dark:text-white">
                                                         {t('events.about_label')}
                                                     </h2>
                                                     <p className="whitespace-pre-line leading-relaxed text-muted-foreground dark:text-white/70">
@@ -564,13 +566,13 @@ export default function EventDetails() {
                                                 </>
                                             )}
                                             {event.target_audience && (
-                                                <div className="mt-6 flex gap-3 rounded-2xl bg-[#F1F1F0] dark:bg-primary-dark p-5 border border-[#D1D5E8] dark:border-primary-light/40">
-                                                    <Users size={20} className="mt-0.5 shrink-0 text-[#213C93] dark:text-brand-yellow" />
+                                                <div className="mt-6 flex gap-3 rounded-2xl bg-brand-bg dark:bg-primary-dark p-5 border border-border dark:border-primary-light/40">
+                                                    <Users size={20} className="mt-0.5 shrink-0 text-brand-blue dark:text-brand-yellow" />
                                                     <div>
-                                                        <p className="text-xs font-bold uppercase tracking-wider text-[#213C93] dark:text-brand-yellow">
+                                                        <p className="text-xs font-bold uppercase tracking-wider text-brand-blue dark:text-brand-yellow">
                                                             {t('events.target_audience_label')}
                                                         </p>
-                                                        <p className="mt-1 text-sm leading-relaxed text-[#0D1B4B] dark:text-white/80">
+                                                        <p className="mt-1 text-sm leading-relaxed text-brand-dark dark:text-white/80">
                                                             {event.target_audience}
                                                         </p>
                                                     </div>
@@ -589,17 +591,17 @@ export default function EventDetails() {
                         <TrainerSection event={event} t={t} />
 
                         {/* 05 — Registration: form + price + payment */}
-                        <section id="register" className="scroll-mt-24 py-16 sm:py-20 bg-[#F7F7F6] dark:bg-primary-dark/40">
+                        <section id="register" className="scroll-mt-24 py-16 sm:py-20 bg-brand-bg-alt dark:bg-primary-dark/40">
                             <div className="mx-auto max-w-xl px-4 sm:px-6 lg:px-8">
-                                <h2 className="mb-8 text-center text-2xl font-black text-[#0D1B4B] dark:text-white sm:text-3xl">
+                                <h2 className="mb-8 text-center text-2xl font-black text-brand-dark dark:text-white sm:text-3xl">
                                     {t('events.registration_label')}
                                 </h2>
-                                <div className="rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_rgba(33,60,147,0.08)] border border-[#D1D5E8] dark:border-primary-light/40">
-                                    <div className="mb-6 flex items-center justify-between border-b border-[#D1D5E8] dark:border-primary-light/40 pb-6">
-                                        <span className="text-xs font-bold uppercase tracking-widest text-[#5A6A9A] dark:text-white/50">
+                                <div className="rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] border border-border dark:border-primary-light/40">
+                                    <div className="mb-6 flex items-center justify-between border-b border-border dark:border-primary-light/40 pb-6">
+                                        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground dark:text-white/50">
                                             {t('events.price_label')}
                                         </span>
-                                        <span className="text-2xl font-black text-[#213C93] dark:text-brand-yellow">
+                                        <span className="text-2xl font-black text-brand-blue dark:text-brand-yellow">
                                             {event.price ? `${Number(event.price).toLocaleString()} ${t('events.currency')}` : t('events.free')}
                                         </span>
                                     </div>
@@ -615,7 +617,7 @@ export default function EventDetails() {
                                     {event.payment_note && (
                                         <div className="mt-5 text-center">
                                             {event.titles?.payment && (
-                                                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-[#213C93] dark:text-brand-yellow">
+                                                <p className="mb-1 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
                                                     {event.titles.payment}
                                                 </p>
                                             )}

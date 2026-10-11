@@ -79,6 +79,7 @@
     --color-brand-gold:   #DDB50E;
     --color-brand-yellow: #FCD532;
     --color-brand-bg:     #F1F1F0;
+    --color-brand-bg-alt: #F7F7F6;
     --color-brand-white:  #FFFFFF;
     --color-brand-dark:   #0D1B4B;
 
@@ -245,26 +246,26 @@
     }
 
     .bg-brand-gradient {
-        background: linear-gradient(135deg, #213C93 0%, #2E52C9 50%, #192E74 100%);
+        background: linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-primary-light) 50%, var(--color-primary-dark) 100%);
     }
 
     .bg-brand-gradient-gold {
-        background: linear-gradient(135deg, #DDB50E 0%, #FCD532 100%);
+        background: linear-gradient(135deg, var(--color-brand-gold) 0%, var(--color-brand-yellow) 100%);
     }
 
     .text-brand-gradient {
-        background: linear-gradient(135deg, #213C93, #2E52C9);
+        background: linear-gradient(135deg, var(--color-brand-blue), var(--color-primary-light));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
     }
 
     .shadow-brand {
-        box-shadow: 0 4px 24px 0 rgba(33, 60, 147, 0.18);
+        box-shadow: 0 4px 24px 0 color-mix(in srgb, var(--color-brand-blue) 18%, transparent);
     }
 
     .shadow-gold {
-        box-shadow: 0 4px 24px 0 rgba(221, 181, 14, 0.28);
+        box-shadow: 0 4px 24px 0 color-mix(in srgb, var(--color-brand-gold) 28%, transparent);
     }
 }
 
@@ -321,16 +322,16 @@
     50%       { opacity: 0.8;  transform: scale(1.6); }
 }
 @keyframes mm-glow-blue {
-    0%, 100% { box-shadow: 0 0 30px 6px rgba(33,60,147,0.22), 0 0 80px 20px rgba(33,60,147,0.08); }
-    50%       { box-shadow: 0 0 60px 12px rgba(33,60,147,0.45), 0 0 140px 40px rgba(33,60,147,0.16); }
+    0%, 100% { box-shadow: 0 0 30px 6px color-mix(in srgb, var(--color-brand-blue) 22%, transparent), 0 0 80px 20px color-mix(in srgb, var(--color-brand-blue) 8%, transparent); }
+    50%       { box-shadow: 0 0 60px 12px color-mix(in srgb, var(--color-brand-blue) 45%, transparent), 0 0 140px 40px color-mix(in srgb, var(--color-brand-blue) 16%, transparent); }
 }
 @keyframes mm-glow-gold {
-    0%, 100% { box-shadow: 0 0 20px 4px rgba(221,181,14,0.18), 0 0 60px 12px rgba(221,181,14,0.06); }
-    50%       { box-shadow: 0 0 40px 8px rgba(221,181,14,0.42), 0 0 100px 24px rgba(221,181,14,0.14); }
+    0%, 100% { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--color-brand-gold) 18%, transparent), 0 0 60px 12px color-mix(in srgb, var(--color-brand-gold) 6%, transparent); }
+    50%       { box-shadow: 0 0 40px 8px color-mix(in srgb, var(--color-brand-gold) 42%, transparent), 0 0 100px 24px color-mix(in srgb, var(--color-brand-gold) 14%, transparent); }
 }
 @keyframes mm-border-glow {
-    0%, 100% { border-color: rgba(221,181,14,0.35); box-shadow: 0 0 10px rgba(221,181,14,0.15); }
-    50%       { border-color: rgba(252,213,50,0.85); box-shadow: 0 0 24px rgba(252,213,50,0.35); }
+    0%, 100% { border-color: color-mix(in srgb, var(--color-brand-gold) 35%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--color-brand-gold) 15%, transparent); }
+    50%       { border-color: color-mix(in srgb, var(--color-brand-yellow) 85%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--color-brand-yellow) 35%, transparent); }
 }
 /* Scrolling banner: the track holds two identical copies, so shifting by -50% loops seamlessly. */
 @keyframes mm-marquee {
@@ -369,18 +370,18 @@
 
     /* Gold shimmer button */
     .btn-gold-shimmer {
-        background: linear-gradient(90deg, #DDB50E 0%, #FCD532 30%, #fff9 48%, #FCD532 66%, #DDB50E 100%);
+        background: linear-gradient(90deg, var(--color-brand-gold) 0%, var(--color-brand-yellow) 30%, #fff9 48%, var(--color-brand-yellow) 66%, var(--color-brand-gold) 100%);
         background-size: 220% 100%;
         animation: shimmer-gold 2.8s linear infinite;
     }
 
     /* Text glow */
-    .text-glow-gold  { text-shadow: 0 0 18px rgba(252,213,50,0.55), 0 0 40px rgba(221,181,14,0.28); }
+    .text-glow-gold  { text-shadow: 0 0 18px color-mix(in srgb, var(--color-brand-yellow) 55%, transparent), 0 0 40px color-mix(in srgb, var(--color-brand-gold) 28%, transparent); }
     .text-glow-white { text-shadow: 0 0 20px rgba(255,255,255,0.35); }
 
     /* Static glow shadows */
-    .glow-blue-sm { box-shadow: 0 0 24px 4px rgba(33,60,147,0.30); }
-    .glow-gold-sm { box-shadow: 0 0 24px 4px rgba(221,181,14,0.36); }
-    .glow-blue    { box-shadow: 0 0 48px 8px rgba(33,60,147,0.28); }
-    .glow-gold    { box-shadow: 0 0 48px 8px rgba(221,181,14,0.32); }
+    .glow-blue-sm { box-shadow: 0 0 24px 4px color-mix(in srgb, var(--color-brand-blue) 30%, transparent); }
+    .glow-gold-sm { box-shadow: 0 0 24px 4px color-mix(in srgb, var(--color-brand-gold) 36%, transparent); }
+    .glow-blue    { box-shadow: 0 0 48px 8px color-mix(in srgb, var(--color-brand-blue) 28%, transparent); }
+    .glow-gold    { box-shadow: 0 0 48px 8px color-mix(in srgb, var(--color-brand-gold) 32%, transparent); }
 }

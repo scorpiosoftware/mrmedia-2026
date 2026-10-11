@@ -30,7 +30,7 @@ export default function Portfolio() {
     return (
         <section
             id="portfolio"
-            className="overflow-hidden bg-[#F1F1F0] py-24 transition-colors duration-300 dark:bg-brand-dark"
+            className="overflow-hidden bg-brand-bg py-24 transition-colors duration-300 dark:bg-brand-dark"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Header */}
@@ -44,10 +44,10 @@ export default function Portfolio() {
                             : 'translateY(24px)',
                     }}
                 >
-                    <span className="mb-3 inline-block rounded-full bg-[#213C93]/10 px-4 py-1.5 text-xs font-bold tracking-widest text-[#213C93] uppercase dark:bg-[#213C93]/30 dark:text-brand-yellow">
+                    <span className="mb-3 inline-block rounded-full bg-brand-blue/10 px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-brand-blue/30 dark:text-brand-yellow">
                         {t('portfolio.section_badge')}
                     </span>
-                    <h2 className="text-3xl font-black text-[#0D1B4B] sm:text-4xl lg:text-5xl dark:text-white">
+                    <h2 className="text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
                         {t('portfolio.title')}
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-muted-foreground dark:text-white/60">
@@ -72,8 +72,8 @@ export default function Portfolio() {
                             onClick={() => setActive(f)}
                             className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 ${
                                 active === f
-                                    ? 'scale-105 bg-[#213C93] text-white shadow-[0_4px_20px_rgba(33,60,147,0.35)]'
-                                    : 'border border-[#D1D5E8] bg-white text-[#213C93] hover:border-[#213C93] hover:shadow-[0_2px_12px_rgba(33,60,147,0.12)] dark:border-primary-light/40 dark:bg-primary-dark dark:text-white dark:hover:border-brand-yellow/60'
+                                    ? 'scale-105 bg-brand-blue text-white shadow-[0_4px_20px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)]'
+                                    : 'border border-border bg-white text-brand-blue hover:border-brand-blue hover:shadow-[0_2px_12px_color-mix(in_srgb,var(--color-brand-blue)_12%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark dark:text-white dark:hover:border-brand-yellow/60'
                             }`}
                         >
                             {t(FILTER_KEYS[f])}
@@ -91,7 +91,7 @@ export default function Portfolio() {
                         Array.from({ length: 3 }).map((_, i) => (
                             <div
                                 key={i}
-                                className="aspect-4/3 animate-pulse rounded-2xl bg-[#D1D5E8]/60"
+                                className="aspect-4/3 animate-pulse rounded-2xl bg-border/60"
                             />
                         ))}
 
@@ -121,7 +121,7 @@ export default function Portfolio() {
                                               'aria-label': project.title,
                                           }
                                         : {})}
-                                    className={`group relative block aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/5 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_60px_rgba(13,27,75,0.35)] hover:ring-2 hover:ring-[#DDB50E]/70 focus-visible:-translate-y-2 focus-visible:ring-2 focus-visible:ring-[#DDB50E] focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:ring-white/10 ${
+                                    className={`group relative block aspect-4/3 overflow-hidden rounded-2xl ring-1 ring-black/5 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_24px_60px_color-mix(in_srgb,var(--color-brand-dark)_35%,transparent)] hover:ring-2 hover:ring-brand-gold/70 focus-visible:-translate-y-2 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:outline-none motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:ring-white/10 ${
                                         hasLink ? 'cursor-pointer' : ''
                                     }`}
                                     style={{ backgroundColor: project.color }}
@@ -151,17 +151,17 @@ export default function Portfolio() {
                                     <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
                                     {/* Brand tint that fades in on hover */}
-                                    <div className="absolute inset-0 bg-linear-to-br from-[#213C93]/50 via-[#0D1B4B]/30 to-black/40 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                                    <div className="absolute inset-0 bg-linear-to-br from-brand-blue/50 via-brand-dark/30 to-black/40 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
 
                                     {/* Centred link button — pops in on hover; always shown on touch screens */}
                                     {hasLink && (
                                         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                                            <span className="relative flex h-16 w-16 scale-50 -rotate-45 items-center justify-center rounded-full bg-[#DDB50E] opacity-0 shadow-[0_0_32px_rgba(221,181,14,0.65)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-100 group-hover:rotate-0 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:rotate-0 group-focus-visible:opacity-100 motion-reduce:transition-none [@media(hover:none)]:scale-90 [@media(hover:none)]:rotate-0 [@media(hover:none)]:opacity-100">
+                                            <span className="relative flex h-16 w-16 scale-50 -rotate-45 items-center justify-center rounded-full bg-brand-gold opacity-0 shadow-[0_0_32px_color-mix(in_srgb,var(--color-brand-gold)_65%,transparent)] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:scale-100 group-hover:rotate-0 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:rotate-0 group-focus-visible:opacity-100 motion-reduce:transition-none [@media(hover:none)]:scale-90 [@media(hover:none)]:rotate-0 [@media(hover:none)]:opacity-100">
                                                 {/* Soft pulsing ring */}
-                                                <span className="absolute inset-0 rounded-full bg-[#DDB50E] opacity-0 group-hover:animate-ping group-hover:opacity-40" />
+                                                <span className="absolute inset-0 rounded-full bg-brand-gold opacity-0 group-hover:animate-ping group-hover:opacity-40" />
                                                 <ArrowUpRight
                                                     size={26}
-                                                    className="relative text-[#0D1B4B] transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                                                    className="relative text-brand-dark transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                                                 />
                                             </span>
                                         </div>
@@ -169,8 +169,8 @@ export default function Portfolio() {
 
                                     {/* Caption — lifts slightly on hover */}
                                     <div className="absolute inset-x-0 bottom-0 p-6 transition-transform duration-500 ease-out group-hover:-translate-y-1">
-                                        <p className="mb-1 flex items-center gap-2 text-xs font-bold tracking-widest text-[#FCD532] uppercase">
-                                            <span className="h-0.5 w-4 rounded-full bg-[#FCD532] transition-all duration-500 group-hover:w-8" />
+                                        <p className="mb-1 flex items-center gap-2 text-xs font-bold tracking-widest text-brand-yellow uppercase">
+                                            <span className="h-0.5 w-4 rounded-full bg-brand-yellow transition-all duration-500 group-hover:w-8" />
                                             {project.category}
                                         </p>
                                         <h3 className="text-lg font-bold text-white">
@@ -194,7 +194,7 @@ export default function Portfolio() {
                         transitionDelay: '500ms',
                     }}
                 >
-                    <button className="group inline-flex items-center gap-2 rounded-full border-2 border-[#213C93] px-8 py-3 text-sm font-bold text-[#213C93] transition-all duration-300 hover:scale-105 hover:bg-[#213C93] hover:text-white hover:shadow-[0_8px_32px_rgba(33,60,147,0.30)]">
+                    <button className="group inline-flex items-center gap-2 rounded-full border-2 border-brand-blue px-8 py-3 text-sm font-bold text-brand-blue transition-all duration-300 hover:scale-105 hover:bg-brand-blue hover:text-white hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)]">
                         {t('portfolio.cta')}
                         <ArrowUpRight
                             size={16}

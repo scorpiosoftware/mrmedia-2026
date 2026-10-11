@@ -34,3 +34,31 @@ export function useContentList(baseKey) {
         .sort((a, b) => a[0] - b[0])
         .map(([, value]) => value);
 }
+
+/**
+ * Site name and tagline from the dashboard's Site Settings, in the current language
+ * (Arabic falls back to English when left blank).
+ */
+export function useSiteIdentity() {
+    const { siteSettings = {}, locale } = useApp();
+    const pick = (en, ar) => (locale === 'ar' && ar ? ar : en) || '';
+    const name = pick(siteSettings.site_name, siteSettings.site_name_ar) || 'Mr.MEDIA';
+    return {
+        name,
+        nameParts: splitBrandName(name),
+        tagline: pick(siteSettings.tagline, siteSettings.tagline_ar),
+    };
+}
+
+/**
+ * Splits a name into [lead, accent] for the two-tone logo text:
+ * after the first "." ("Mr.MEDIA" → "Mr." + "MEDIA"), else at the last space
+ * ("Acme Studio" → "Acme " + "Studio"); a single word has no accent part.
+ */
+export function splitBrandName(name) {
+    const dot = name.indexOf('.');
+    if (dot > 0 && dot < name.length - 1) return [name.slice(0, dot + 1), name.slice(dot + 1)];
+    const space = name.lastIndexOf(' ');
+    if (space > 0) return [name.slice(0, space + 1), name.slice(space + 1)];
+    return [name, ''];
+}

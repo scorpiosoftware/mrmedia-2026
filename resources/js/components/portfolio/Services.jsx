@@ -14,7 +14,7 @@ export default function Services() {
     return (
         <section
             id="services"
-            className="overflow-hidden bg-white py-24 transition-colors duration-300 dark:bg-[#0D1B4B]"
+            className="overflow-hidden bg-white py-24 transition-colors duration-300 dark:bg-brand-dark"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Section header */}
@@ -28,10 +28,10 @@ export default function Services() {
                             : 'translateY(24px)',
                     }}
                 >
-                    <span className="mb-3 inline-block rounded-full bg-[#E8EAF6] px-4 py-1.5 text-xs font-bold tracking-widest text-[#213C93] uppercase dark:bg-primary-dark dark:text-[#FCD532]">
+                    <span className="mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
                         {t('services.section_badge')}
                     </span>
-                    <h2 className="text-3xl font-black text-[#0D1B4B] sm:text-4xl lg:text-5xl dark:text-white">
+                    <h2 className="text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
                         {t('services.title')}
                     </h2>
                     <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
@@ -49,7 +49,7 @@ export default function Services() {
                         Array.from({ length: 3 }).map((_, i) => (
                             <div
                                 key={i}
-                                className="h-48 animate-pulse rounded-2xl bg-[#F1F1F0] dark:bg-primary-dark"
+                                className="h-48 animate-pulse rounded-2xl bg-brand-bg dark:bg-primary-dark"
                             />
                         ))}
 
@@ -58,7 +58,7 @@ export default function Services() {
                         return (
                             <div
                                 key={service.id}
-                                className="group relative cursor-default rounded-2xl border border-[#D1D5E8] bg-[#F1F1F0] p-8 transition-all duration-500 hover:-translate-y-2 hover:border-[#213C93]/50 hover:bg-white hover:shadow-[0_12px_48px_rgba(33,60,147,0.18)] dark:border-primary-light/40 dark:bg-primary-dark dark:hover:border-brand-yellow/50 dark:hover:bg-[#213C93]"
+                                className="group relative cursor-default rounded-2xl border border-border bg-brand-bg p-8 transition-all duration-500 hover:-translate-y-2 hover:border-brand-blue/50 hover:bg-white hover:shadow-[0_12px_48px_color-mix(in_srgb,var(--color-brand-blue)_18%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark dark:hover:border-brand-yellow/50 dark:hover:bg-brand-blue"
                                 style={{
                                     opacity: gridVisible ? 1 : 0,
                                     transform: gridVisible
@@ -69,14 +69,14 @@ export default function Services() {
                                 }}
                             >
                                 {/* Glow dot top-right */}
-                                <div className="absolute top-5 right-5 h-2 w-2 rounded-full bg-[#DDB50E]/0 transition-all duration-500 group-hover:bg-[#DDB50E] group-hover:shadow-[0_0_10px_rgba(221,181,14,0.8)]" />
+                                <div className="absolute top-5 right-5 h-2 w-2 rounded-full bg-brand-gold/0 transition-all duration-500 group-hover:bg-brand-gold group-hover:shadow-[0_0_10px_color-mix(in_srgb,var(--color-brand-gold)_80%,transparent)]" />
 
                                 {/* Icon container */}
-                                <div className="mb-5 inline-flex h-13 w-13 items-center justify-center rounded-xl bg-[#213C93] text-white transition-all duration-400 group-hover:scale-110 group-hover:bg-[#DDB50E] group-hover:text-[#0D1B4B] group-hover:shadow-[0_0_24px_rgba(221,181,14,0.45)]">
+                                <div className="mb-5 inline-flex h-13 w-13 items-center justify-center rounded-xl bg-brand-blue text-white transition-all duration-400 group-hover:scale-110 group-hover:bg-brand-gold group-hover:text-brand-dark group-hover:shadow-[0_0_24px_color-mix(in_srgb,var(--color-brand-gold)_45%,transparent)]">
                                     <Icon size={22} />
                                 </div>
 
-                                <h3 className="mb-3 text-lg font-bold text-[#0D1B4B] transition-colors duration-300 group-hover:text-[#213C93] dark:text-white dark:group-hover:text-brand-yellow">
+                                <h3 className="mb-3 text-lg font-bold text-brand-dark transition-colors duration-300 group-hover:text-brand-blue dark:text-white dark:group-hover:text-brand-yellow">
                                     {service.title}
                                 </h3>
                                 <p className="text-sm leading-relaxed text-muted-foreground">
@@ -84,7 +84,7 @@ export default function Services() {
                                 </p>
 
                                 {/* Bottom accent line */}
-                                <div className="absolute right-8 bottom-0 left-8 h-px bg-linear-to-r from-transparent via-[#213C93]/0 to-transparent transition-all duration-500 group-hover:via-[#213C93]/30" />
+                                <div className="absolute right-8 bottom-0 left-8 h-px bg-linear-to-r from-transparent via-brand-blue/0 to-transparent transition-all duration-500 group-hover:via-brand-blue/30" />
                             </div>
                         );
                     })}

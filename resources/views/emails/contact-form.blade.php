@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+@php($siteName = \App\Models\SiteSetting::current()->site_name)
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +23,7 @@
     <div class="card">
         <div class="header">
             <h1>New Contact Form Message</h1>
-            <p>Mr.MEDIA Portfolio · {{ now()->format('M j, Y \a\t g:i A') }}</p>
+            <p>{{ $siteName }} · {{ now()->format('M j, Y \a\t g:i A') }}</p>
         </div>
         <div class="body">
             <div class="field">
@@ -48,7 +49,7 @@
             </div>
         </div>
         <div class="footer">
-            Sent via the contact form on Mr.MEDIA portfolio
+            Sent via the contact form on {{ $siteName }}
         </div>
     </div>
 </body>

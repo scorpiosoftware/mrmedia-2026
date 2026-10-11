@@ -2,7 +2,7 @@ import { Menu, Moon, Sun, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
-import { useContent, useLocale } from '@/hooks/use-content';
+import { useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
 import { LOGO_SRC } from '@/lib/brand-logos';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
@@ -10,6 +10,7 @@ const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio'
 
 export default function Navbar() {
     const t = useContent();
+    const site = useSiteIdentity();
     const locale = useLocale();
     const { setLocale, isDarkMode, toggleDarkMode } = useApp();
     const navigate = useNavigate();
@@ -59,7 +60,7 @@ export default function Navbar() {
         <header
             className={`fixed top-0 inset-x-0 z-50 transition-all duration-400 ${
                 scrolled
-                    ? 'bg-white/96 dark:bg-[#0D1B4B]/96 backdrop-blur-md shadow-[0_4px_32px_rgba(33,60,147,0.12)] border-b border-[#D1D5E8]/50 dark:border-[#2E52C9]/50'
+                    ? 'bg-white/96 dark:bg-brand-dark/96 backdrop-blur-md shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_12%,transparent)] border-b border-border/50 dark:border-primary-light/50'
                     : 'bg-transparent dark:bg-brand-dark/30'
             }`}
         >
@@ -74,21 +75,23 @@ export default function Navbar() {
                         <div
                             className={`flex items-center justify-center rounded-xl overflow-hidden transition-all duration-300 group-hover:scale-105 w-11 h-11 ${
                                 scrolled
-                                    ? 'bg-white dark:bg-primary-dark shadow-[0_2px_14px_rgba(33,60,147,0.15)]'
-                                    : 'bg-[#0D1B4B]/70 backdrop-blur-sm border border-white/15 shadow-[0_0_18px_rgba(46,82,201,0.35)]'
+                                    ? 'bg-white dark:bg-primary-dark shadow-[0_2px_14px_color-mix(in_srgb,var(--color-brand-blue)_15%,transparent)]'
+                                    : 'bg-brand-dark/70 backdrop-blur-sm border border-white/15 shadow-[0_0_18px_color-mix(in_srgb,var(--color-primary-light)_35%,transparent)]'
                             }`}
                         >
                             <img
                                 src={LOGO_SRC}
-                                alt="Mr. Media"
+                                alt={site.name}
                                 className="w-9 h-9 object-contain"
                             />
                         </div>
-                        <span className="text-xl font-black tracking-tight">
-                            <span className={`transition-colors duration-300 ${scrolled ? 'text-[#213C93] dark:text-white' : 'text-white'}`}>Mr.</span>
-                            <span className="text-[#DDB50E] transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(221,181,14,0.7)]">
-                                MEDIA
-                            </span>
+                        <span dir="auto" className="text-xl font-black tracking-tight whitespace-pre">
+                            <span className={`transition-colors duration-300 ${scrolled ? 'text-brand-blue dark:text-white' : 'text-white'}`}>{site.nameParts[0]}</span>
+                            {site.nameParts[1] && (
+                                <span className="text-brand-gold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_color-mix(in_srgb,var(--color-brand-gold)_70%,transparent)]">
+                                    {site.nameParts[1]}
+                                </span>
+                            )}
                         </span>
                     </button>
 
@@ -99,13 +102,13 @@ export default function Navbar() {
                                 key={key}
                                 onClick={() => scrollTo(SECTION_IDS[key])}
                                 className={`relative text-sm font-medium transition-all duration-300 group ${
-                                    scrolled ? 'text-[#213C93] dark:text-white/90' : 'text-white/90'
-                                } hover:text-[#DDB50E]`}
+                                    scrolled ? 'text-brand-blue dark:text-white/90' : 'text-white/90'
+                                } hover:text-brand-gold`}
                             >
                                 {t(`nav.${key}`)}
                                 {/* Active indicator */}
                                 <span
-                                    className={`absolute -bottom-1 left-0 h-0.5 rounded-full bg-[#DDB50E] transition-all duration-300 ${
+                                    className={`absolute -bottom-1 left-0 h-0.5 rounded-full bg-brand-gold transition-all duration-300 ${
                                         activeSection === key ? 'w-full' : 'w-0 group-hover:w-full'
                                     }`}
                                 />
@@ -120,7 +123,7 @@ export default function Navbar() {
                             onClick={toggleDarkMode}
                             className={`flex items-center justify-center h-8 w-8 rounded-full transition-all duration-300 hover:scale-110 ${
                                 scrolled
-                                    ? 'text-[#213C93] dark:text-white hover:bg-[#E8EAF6] dark:hover:bg-primary-dark'
+                                    ? 'text-brand-blue dark:text-white hover:bg-secondary dark:hover:bg-primary-dark'
                                     : 'text-white hover:bg-white/15'
                             }`}
                             aria-label="Toggle dark mode"
@@ -133,7 +136,7 @@ export default function Navbar() {
                             onClick={switchLocale}
                             className={`hidden sm:flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-300 hover:scale-105 ${
                                 scrolled
-                                    ? 'border-[#213C93] dark:border-white/50 text-[#213C93] dark:text-white hover:bg-[#213C93] dark:hover:bg-white/15 hover:text-white'
+                                    ? 'border-brand-blue dark:border-white/50 text-brand-blue dark:text-white hover:bg-brand-blue dark:hover:bg-white/15 hover:text-white'
                                     : 'border-white/50 text-white hover:border-white hover:bg-white/15'
                             }`}
                         >
@@ -145,7 +148,7 @@ export default function Navbar() {
                             onClick={() => scrollTo('contact')}
                             className={`hidden sm:inline-flex rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 ${
                                 scrolled
-                                    ? 'bg-[#213C93] text-white hover:bg-[#2E52C9] hover:shadow-[0_4px_20px_rgba(33,60,147,0.35)]'
+                                    ? 'bg-brand-blue text-white hover:bg-primary-light hover:shadow-[0_4px_20px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)]'
                                     : 'bg-white/15 text-white border border-white/30 hover:bg-white/25 hover:border-white/60'
                             }`}
                         >
@@ -155,7 +158,7 @@ export default function Navbar() {
                         {/* Mobile menu toggle */}
                         <button
                             onClick={() => setOpen(!open)}
-                            className={`lg:hidden p-2 transition-colors duration-200 ${scrolled ? 'text-[#213C93] dark:text-white' : 'text-white'}`}
+                            className={`lg:hidden p-2 transition-colors duration-200 ${scrolled ? 'text-brand-blue dark:text-white' : 'text-white'}`}
                             aria-label="Toggle menu"
                         >
                             <div className="transition-all duration-300">
@@ -170,15 +173,15 @@ export default function Navbar() {
             <div
                 className={`lg:hidden overflow-hidden transition-all duration-400 ${
                     open ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-                } bg-white dark:bg-[#0D1B4B] border-t border-[#D1D5E8] dark:border-[#2E52C9] shadow-lg`}
+                } bg-white dark:bg-brand-dark border-t border-border dark:border-primary-light shadow-lg`}
             >
                 <div className="px-4 pb-6 pt-4">
                     {NAV_KEYS.map((key) => (
                         <button
                             key={key}
                             onClick={() => scrollTo(SECTION_IDS[key])}
-                            className={`block w-full text-start py-3 text-sm font-medium border-b border-[#E8EAF6] dark:border-[#2E52C9]/50 transition-colors duration-200 ${
-                                activeSection === key ? 'text-[#DDB50E]' : 'text-[#213C93] dark:text-white/80 hover:text-[#DDB50E]'
+                            className={`block w-full text-start py-3 text-sm font-medium border-b border-secondary dark:border-primary-light/50 transition-colors duration-200 ${
+                                activeSection === key ? 'text-brand-gold' : 'text-brand-blue dark:text-white/80 hover:text-brand-gold'
                             }`}
                         >
                             {t(`nav.${key}`)}
@@ -187,13 +190,13 @@ export default function Navbar() {
                     <div className="mt-4 flex gap-3">
                         <button
                             onClick={switchLocale}
-                            className="flex-1 rounded-full border border-[#213C93] dark:border-white/40 py-2 text-sm font-semibold text-[#213C93] dark:text-white hover:bg-[#213C93] dark:hover:bg-white/15 hover:text-white transition-all duration-200"
+                            className="flex-1 rounded-full border border-brand-blue dark:border-white/40 py-2 text-sm font-semibold text-brand-blue dark:text-white hover:bg-brand-blue dark:hover:bg-white/15 hover:text-white transition-all duration-200"
                         >
                             {isAr ? 'EN' : 'عربي'}
                         </button>
                         <button
                             onClick={() => scrollTo('contact')}
-                            className="flex-1 rounded-full bg-[#213C93] py-2 text-sm font-semibold text-white hover:bg-[#2E52C9] transition-colors duration-200"
+                            className="flex-1 rounded-full bg-brand-blue py-2 text-sm font-semibold text-white hover:bg-primary-light transition-colors duration-200"
                         >
                             {t('nav.cta')}
                         </button>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\MarqueeBannerController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\ContactController;
@@ -98,6 +99,9 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/inbox',    [InboxController::class, 'index']);
     Route::post('/spa/admin/inbox/{contactMessage}/read',  [InboxController::class, 'markRead']);
     Route::delete('/spa/admin/inbox/{contactMessage}',     [InboxController::class, 'destroy']);
+
+    Route::get('/spa/admin/site-settings',  [SiteSettingController::class, 'show']);
+    Route::post('/spa/admin/site-settings', [SiteSettingController::class, 'update']);
 
     Route::get('/spa/admin/marquee',  [MarqueeBannerController::class, 'show']);
     Route::post('/spa/admin/marquee', [MarqueeBannerController::class, 'update']);

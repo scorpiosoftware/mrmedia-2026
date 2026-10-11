@@ -6,10 +6,10 @@ import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
 
 const FIELD_CLASS =
-    'rounded-xl border border-[#D1D5E8] bg-white px-4 py-3 text-sm text-[#0D1B4B] transition-all duration-200 placeholder:text-muted-foreground hover:border-[#213C93]/40 focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20';
+    'rounded-xl border border-border bg-white px-4 py-3 text-sm text-brand-dark transition-all duration-200 placeholder:text-muted-foreground hover:border-brand-blue/40 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20';
 
 const LABEL_CLASS =
-    'mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase dark:text-brand-yellow';
+    'mb-2 block text-xs font-semibold tracking-wider text-brand-blue uppercase dark:text-brand-yellow';
 
 const EMPTY_FORM = {
     name: '',
@@ -101,10 +101,10 @@ export default function Contact() {
                             transitionDelay: '0ms',
                         }}
                     >
-                        <span className="mb-3 inline-block rounded-full bg-[#E8EAF6] px-4 py-1.5 text-xs font-bold tracking-widest text-[#213C93] uppercase dark:bg-primary-dark dark:text-brand-yellow">
+                        <span className="mb-3 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-bold tracking-widest text-brand-blue uppercase dark:bg-primary-dark dark:text-brand-yellow">
                             {t('contact.section_badge')}
                         </span>
-                        <h2 className="mb-4 text-3xl font-black text-[#0D1B4B] sm:text-4xl lg:text-5xl dark:text-white">
+                        <h2 className="mb-4 text-3xl font-black text-brand-dark sm:text-4xl lg:text-5xl dark:text-white">
                             {t('contact.title')}
                         </h2>
                         <p className="mb-10 leading-relaxed text-muted-foreground">
@@ -142,14 +142,14 @@ export default function Contact() {
                                             transitionDelay: `${150 + i * 100}ms`,
                                         }}
                                     >
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#213C93] text-white transition-all duration-300 hover:bg-[#DDB50E] hover:text-[#0D1B4B] hover:shadow-[0_0_20px_rgba(221,181,14,0.45)]">
+                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white transition-all duration-300 hover:bg-brand-gold hover:text-brand-dark hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-gold)_45%,transparent)]">
                                             <Icon size={18} />
                                         </div>
                                         <div className="space-y-1">
                                             {values.map((value, j) => (
                                                 <p
                                                     key={j}
-                                                    className="font-medium text-[#0D1B4B] dark:text-white/80"
+                                                    className="font-medium text-brand-dark dark:text-white/80"
                                                 >
                                                     {value}
                                                 </p>
@@ -171,12 +171,12 @@ export default function Contact() {
                             transitionDelay: '100ms',
                         }}
                     >
-                        <div className="rounded-3xl border border-[#D1D5E8] bg-[#F1F1F0] p-8 shadow-[0_4px_32px_rgba(33,60,147,0.08)] dark:border-primary-light/40 dark:bg-primary-dark">
+                        <div className="rounded-3xl border border-border bg-brand-bg p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] dark:border-primary-light/40 dark:bg-primary-dark">
                             {status === 'sent' ? (
                                 <div className="flex h-full items-center justify-center py-16 text-center">
                                     <div>
                                         <div
-                                            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#213C93] shadow-[0_0_32px_rgba(33,60,147,0.45)]"
+                                            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-blue shadow-[0_0_32px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]"
                                             style={{
                                                 animation:
                                                     'scale-in-fade 0.5s cubic-bezier(0.16,1,0.3,1) both',
@@ -187,7 +187,7 @@ export default function Contact() {
                                                 className="text-white"
                                             />
                                         </div>
-                                        <p className="text-lg font-bold text-[#0D1B4B] dark:text-white">
+                                        <p className="text-lg font-bold text-brand-dark dark:text-white">
                                             Message sent!
                                         </p>
                                         <p className="mt-1 text-muted-foreground dark:text-white/60">
@@ -308,7 +308,7 @@ export default function Contact() {
                                     <button
                                         type="submit"
                                         disabled={status === 'sending'}
-                                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#213C93] py-3.5 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-[#2E52C9] hover:shadow-[0_8px_32px_rgba(33,60,147,0.35)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+                                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-blue py-3.5 text-sm font-bold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-primary-light hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                                     >
                                         {status === 'sending' ? (
                                             <>

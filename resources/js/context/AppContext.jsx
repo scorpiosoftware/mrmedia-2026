@@ -6,8 +6,14 @@ function getCsrf() {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
 }
 
+// Site-wide settings embedded in the page by the server (see spa.blade.php).
+const SITE_SETTINGS = window.__SITE_SETTINGS__ ?? {};
+
 export function AppProvider({ children }) {
-    const [locale, setLocaleState] = useState(() => localStorage.getItem('mm_locale') || 'en');
+    // A visitor's own choice wins; otherwise use the default language set in the dashboard.
+    const [locale, setLocaleState] = useState(
+        () => localStorage.getItem('mm_locale') || SITE_SETTINGS.default_locale || 'en',
+    );
     const [content, setContent] = useState({});
     const [contentLoading, setContentLoading] = useState(true);
     const [whatsappNumber, setWhatsappNumber] = useState(null);
@@ -17,8 +23,17 @@ export function AppProvider({ children }) {
     const [isDarkMode, setIsDarkMode] = useState(() => {
         const saved = localStorage.getItem('mm_dark');
         if (saved !== null) return saved === 'true';
+        if (SITE_SETTINGS.default_appearance === 'dark') return true;
+        if (SITE_SETTINGS.default_appearance === 'light') return false;
         return window.matchMedia('(prefers-color-scheme: dark)').matches;
     });
+
+    // Make sure <html> matches the starting language (the server may have rendered another).
+    useEffect(() => {
+        document.documentElement.setAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr');
+        document.documentElement.setAttribute('lang', locale);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Fetch translated content whenever locale changes
     useEffect(() => {
@@ -56,10 +71,18 @@ export function AppProvider({ children }) {
 
     useEffect(() => {
         document.documentElement.classList.toggle('dark', isDarkMode);
-        localStorage.setItem('mm_dark', String(isDarkMode));
     }, [isDarkMode]);
 
-    const toggleDarkMode = useCallback(() => setIsDarkMode((prev) => !prev), []);
+    // Only remember the mode once the visitor actually toggles it, so the dashboard's
+    // default appearance keeps applying to everyone who hasn't chosen.
+    const toggleDarkMode = useCallback(
+        () =>
+            setIsDarkMode((prev) => {
+                localStorage.setItem('mm_dark', String(!prev));
+                return !prev;
+            }),
+        [],
+    );
 
     const setLocale = useCallback((loc) => {
         if (loc === locale) return;
@@ -102,7 +125,7 @@ export function AppProvider({ children }) {
 
     return (
         <AppContext.Provider
-            value={{ locale, content, contentLoading, whatsappNumber, whatsappVisible, user, userLoading, setLocale, login, logout, isDarkMode, toggleDarkMode }}
+            value={{ locale, content, contentLoading, whatsappNumber, whatsappVisible, user, userLoading, setLocale, login, logout, isDarkMode, toggleDarkMode, siteSettings: SITE_SETTINGS }}
         >
             {children}
         </AppContext.Provider>

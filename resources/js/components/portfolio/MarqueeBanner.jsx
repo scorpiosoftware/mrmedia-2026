@@ -168,7 +168,7 @@ export function MarqueeStrip({ banner }) {
                 <div
                     key={i}
                     // Tilted rows are widened so their ends never show inside the viewport.
-                    className={`${banner.tilted ? '-mx-[5%] w-[110%] shadow-[0_10px_40px_rgba(13,27,75,0.25)]' : ''} ${
+                    className={`${banner.tilted ? '-mx-[5%] w-[110%] shadow-[0_10px_40px_color-mix(in_srgb,var(--color-brand-dark)_25%,transparent)]' : ''} ${
                         banner.double_row && banner.tilted && i === 1
                             ? '-mt-14 sm:-mt-16'
                             : ''
@@ -208,7 +208,7 @@ export default function MarqueeBanner() {
     return (
         <section
             aria-label="Highlights"
-            className="overflow-hidden bg-[#F1F1F0] transition-colors duration-300 dark:bg-brand-dark"
+            className="overflow-hidden bg-brand-bg transition-colors duration-300 dark:bg-brand-dark"
         >
             <MarqueeStrip banner={banner} />
         </section>

@@ -1,4 +1,4 @@
-import { useContent, useContentList } from '@/hooks/use-content';
+import { useContent, useContentList, useSiteIdentity } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
 import { getSocialIcon, getSocialLabel } from '@/lib/social-platforms';
 
@@ -7,6 +7,7 @@ const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio'
 
 export default function Footer() {
     const t = useContent();
+    const site = useSiteIdentity();
     const contactDetails = [
         ...useContentList('contact.email'),
         ...useContentList('contact.phone'),
@@ -17,13 +18,14 @@ export default function Footer() {
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
     return (
-        <footer className="bg-[#0D1B4B] dark:bg-[#080F28] text-white transition-colors duration-300">
+        <footer className="bg-brand-dark dark:bg-[color-mix(in_srgb,var(--color-brand-dark)_60%,black)] text-white transition-colors duration-300">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
                     {/* Brand */}
                     <div className="lg:col-span-2">
-                        <p className="text-2xl font-black mb-3">
-                            Mr.<span className="text-[#DDB50E]">MEDIA</span>
+                        <p dir="auto" className="text-2xl font-black mb-3 whitespace-pre">
+                            {site.nameParts[0]}
+                            {site.nameParts[1] && <span className="text-brand-gold">{site.nameParts[1]}</span>}
                         </p>
                         <p className="text-white/60 text-sm max-w-xs leading-relaxed">
                             {t('footer.tagline')}
@@ -41,7 +43,7 @@ export default function Footer() {
                                             rel="noopener noreferrer"
                                             aria-label={label}
                                             title={label}
-                                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-[#DDB50E] hover:text-[#0D1B4B] transition-colors"
+                                            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 hover:bg-brand-gold hover:text-brand-dark transition-colors"
                                         >
                                             <Icon size={16} />
                                         </a>
@@ -53,7 +55,7 @@ export default function Footer() {
 
                     {/* Navigation */}
                     <div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-[#DDB50E] mb-4">
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-gold mb-4">
                             {t('nav.home')}
                         </p>
                         <ul className="space-y-3">
@@ -72,7 +74,7 @@ export default function Footer() {
 
                     {/* Contact */}
                     <div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-[#DDB50E] mb-4">
+                        <p className="text-xs font-bold uppercase tracking-widest text-brand-gold mb-4">
                             {t('contact.section_badge')}
                         </p>
                         <ul className="space-y-3 text-sm text-white/60">

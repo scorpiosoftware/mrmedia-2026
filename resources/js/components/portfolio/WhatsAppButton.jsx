@@ -18,7 +18,7 @@ export default function WhatsAppButton() {
             className="fixed bottom-6 right-6 z-50 group flex items-center gap-3"
         >
             {/* Tooltip label */}
-            <span className="pointer-events-none hidden sm:block opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 rounded-full bg-[#0D1B4B] text-white text-xs font-semibold px-3 py-1.5 shadow-lg whitespace-nowrap">
+            <span className="pointer-events-none hidden sm:block opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 rounded-full bg-brand-dark text-white text-xs font-semibold px-3 py-1.5 shadow-lg whitespace-nowrap">
                 Chat with us
             </span>
 

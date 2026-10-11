@@ -1,6 +1,7 @@
-import { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import { applyThemeVars, themeVars } from '@/lib/site-theme';
 import EventDetails from '@/pages/EventDetails';
 import Home from '@/pages/Home';
 
@@ -13,6 +14,7 @@ const AdminEvents = lazy(() => import('@/pages/admin/Events'));
 const AdminProjects = lazy(() => import('@/pages/admin/Projects'));
 const AdminServices = lazy(() => import('@/pages/admin/Services'));
 const AdminMarquee = lazy(() => import('@/pages/admin/MarqueeBanner'));
+const AdminSiteSettings = lazy(() => import('@/pages/admin/SiteSettings'));
 const AdminSocialLinks = lazy(() => import('@/pages/admin/SocialLinks'));
 const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
 const AdminProfile = lazy(() => import('@/pages/admin/Profile'));
@@ -40,9 +42,25 @@ function RequireAuth({ children }) {
     return children;
 }
 
+/** Applies the dashboard's colour theme on public pages; the admin panel keeps its own brand colours. */
+function SiteThemeApplier() {
+    const { pathname } = useLocation();
+    const { siteSettings } = useApp();
+    const isAdmin = pathname.startsWith('/admin');
+
+    useEffect(() => {
+        applyThemeVars(
+            isAdmin ? {} : themeVars(siteSettings?.theme, siteSettings?.colors),
+        );
+    }, [isAdmin, siteSettings]);
+
+    return null;
+}
+
 export default function AppRouter() {
     return (
         <Suspense fallback={<RouteFallback />}>
+            <SiteThemeApplier />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/events/:slug" element={<EventDetails />} />
@@ -115,6 +133,14 @@ export default function AppRouter() {
                     element={
                         <RequireAuth>
                             <AdminMarquee />
+                        </RequireAuth>
+                    }
+                />
+                <Route
+                    path="/admin/site-settings"
+                    element={
+                        <RequireAuth>
+                            <AdminSiteSettings />
                         </RequireAuth>
                     }
                 />

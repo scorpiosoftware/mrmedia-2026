@@ -82,8 +82,8 @@ export default function PhoneInput({
             />
 
             {open && (
-                <div className="absolute top-full left-0 z-20 mt-2 w-72 overflow-hidden rounded-xl border border-[#D1D5E8] bg-white shadow-[0_8px_32px_rgba(33,60,147,0.15)] dark:border-primary-light/50 dark:bg-brand-dark">
-                    <div className="flex items-center gap-2 border-b border-[#E8EAF6] px-3 py-2 dark:border-primary-light/30">
+                <div className="absolute top-full left-0 z-20 mt-2 w-72 overflow-hidden rounded-xl border border-border bg-white shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_15%,transparent)] dark:border-primary-light/50 dark:bg-brand-dark">
+                    <div className="flex items-center gap-2 border-b border-secondary px-3 py-2 dark:border-primary-light/30">
                         <Search size={14} className="text-muted-foreground" />
                         <input
                             ref={searchRef}
@@ -97,7 +97,7 @@ export default function PhoneInput({
                                 }
                             }}
                             placeholder="Search country or code"
-                            className="w-full bg-transparent text-sm text-[#0D1B4B] outline-none placeholder:text-muted-foreground dark:text-white"
+                            className="w-full bg-transparent text-sm text-brand-dark outline-none placeholder:text-muted-foreground dark:text-white"
                         />
                     </div>
                     <ul
@@ -111,10 +111,10 @@ export default function PhoneInput({
                                     role="option"
                                     aria-selected={c.iso === selected.iso}
                                     onClick={() => pick(c.iso)}
-                                    className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-[#E8EAF6] dark:hover:bg-primary-dark ${
+                                    className={`flex w-full items-center gap-3 px-3 py-2 text-left text-sm transition-colors hover:bg-secondary dark:hover:bg-primary-dark ${
                                         c.iso === selected.iso
-                                            ? 'font-semibold text-[#213C93] dark:text-brand-yellow'
-                                            : 'text-[#0D1B4B] dark:text-white/80'
+                                            ? 'font-semibold text-brand-blue dark:text-brand-yellow'
+                                            : 'text-brand-dark dark:text-white/80'
                                     }`}
                                 >
                                     <span className="text-base leading-none">

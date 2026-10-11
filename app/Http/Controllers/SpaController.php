@@ -4,19 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\SiteContent;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SpaController extends Controller
 {
-    private const SITE_NAME = 'Mr.MEDIA';
-
     public function show(Request $request)
     {
         $path = trim($request->path(), '/');
         $canonical = $request->url();
+        $settings = SiteSetting::current();
 
-        return view('spa', $this->resolveSeo($path, $canonical));
+        return view('spa', [
+            ...$this->resolveSeo($path, $canonical),
+            'siteSettings' => $settings->publicPayload(),
+            // The admin panel keeps its fixed brand colours; only the public site is themed.
+            'themeVars'    => str_starts_with($path, 'admin') ? [] : $settings->themeCssVars(),
+            'themeColor'   => $settings->colors()['primary'],
+        ]);
+    }
+
+    private function siteName(): string
+    {
+        return SiteSetting::current()->site_name;
     }
 
     private function resolveSeo(string $path, string $canonical): array
@@ -30,19 +41,20 @@ class SpaController extends Controller
         }
 
         // Admin screens, auth redirects, and anything else under the SPA catch-all
-        return $this->defaultSeo($canonical, self::SITE_NAME, 'noindex, nofollow');
+        return $this->defaultSeo($canonical, $this->siteName(), 'noindex, nofollow');
     }
 
     private function homeSeo(string $canonical): array
     {
         $content = SiteContent::getAllForLocale('en');
-        $siteName = self::SITE_NAME;
+        $siteName = $this->siteName();
+        $tagline = SiteSetting::current()->tagline;
 
         $description = $content['hero.subtitle']
-            ?? 'Mr.MEDIA is a full-service marketing agency helping brands grow through strategy, creativity and digital excellence.';
+            ?? "{$siteName} is a full-service marketing agency helping brands grow through strategy, creativity and digital excellence.";
 
         return [
-            'title'       => "{$siteName} | Marketing Agency That Moves Markets",
+            'title'       => $tagline ? "{$siteName} | {$tagline}" : $siteName,
             'description' => $description,
             'canonical'   => $canonical,
             'ogImage'     => asset('images/logo.png'),
@@ -54,7 +66,7 @@ class SpaController extends Controller
 
     private function eventSeo(string $slug, string $canonical): array
     {
-        $siteName = self::SITE_NAME;
+        $siteName = $this->siteName();
 
         $event = Event::where('slug', $slug)
             ->where('is_published', true)
@@ -118,7 +130,7 @@ class SpaController extends Controller
         return array_filter([
             '@context'     => 'https://schema.org',
             '@type'        => 'Organization',
-            'name'         => self::SITE_NAME,
+            'name'         => $this->siteName(),
             'url'          => url('/'),
             'logo'         => asset('images/logo.png'),
             'description'  => $content['hero.subtitle'] ?? null,
@@ -152,13 +164,13 @@ class SpaController extends Controller
                 ? ['@type' => 'VirtualLocation', 'url' => $canonical]
                 : array_filter([
                     '@type'   => 'Place',
-                    'name'    => $event->location ?: self::SITE_NAME,
+                    'name'    => $event->location ?: $this->siteName(),
                     'address' => $event->location,
                 ]),
             'image'                => [$image],
             'organizer'            => [
                 '@type' => 'Organization',
-                'name'  => self::SITE_NAME,
+                'name'  => $this->siteName(),
                 'url'   => url('/'),
             ],
             'offers'               => array_filter([

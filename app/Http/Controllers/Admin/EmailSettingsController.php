@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmailSettings;
+use App\Models\SiteSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -76,10 +77,10 @@ class EmailSettingsController extends Controller
 
         try {
             \Illuminate\Support\Facades\Mail::raw(
-                'This is a test email from your Mr.MEDIA admin panel. Your email configuration is working correctly.',
+                'This is a test email from your '.SiteSetting::current()->site_name.' admin panel. Your email configuration is working correctly.',
                 function ($message) use ($request, $settings) {
                     $message->to($request->to)
-                            ->subject('Mr.MEDIA — Test Email');
+                            ->subject(SiteSetting::current()->site_name.' — Test Email');
                 }
             );
 

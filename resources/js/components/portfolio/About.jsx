@@ -31,11 +31,11 @@ export default function About() {
                         }}
                     >
                         {/* Main visual card */}
-                        <div className="relative overflow-hidden rounded-3xl bg-brand-gradient aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_rgba(33,60,147,0.35)] transition-shadow duration-500 hover:shadow-[0_28px_80px_rgba(33,60,147,0.45)]">
+                        <div className="relative overflow-hidden rounded-3xl bg-brand-gradient aspect-4/3 flex items-center justify-center shadow-[0_20px_64px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] transition-shadow duration-500 hover:shadow-[0_28px_80px_color-mix(in_srgb,var(--color-brand-blue)_45%,transparent)]">
                             {/* Spinning ring inside card */}
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <div className="w-64 h-64 rounded-full border border-white/10 mm-spin-cw" />
-                                <div className="absolute w-44 h-44 rounded-full border border-[#DDB50E]/15 mm-spin-ccw" />
+                                <div className="absolute w-44 h-44 rounded-full border border-brand-gold/15 mm-spin-ccw" />
                             </div>
 
                             <img
@@ -48,18 +48,18 @@ export default function About() {
 
                             {/* Inner badge */}
                             <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/10 backdrop-blur-sm p-5 border border-white/20">
-                                <p className="text-2xl font-black text-[#FCD532] text-glow-gold">{t('stats.years')}</p>
+                                <p className="text-2xl font-black text-brand-yellow text-glow-gold">{t('stats.years')}</p>
                                 <p className="text-sm text-white/75 mt-0.5">{t('stats.years_label')}</p>
                             </div>
                         </div>
 
                         {/* Floating badge — bounces gently */}
                         <div
-                            className="absolute -top-4 -right-4 rounded-2xl bg-[#DDB50E] p-5 shadow-[0_8px_32px_rgba(221,181,14,0.50)] mm-float-rev"
+                            className="absolute -top-4 -right-4 rounded-2xl bg-brand-gold p-5 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-gold)_50%,transparent)] mm-float-rev"
                             style={{ animationDelay: '0.5s' }}
                         >
-                            <p className="text-3xl font-black text-[#0D1B4B] text-glow-gold">{t('stats.clients')}</p>
-                            <p className="text-xs font-semibold text-[#0D1B4B]/70">{t('stats.clients_label')}</p>
+                            <p className="text-3xl font-black text-brand-dark text-glow-gold">{t('stats.clients')}</p>
+                            <p className="text-xs font-semibold text-brand-dark/70">{t('stats.clients_label')}</p>
                         </div>
                     </div>
 
@@ -72,10 +72,10 @@ export default function About() {
                             transitionDelay: '160ms',
                         }}
                     >
-                        <span className="inline-block mb-3 rounded-full bg-[#E8EAF6] dark:bg-[#213C93]/40 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-[#213C93] dark:text-brand-yellow">
+                        <span className="inline-block mb-3 rounded-full bg-secondary dark:bg-brand-blue/40 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow">
                             {t('about.section_badge')}
                         </span>
-                        <h2 className="mb-6 text-3xl font-black text-[#0D1B4B] dark:text-white sm:text-4xl lg:text-5xl">
+                        <h2 className="mb-6 text-3xl font-black text-brand-dark dark:text-white sm:text-4xl lg:text-5xl">
                             {t('about.title')}
                         </h2>
                         <div className="mb-8 space-y-4 text-muted-foreground leading-relaxed">
@@ -85,11 +85,11 @@ export default function About() {
                         </div>
 
                         {/* Mission box */}
-                        <div className="mb-8 rounded-2xl bg-[#F1F1F0] dark:bg-brand-dark border-l-4 border-[#213C93] dark:border-brand-yellow p-6 rtl:border-l-0 rtl:border-r-4 transition-all duration-300 hover:shadow-[0_4px_24px_rgba(33,60,147,0.12)]">
-                            <p className="text-xs font-bold uppercase tracking-widest text-[#213C93] dark:text-brand-yellow mb-2">
+                        <div className="mb-8 rounded-2xl bg-brand-bg dark:bg-brand-dark border-l-4 border-brand-blue dark:border-brand-yellow p-6 rtl:border-l-0 rtl:border-r-4 transition-all duration-300 hover:shadow-[0_4px_24px_color-mix(in_srgb,var(--color-brand-blue)_12%,transparent)]">
+                            <p className="text-xs font-bold uppercase tracking-widest text-brand-blue dark:text-brand-yellow mb-2">
                                 {t('about.mission_label')}
                             </p>
-                            <p className="text-[#0D1B4B] dark:text-white/80 font-medium">{t('about.mission_text')}</p>
+                            <p className="text-brand-dark dark:text-white/80 font-medium">{t('about.mission_text')}</p>
                         </div>
 
                         {/* Values list — staggered inside the slide */}
@@ -97,14 +97,14 @@ export default function About() {
                             {VALUES.map((v, i) => (
                                 <li
                                     key={i}
-                                    className="flex items-center gap-2 text-sm text-[#0D1B4B] dark:text-white/80 font-medium transition-all duration-500"
+                                    className="flex items-center gap-2 text-sm text-brand-dark dark:text-white/80 font-medium transition-all duration-500"
                                     style={{
                                         opacity:   isVisible ? 1 : 0,
                                         transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
                                         transitionDelay: `${300 + i * 80}ms`,
                                     }}
                                 >
-                                    <CheckCircle size={16} className="text-[#213C93] dark:text-brand-yellow shrink-0" />
+                                    <CheckCircle size={16} className="text-brand-blue dark:text-brand-yellow shrink-0" />
                                     {v.en}
                                 </li>
                             ))}
@@ -112,7 +112,7 @@ export default function About() {
 
                         <button
                             onClick={() => scrollTo('contact')}
-                            className="group inline-flex items-center gap-2 rounded-full bg-[#213C93] px-7 py-3 text-sm font-bold text-white hover:bg-[#2E52C9] hover:shadow-[0_8px_32px_rgba(33,60,147,0.35)] hover:scale-105 transition-all duration-300"
+                            className="group inline-flex items-center gap-2 rounded-full bg-brand-blue px-7 py-3 text-sm font-bold text-white hover:bg-primary-light hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] hover:scale-105 transition-all duration-300"
                         >
                             {t('about.cta')}
                             <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" />

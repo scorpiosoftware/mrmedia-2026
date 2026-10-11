@@ -13,17 +13,18 @@ import Stats from '@/components/portfolio/Stats';
 import Testimonials from '@/components/portfolio/Testimonials';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
-import { useContent } from '@/hooks/use-content';
+import { useContent, useSiteIdentity } from '@/hooks/use-content';
 
 export default function Home() {
     const location = useLocation();
     const t = useContent();
+    const site = useSiteIdentity();
 
     useDocumentMeta({
-        title: 'Mr.MEDIA | Marketing Agency That Moves Markets',
+        title: site.tagline ? `${site.name} | ${site.tagline}` : site.name,
         description: t(
             'hero.subtitle',
-            'Mr.MEDIA is a full-service marketing agency helping brands grow through strategy, creativity and digital excellence.',
+            `${site.name} is a full-service marketing agency helping brands grow through strategy, creativity and digital excellence.`,
         ),
     });
 

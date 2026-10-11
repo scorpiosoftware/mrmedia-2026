@@ -24,6 +24,7 @@ import {
     Inbox,
     LogOut,
     Megaphone,
+    Palette,
     Mail,
     Share2,
     Sparkles,
@@ -38,6 +39,7 @@ const NAV_ITEMS = [
     { to: '/admin/events', label: 'Events & Training', Icon: Calendar },
     { to: '/admin/inbox', label: 'Inbox', Icon: Inbox },
     { to: '/admin/social-links', label: 'Social Media', Icon: Share2 },
+    { to: '/admin/site-settings', label: 'Site Settings', Icon: Palette },
     { to: '/admin/email-settings', label: 'Email Settings', Icon: Mail },
     { to: '/admin/profile', label: 'Profile', Icon: UserCircle },
 ];
