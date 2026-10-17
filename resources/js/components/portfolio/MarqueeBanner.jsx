@@ -136,6 +136,9 @@ function MarqueeRow({ banner, reverse = false, swapColors = false }) {
                 style={
                     duration
                         ? {
+                              // Own GPU layer: stops rotated (tilted) text from shimmering on iOS.
+                              willChange: 'transform',
+                              backfaceVisibility: 'hidden',
                               animation: `mm-marquee ${duration}s linear infinite`,
                               animationDirection: goesRight
                                   ? 'reverse'

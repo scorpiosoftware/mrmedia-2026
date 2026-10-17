@@ -624,3 +624,35 @@
         }
     }
 }
+
+/*
+ * Touch devices (phones/tablets): freeze the decorative ambient loops.
+ * Several of them repaint every frame (pulsing box-shadows on 700px circles, blurred
+ * blobs, conic beams) underneath backdrop-blur panels, which overloads iOS Safari and
+ * makes the whole page visibly jitter even while idle. Pausing (rather than removing)
+ * keeps each element at its first keyframe, so the design looks the same, just still.
+ * Unlayered on purpose so it wins over the utility classes above.
+ */
+@media (hover: none) and (pointer: coarse) {
+    .mm-float,
+    .mm-float-rev,
+    .mm-float-slow,
+    .mm-float-x,
+    .mm-spin-cw,
+    .mm-spin-ccw,
+    .mm-twinkle,
+    .mm-glow-blue,
+    .mm-glow-gold,
+    .mm-border-glow,
+    .mm-drift,
+    .mm-title-line,
+    .mm-text-shine,
+    .btn-gold-shimmer,
+    .mm-beam::before,
+    .mm-chip::after {
+        animation-play-state: paused;
+    }
+    .mm-drift {
+        will-change: auto;
+    }
+}
