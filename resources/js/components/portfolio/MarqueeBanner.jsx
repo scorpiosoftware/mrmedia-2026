@@ -163,7 +163,9 @@ export function MarqueeStrip({ banner }) {
     };
 
     return (
-        <div className={banner.tilted ? 'relative py-10' : 'relative'}>
+        // overflow-x-clip: the widened, rotated rows must not make the page wider than
+        // the viewport, or iOS Safari lets the whole page wobble sideways.
+        <div className={banner.tilted ? 'relative overflow-x-clip py-10' : 'relative'}>
             {Array.from({ length: rows }).map((_, i) => (
                 <div
                     key={i}

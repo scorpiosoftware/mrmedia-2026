@@ -289,29 +289,6 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* Scroll cue */}
-            <button
-                type="button"
-                onClick={(e) =>
-                    e.currentTarget
-                        .closest('section')
-                        ?.nextElementSibling?.scrollIntoView({
-                            behavior: 'smooth',
-                        })
-                }
-                aria-label="Scroll down"
-                className="absolute bottom-20 left-1/2 z-10 hidden -translate-x-1/2 sm:block"
-                style={{
-                    animation:
-                        'slide-up-fade 0.8s cubic-bezier(0.16,1,0.3,1) both',
-                    animationDelay: '1s',
-                }}
-            >
-                <span className="flex h-10 w-6 justify-center rounded-full border-2 border-white/35 pt-2 shadow-[0_0_16px_rgba(255,255,255,0.12)] transition-colors duration-300 hover:border-brand-yellow/70">
-                    <span className="mm-scroll-cue h-2 w-1 rounded-full bg-brand-yellow shadow-[0_0_8px_var(--color-brand-yellow)]" />
-                </span>
-            </button>
-
             {/* Wave divider */}
             <div className="absolute right-0 bottom-0 left-0">
                 <svg

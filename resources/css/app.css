@@ -219,6 +219,14 @@
         @apply border-border;
     }
 
+    /* Nothing may widen the page past the viewport: on iOS Safari any horizontal
+       overflow lets the page drift/shake sideways while scrolling. `clip` (unlike
+       `hidden`) keeps position: sticky working. */
+    html,
+    body {
+        overflow-x: clip;
+    }
+
     html {
         scroll-behavior: smooth;
         transition: background-color 0.25s ease, color 0.25s ease;
@@ -451,11 +459,6 @@
     from { transform: scaleX(0); }
     to   { transform: scaleX(1); }
 }
-@keyframes mm-scroll-cue {
-    0%   { opacity: 0; transform: translateY(0); }
-    30%  { opacity: 1; }
-    100% { opacity: 0; transform: translateY(12px); }
-}
 @keyframes mm-drift {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
     33%      { transform: translate3d(6%, -8%, 0) scale(1.08); }
@@ -584,11 +587,6 @@
         will-change: transform;
     }
 
-    /* Mouse-wheel scroll cue */
-    .mm-scroll-cue {
-        animation: mm-scroll-cue 1.8s ease-in-out infinite;
-    }
-
     /* Page scroll progress bar — CSS scroll-driven, hidden where unsupported */
     .mm-scroll-progress {
         display: none;
@@ -618,8 +616,7 @@
         .mm-chip::after,
         .mm-title-line,
         .mm-text-shine,
-        .mm-drift,
-        .mm-scroll-cue {
+        .mm-drift {
             animation: none;
         }
         .mm-spotlight::after {
