@@ -226,6 +226,13 @@
     body {
         overflow-x: clip;
     }
+    /* iOS 15 and older don't support `clip` — fall back to `hidden` there. */
+    @supports not (overflow-x: clip) {
+        html,
+        body {
+            overflow-x: hidden;
+        }
+    }
 
     html {
         scroll-behavior: smooth;
@@ -344,6 +351,11 @@
     50%       { border-color: color-mix(in srgb, var(--color-brand-yellow) 85%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--color-brand-yellow) 35%, transparent); }
 }
 /* Scrolling banner: the track holds two identical copies, so shifting by -50% loops seamlessly. */
+/* WhatsApp button pulse: like Tailwind's ping, but capped at 1.6× so it stays on screen. */
+@keyframes mm-wa-pulse {
+    0%        { transform: scale(1);   opacity: 0.35; }
+    75%, 100% { transform: scale(1.6); opacity: 0; }
+}
 @keyframes mm-marquee {
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(-50%, 0, 0); }
@@ -372,6 +384,8 @@
     /* Spin */
     .mm-spin-cw     { animation: mm-spin-cw   22s linear infinite; }
     .mm-spin-ccw    { animation: mm-spin-ccw  16s linear infinite; }
+
+    .mm-wa-pulse    { animation: mm-wa-pulse  1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
 
     /* Twinkle */
     .mm-twinkle     { animation: mm-twinkle    2.5s ease-in-out infinite; }

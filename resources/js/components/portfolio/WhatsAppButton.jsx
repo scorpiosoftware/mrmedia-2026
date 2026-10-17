@@ -24,8 +24,9 @@ export default function WhatsAppButton() {
 
             {/* Button */}
             <div className="relative h-14 w-14 flex items-center justify-center rounded-full bg-[#25D366] shadow-[0_4px_24px_rgba(37,211,102,0.50)] hover:shadow-[0_6px_32px_rgba(37,211,102,0.65)] hover:scale-110 active:scale-95 transition-all duration-200">
-                {/* Pulse ring */}
-                <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-25" />
+                {/* Pulse ring — capped at 1.6× so it never crosses the screen edge
+                    (animate-ping's 2× did, which made iOS Safari shake the page every second) */}
+                <span className="mm-wa-pulse absolute inset-0 rounded-full bg-[#25D366]" />
                 <WhatsAppIcon />
             </div>
         </a>
