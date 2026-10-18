@@ -22,7 +22,8 @@ export default function About() {
 
                     {/* ── Visual side ── */}
                     <div
-                        className="relative order-2 lg:order-1 transition-all duration-800"
+                        // Extra side margin on phones so the overhanging badge stays clear of the screen edge
+                        className="relative order-2 mx-3 sm:mx-0 lg:order-1 transition-all duration-800"
                         style={{
                             opacity:   isVisible ? 1 : 0,
                             transform: isVisible ? 'translateX(0)' : 'translateX(-40px)',
@@ -65,7 +66,7 @@ export default function About() {
                             )}
 
                             {/* Inner badge */}
-                            <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/10 backdrop-blur-sm p-5 border border-white/20">
+                            <div className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/10 backdrop-blur-sm p-4 border border-white/20 sm:bottom-8 sm:left-8 sm:right-8 sm:p-5">
                                 <p className="text-2xl font-black text-brand-yellow text-glow-gold">{t('stats.years')}</p>
                                 <p className="text-sm text-white/75 mt-0.5">{t('stats.years_label')}</p>
                             </div>
@@ -73,10 +74,10 @@ export default function About() {
 
                         {/* Floating badge — bounces gently */}
                         <div
-                            className="absolute -top-4 -right-4 rounded-2xl bg-brand-gold p-5 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-gold)_50%,transparent)] mm-float-rev"
+                            className="absolute -top-4 -right-2 rounded-2xl bg-brand-gold p-4 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-gold)_50%,transparent)] mm-float-rev sm:-right-4 sm:p-5"
                             style={{ animationDelay: '0.5s' }}
                         >
-                            <p className="text-3xl font-black text-brand-dark text-glow-gold">{t('stats.clients')}</p>
+                            <p className="text-2xl font-black text-brand-dark text-glow-gold sm:text-3xl">{t('stats.clients')}</p>
                             <p className="text-xs font-semibold text-brand-dark/70">{t('stats.clients_label')}</p>
                         </div>
                     </div>

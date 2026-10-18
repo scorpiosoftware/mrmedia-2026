@@ -89,7 +89,8 @@ export default function Contact() {
             className="overflow-hidden bg-white py-24 transition-colors duration-300 dark:bg-brand-dark"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div ref={ref} className="grid gap-16 lg:grid-cols-2">
+                {/* grid-cols-1 = minmax(0, 1fr): a long email can't widen the column past the screen */}
+                <div ref={ref} className="grid grid-cols-1 gap-16 lg:grid-cols-2">
                     {/* Info column */}
                     <div
                         className="transition-all duration-700"
@@ -145,11 +146,11 @@ export default function Contact() {
                                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-blue text-white transition-all duration-300 hover:bg-brand-gold hover:text-brand-dark hover:shadow-[0_0_20px_color-mix(in_srgb,var(--color-brand-gold)_45%,transparent)]">
                                             <Icon size={18} />
                                         </div>
-                                        <div className="space-y-1">
+                                        <div className="min-w-0 space-y-1">
                                             {values.map((value, j) => (
                                                 <p
                                                     key={j}
-                                                    className="font-medium text-brand-dark dark:text-white/80"
+                                                    className="font-medium wrap-anywhere text-brand-dark dark:text-white/80"
                                                 >
                                                     {value}
                                                 </p>
@@ -171,7 +172,7 @@ export default function Contact() {
                             transitionDelay: '100ms',
                         }}
                     >
-                        <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] dark:border-primary-light/40 dark:bg-primary-dark">
+                        <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-5 sm:p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] dark:border-primary-light/40 dark:bg-primary-dark">
                             {status === 'sent' ? (
                                 <div className="flex h-full items-center justify-center py-16 text-center">
                                     <div>
