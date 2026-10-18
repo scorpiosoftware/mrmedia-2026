@@ -1,6 +1,8 @@
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
     Check,
+    Eye,
+    EyeOff,
     Image as ImageIcon,
     Loader2,
     Plus,
@@ -170,6 +172,127 @@ function ContentImageField({ item, onChange }) {
     );
 }
 
+// Home-page sections that can be switched off — must match SiteSetting::TOGGLEABLE_SECTIONS.
+const TOGGLEABLE_SECTIONS = [
+    'hero',
+    'stats',
+    'services',
+    'portfolio',
+    'events',
+    'about',
+    'testimonials',
+    'contact',
+];
+const TOGGLE_LABELS = { ...SECTION_LABELS, events: 'Events' };
+
+/**
+ * Show/hide switches for each home-page section. Saved on its own (instantly, not with
+ * "Save All") and stored apart from the content, so hiding a section never changes its text.
+ */
+function SectionVisibilityPanel({ hidden, onChange }) {
+    const [savingId, setSavingId] = useState(null);
+    const [error, setError] = useState('');
+
+    const toggle = async (id) => {
+        const next = hidden.includes(id)
+            ? hidden.filter((s) => s !== id)
+            : [...hidden, id];
+        const previous = hidden;
+        onChange(next); // optimistic
+        setSavingId(id);
+        setError('');
+        try {
+            const res = await fetch('/spa/admin/site-settings/sections', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body: JSON.stringify({ hidden_sections: next }),
+            });
+            const json = await res.json().catch(() => ({}));
+            if (res.ok) {
+                onChange(json.hidden_sections ?? next);
+            } else {
+                onChange(previous);
+                setError(json?.message || 'Failed to update. Please try again.');
+            }
+        } catch {
+            onChange(previous);
+            setError('Network error. Please try again.');
+        } finally {
+            setSavingId(null);
+        }
+    };
+
+    return (
+        <div className="mb-8 rounded-2xl border border-[#D1D5E8] bg-white p-5">
+            <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
+                <h2 className="text-sm font-bold text-[#0D1B4B]">
+                    Show on website
+                </h2>
+                <p className="text-xs text-[#5A6A9A]">
+                    Changes apply instantly. Hiding a section keeps its content —
+                    switch it back on any time.
+                </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {TOGGLEABLE_SECTIONS.map((id) => {
+                    const shown = !hidden.includes(id);
+                    return (
+                        <button
+                            key={id}
+                            type="button"
+                            role="switch"
+                            aria-checked={shown}
+                            disabled={savingId !== null}
+                            onClick={() => toggle(id)}
+                            className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-start transition-colors disabled:cursor-wait ${
+                                shown
+                                    ? 'border-[#213C93]/30 bg-[#E8EAF6]/60'
+                                    : 'border-dashed border-[#D1D5E8] bg-[#F1F1F0]'
+                            }`}
+                        >
+                            <span className="flex items-center gap-2">
+                                {savingId === id ? (
+                                    <Loader2
+                                        size={14}
+                                        className="animate-spin text-[#213C93]"
+                                    />
+                                ) : shown ? (
+                                    <Eye size={14} className="text-[#213C93]" />
+                                ) : (
+                                    <EyeOff
+                                        size={14}
+                                        className="text-[#5A6A9A]"
+                                    />
+                                )}
+                                <span
+                                    className={`text-sm font-semibold ${shown ? 'text-[#0D1B4B]' : 'text-[#5A6A9A] line-through'}`}
+                                >
+                                    {TOGGLE_LABELS[id] ?? id}
+                                </span>
+                            </span>
+                            {/* Switch */}
+                            <span
+                                aria-hidden="true"
+                                className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${shown ? 'bg-[#213C93]' : 'bg-[#C5CAE0]'}`}
+                            >
+                                <span
+                                    className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all ${shown ? 'start-4.5' : 'start-0.5'}`}
+                                />
+                            </span>
+                        </button>
+                    );
+                })}
+            </div>
+            {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
+        </div>
+    );
+}
+
 function getCsrf() {
     return (
         document
@@ -188,6 +311,16 @@ export default function ContentEditor() {
     const [savedMsg, setSavedMsg] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
     const [focusId, setFocusId] = useState(null); // newly added row to scroll to + focus
+    const [hiddenSections, setHiddenSections] = useState([]);
+
+    useEffect(() => {
+        fetch('/spa/admin/site-settings', { credentials: 'include' })
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) =>
+                setHiddenSections(data?.settings?.hidden_sections ?? []),
+            )
+            .catch(() => {});
+    }, []);
 
     // Once a newly added contact entry has rendered, bring it into view and focus its English field.
     useEffect(() => {
@@ -383,6 +516,11 @@ export default function ContentEditor() {
             }
         >
             <div>
+                <SectionVisibilityPanel
+                    hidden={hiddenSections}
+                    onChange={setHiddenSections}
+                />
+
                 {/* Search + section filter */}
                 <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
                     <div className="relative max-w-md min-w-55 flex-1">
@@ -429,6 +567,12 @@ export default function ContentEditor() {
                         <h2 className="mb-4 flex items-center gap-3 text-xs font-bold tracking-widest text-[#213C93] uppercase">
                             <span className="h-px flex-1 bg-[#D1D5E8]" />
                             {SECTION_LABELS[section] ?? section}
+                            {hiddenSections.includes(section) && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-[#F1F1F0] px-2 py-0.5 text-[10px] tracking-normal text-[#5A6A9A] normal-case">
+                                    <EyeOff size={10} />
+                                    Hidden on website
+                                </span>
+                            )}
                             <span className="h-px flex-1 bg-[#D1D5E8]" />
                         </h2>
 

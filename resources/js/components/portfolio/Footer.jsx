@@ -1,5 +1,6 @@
 import { useContent, useContentList, useSiteIdentity } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
+import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { getSocialIcon, getSocialLabel } from '@/lib/social-platforms';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'about', 'contact'];
@@ -14,8 +15,13 @@ export default function Footer() {
         ...useContentList('contact.address'),
     ];
     const { items: socialLinks } = usePublicList('/api/social-links');
+    const isShown = useSectionVisibility();
+    const navKeys = NAV_KEYS.filter((key) => key === 'home' || isShown(SECTION_IDS[key]));
 
-    const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const scrollTo = (id) =>
+        id === 'hero'
+            ? window.scrollTo({ top: 0, behavior: 'smooth' })
+            : document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
     return (
         <footer className="bg-brand-dark dark:bg-[color-mix(in_srgb,var(--color-brand-dark)_60%,black)] text-white transition-colors duration-300">
@@ -59,7 +65,7 @@ export default function Footer() {
                             {t('nav.home')}
                         </p>
                         <ul className="space-y-3">
-                            {NAV_KEYS.map((key) => (
+                            {navKeys.map((key) => (
                                 <li key={key}>
                                     <button
                                         onClick={() => scrollTo(SECTION_IDS[key])}

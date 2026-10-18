@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { useBrandLogos, useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
+import { useSectionVisibility } from '@/hooks/use-section-visibility';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
 const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', events: 'events', about: 'about', contact: 'contact' };
@@ -16,8 +17,13 @@ export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const isAr = locale === 'ar';
+    const isShown = useSectionVisibility();
     const [open, setOpen] = useState(false);
-    const [scrolled, setScrolled] = useState(false);
+    const [scrolledPastTop, setScrolled] = useState(false);
+    // Without the hero there's no dark gradient behind the bar, so use the solid style from the start.
+    const scrolled = scrolledPastTop || !isShown('hero');
+    // "Home" always stays — it scrolls to the top even when the hero is hidden.
+    const navKeys = NAV_KEYS.filter((key) => key === 'home' || isShown(SECTION_IDS[key]));
     const [activeSection, setActiveSection] = useState('home');
 
     useEffect(() => {
@@ -48,6 +54,9 @@ export default function Navbar() {
     const scrollTo = (id) => {
         if (location.pathname !== '/') {
             navigate('/', { state: { scrollTo: id } });
+        } else if (id === 'hero') {
+            // Works whether or not the hero section is shown.
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
             document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         }
@@ -97,7 +106,7 @@ export default function Navbar() {
 
                     {/* Desktop nav */}
                     <nav className="hidden lg:flex items-center gap-8">
-                        {NAV_KEYS.map((key) => (
+                        {navKeys.map((key) => (
                             <button
                                 key={key}
                                 onClick={() => scrollTo(SECTION_IDS[key])}
@@ -144,16 +153,18 @@ export default function Navbar() {
                         </button>
 
                         {/* CTA */}
-                        <button
-                            onClick={() => scrollTo('contact')}
-                            className={`hidden sm:inline-flex rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 ${
-                                scrolled
-                                    ? 'bg-brand-blue text-white hover:bg-primary-light hover:shadow-[0_4px_20px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)]'
-                                    : 'bg-white/15 text-white border border-white/30 hover:bg-white/25 hover:border-white/60'
-                            }`}
-                        >
-                            {t('nav.cta')}
-                        </button>
+                        {isShown('contact') && (
+                            <button
+                                onClick={() => scrollTo('contact')}
+                                className={`hidden sm:inline-flex rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 hover:scale-105 ${
+                                    scrolled
+                                        ? 'bg-brand-blue text-white hover:bg-primary-light hover:shadow-[0_4px_20px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)]'
+                                        : 'bg-white/15 text-white border border-white/30 hover:bg-white/25 hover:border-white/60'
+                                }`}
+                            >
+                                {t('nav.cta')}
+                            </button>
+                        )}
 
                         {/* Mobile menu toggle */}
                         <button
@@ -176,7 +187,7 @@ export default function Navbar() {
                 } bg-white dark:bg-brand-dark border-t border-border dark:border-primary-light shadow-lg`}
             >
                 <div className="px-4 pb-6 pt-4">
-                    {NAV_KEYS.map((key) => (
+                    {navKeys.map((key) => (
                         <button
                             key={key}
                             onClick={() => scrollTo(SECTION_IDS[key])}
@@ -194,12 +205,14 @@ export default function Navbar() {
                         >
                             {isAr ? 'EN' : 'عربي'}
                         </button>
-                        <button
-                            onClick={() => scrollTo('contact')}
-                            className="flex-1 rounded-full bg-brand-blue py-2 text-sm font-semibold text-white hover:bg-primary-light transition-colors duration-200"
-                        >
-                            {t('nav.cta')}
-                        </button>
+                        {isShown('contact') && (
+                            <button
+                                onClick={() => scrollTo('contact')}
+                                className="flex-1 rounded-full bg-brand-blue py-2 text-sm font-semibold text-white hover:bg-primary-light transition-colors duration-200"
+                            >
+                                {t('nav.cta')}
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

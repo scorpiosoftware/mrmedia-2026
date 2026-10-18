@@ -49,13 +49,18 @@ class SiteSetting extends Model
         'logo_url',
         'logo_dark_url',
         'favicon_url',
+        'hidden_sections',
     ];
 
     /** Branding image fields, each uploaded through Site Settings. */
     public const BRANDING_FIELDS = ['logo_url', 'logo_dark_url', 'favicon_url'];
 
+    /** Home-page sections the admin can show or hide (the element ids used on the page). */
+    public const TOGGLEABLE_SECTIONS = ['hero', 'stats', 'services', 'portfolio', 'events', 'about', 'testimonials', 'contact'];
+
     protected $casts = [
         'custom_colors' => 'array',
+        'hidden_sections' => 'array',
     ];
 
     protected static function booted(): void
@@ -137,6 +142,7 @@ class SiteSetting extends Model
             'logo_url'           => $this->logo_url,
             'logo_dark_url'      => $this->logo_dark_url,
             'favicon_url'        => $this->favicon_url,
+            'hidden_sections'    => array_values(array_intersect($this->hidden_sections ?? [], self::TOGGLEABLE_SECTIONS)),
         ];
     }
 }

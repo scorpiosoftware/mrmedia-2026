@@ -103,6 +103,7 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/spa/admin/site-settings',  [SiteSettingController::class, 'show']);
     Route::post('/spa/admin/site-settings', [SiteSettingController::class, 'update']);
+    Route::post('/spa/admin/site-settings/sections', [SiteSettingController::class, 'updateSections']);
     Route::post('/spa/admin/site-settings/upload-logo',    [SiteSettingController::class, 'uploadLogo'])->middleware('throttle:20,1');
     Route::post('/spa/admin/site-settings/upload-favicon', [SiteSettingController::class, 'uploadFavicon'])->middleware('throttle:20,1');
 

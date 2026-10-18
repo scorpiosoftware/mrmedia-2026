@@ -83,6 +83,23 @@ class SiteSettingController extends Controller
         return response()->json(['settings' => $settings->fresh()]);
     }
 
+    /**
+     * POST /spa/admin/site-settings/sections — which home-page sections are hidden.
+     * Its own endpoint so a toggle saves instantly without re-validating every other setting.
+     */
+    public function updateSections(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'hidden_sections'   => ['present', 'array'],
+            'hidden_sections.*' => ['string', 'in:'.implode(',', SiteSetting::TOGGLEABLE_SECTIONS)],
+        ]);
+
+        $settings = SiteSetting::current();
+        $settings->update(['hidden_sections' => array_values(array_unique($data['hidden_sections']))]);
+
+        return response()->json(['hidden_sections' => $settings->fresh()->hidden_sections ?? []]);
+    }
+
     /** POST /spa/admin/site-settings/upload-logo — light or dark logo */
     public function uploadLogo(Request $request): JsonResponse
     {

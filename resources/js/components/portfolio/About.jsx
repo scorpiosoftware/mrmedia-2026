@@ -1,5 +1,6 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useBrandLogos, useContent, useContentList } from '@/hooks/use-content';
+import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { ArrowRight, CheckCircle } from 'lucide-react';
 
 export default function About() {
@@ -9,6 +10,7 @@ export default function About() {
     const aboutImage = t('about.image');
     // Editable in Content → About (about.value_1, _2, …); blank entries are skipped.
     const values = useContentList('about.value');
+    const isShown = useSectionVisibility();
 
     const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
@@ -124,13 +126,15 @@ export default function About() {
                             </ul>
                         )}
 
-                        <button
-                            onClick={() => scrollTo('contact')}
-                            className="group inline-flex items-center gap-2 rounded-full bg-brand-blue px-7 py-3 text-sm font-bold text-white hover:bg-primary-light hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] hover:scale-105 transition-all duration-300"
-                        >
-                            {t('about.cta')}
-                            <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" />
-                        </button>
+                        {isShown('contact') && (
+                            <button
+                                onClick={() => scrollTo('contact')}
+                                className="group inline-flex items-center gap-2 rounded-full bg-brand-blue px-7 py-3 text-sm font-bold text-white hover:bg-primary-light hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_35%,transparent)] hover:scale-105 transition-all duration-300"
+                            >
+                                {t('about.cta')}
+                                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

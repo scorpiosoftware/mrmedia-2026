@@ -15,6 +15,7 @@ import Testimonials from '@/components/portfolio/Testimonials';
 import WhatsAppButton from '@/components/portfolio/WhatsAppButton';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { usePointerGlow } from '@/hooks/use-pointer-glow';
+import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { useApp } from '@/context/AppContext';
 import { useContent, useSiteIdentity } from '@/hooks/use-content';
 
@@ -51,6 +52,7 @@ export default function Home() {
     const site = useSiteIdentity();
     const { contentLoading } = useApp();
     const showSkeleton = useMinimumLoading(contentLoading, MIN_SKELETON_MS);
+    const isShown = useSectionVisibility();
     usePointerGlow();
 
     useDocumentMeta({
@@ -96,15 +98,17 @@ export default function Home() {
             <div aria-hidden="true" className="mm-scroll-progress" />
             <Navbar />
             <main>
-                <Hero />
-                <Stats />
-                <Services />
+                {/* Each section can be hidden in Content Editor → "Show on website". */}
+                {isShown('hero') && <Hero />}
+                {isShown('stats') && <Stats />}
+                {isShown('services') && <Services />}
+                {/* The marquee has its own on/off switch on its admin page. */}
                 <MarqueeBanner />
-                <Portfolio />
-                <Events />
-                <About />
-                <Testimonials />
-                <Contact />
+                {isShown('portfolio') && <Portfolio />}
+                {isShown('events') && <Events />}
+                {isShown('about') && <About />}
+                {isShown('testimonials') && <Testimonials />}
+                {isShown('contact') && <Contact />}
             </main>
             <Footer />
             <WhatsAppButton />

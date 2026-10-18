@@ -1,4 +1,5 @@
 import { useBrandLogos, useContent } from '@/hooks/use-content';
+import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { ArrowRight, Play } from 'lucide-react';
 
 /* Deterministic particle positions so there are no hydration mismatches */
@@ -17,6 +18,7 @@ const DOT_GRID_B = Array.from({ length: 16 });
 export default function Hero() {
     const t = useContent();
     const logos = useBrandLogos();
+    const isShown = useSectionVisibility();
     // Optional image (Content → Hero). When set, the hero splits into text + image columns.
     const heroImage = t('hero.image');
     const split = Boolean(heroImage);
@@ -228,27 +230,32 @@ export default function Hero() {
                                 animationDelay: '0.58s',
                             }}
                         >
-                            <button
-                                onClick={() => scrollTo('contact')}
-                                className="btn-gold-shimmer group inline-flex items-center gap-2 rounded-full px-9 py-4 text-base font-bold text-brand-dark transition-all duration-300 hover:scale-105 hover:shadow-[0_0_44px_color-mix(in_srgb,var(--color-brand-gold)_65%,transparent)]"
-                            >
-                                {t('hero.cta_primary')}
-                                <ArrowRight
-                                    size={18}
-                                    className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
-                                />
-                            </button>
+                            {/* Each button only shows while the section it scrolls to is shown. */}
+                            {isShown('contact') && (
+                                <button
+                                    onClick={() => scrollTo('contact')}
+                                    className="btn-gold-shimmer group inline-flex items-center gap-2 rounded-full px-9 py-4 text-base font-bold text-brand-dark transition-all duration-300 hover:scale-105 hover:shadow-[0_0_44px_color-mix(in_srgb,var(--color-brand-gold)_65%,transparent)]"
+                                >
+                                    {t('hero.cta_primary')}
+                                    <ArrowRight
+                                        size={18}
+                                        className="transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
+                                    />
+                                </button>
+                            )}
 
-                            <button
-                                onClick={() => scrollTo('portfolio')}
-                                className="group mm-beam inline-flex items-center gap-2 rounded-full border-2 border-white/25 px-9 py-4 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 [--mm-beam-inset:-2px] [--mm-beam-width:2px] hover:scale-105 hover:border-white/55 hover:bg-white/10 hover:shadow-[0_0_32px_rgba(255,255,255,0.14)]"
-                            >
-                                <Play
-                                    size={18}
-                                    className="transition-transform duration-300 group-hover:scale-110"
-                                />
-                                {t('hero.cta_secondary')}
-                            </button>
+                            {isShown('portfolio') && (
+                                <button
+                                    onClick={() => scrollTo('portfolio')}
+                                    className="group mm-beam inline-flex items-center gap-2 rounded-full border-2 border-white/25 px-9 py-4 text-base font-bold text-white backdrop-blur-sm transition-all duration-300 [--mm-beam-inset:-2px] [--mm-beam-width:2px] hover:scale-105 hover:border-white/55 hover:bg-white/10 hover:shadow-[0_0_32px_rgba(255,255,255,0.14)]"
+                                >
+                                    <Play
+                                        size={18}
+                                        className="transition-transform duration-300 group-hover:scale-110"
+                                    />
+                                    {t('hero.cta_secondary')}
+                                </button>
+                            )}
                         </div>
                     </div>
 
