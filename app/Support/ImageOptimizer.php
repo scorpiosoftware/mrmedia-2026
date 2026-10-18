@@ -16,6 +16,12 @@ class ImageOptimizer
     /** Only these real (content-sniffed) MIME types are ever accepted. */
     public const ALLOWED_MIMES = ['image/jpeg', 'image/png', 'image/webp'];
 
+    /**
+     * Largest accepted upload (KB). PHP must allow it too: upload_max_filesize / post_max_size
+     * (public/.user.ini, public/.htaccess). Mirrored in resources/js/lib/upload-limits.js.
+     */
+    public const MAX_UPLOAD_KB = 16 * 1024;
+
     /** Longest side (px) a stored image is scaled down to — plenty for full-width heroes on retina screens. */
     public const MAX_SIDE = 1920;
 

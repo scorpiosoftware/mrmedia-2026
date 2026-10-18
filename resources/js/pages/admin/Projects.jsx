@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, TOO_LARGE_MESSAGE } from '@/lib/upload-limits';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
     ArrowDown,
@@ -120,8 +121,8 @@ export default function AdminProjects() {
             setUploadError('Only JPG, PNG or WebP images are allowed.');
             return;
         }
-        if (file.size > 2 * 1024 * 1024) {
-            setUploadError('Image must be 2MB or smaller.');
+        if (file.size > MAX_UPLOAD_BYTES) {
+            setUploadError(TOO_LARGE_MESSAGE);
             return;
         }
 
@@ -468,7 +469,7 @@ export default function AdminProjects() {
                                         <strong className="font-semibold text-[#213C93]">
                                             1200 × 900 px
                                         </strong>{' '}
-                                        (4:3) — JPG, PNG or WebP, up to 2MB.
+                                        (4:3) — JPG, PNG or WebP, up to {MAX_UPLOAD_LABEL}.
                                         Images are cropped to fill a 4:3 card,
                                         so keep the subject centred. Falls back
                                         to the accent color below when no image

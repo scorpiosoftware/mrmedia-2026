@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\Api\EventApiController;
 use App\Http\Controllers\Api\MarqueeBannerApiController;
+use App\Http\Controllers\Api\PopupApiController;
 use App\Http\Controllers\Api\ProjectApiController;
 use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\SocialLinkApiController;
@@ -22,6 +23,9 @@ Route::get('/services', [ServiceApiController::class, 'index']);
 
 // Public: scrolling phrases banner (null when hidden)
 Route::get('/marquee', [MarqueeBannerApiController::class, 'index']);
+
+// Public: home-page popup carousel (null when switched off or empty)
+Route::get('/popup', [PopupApiController::class, 'index']);
 
 // Public: published social media links
 Route::get('/social-links', [SocialLinkApiController::class, 'index']);

@@ -86,7 +86,7 @@ class SpaController extends Controller
         }
 
         $srcset = null;
-        if (preg_match('#/storage/(content|projects|events|branding)/[0-9a-f-]{36}\.webp$#i', $url)) {
+        if (preg_match('#/storage/(content|projects|events|branding|popup)/[0-9a-f-]{36}\.webp$#i', $url)) {
             $relative = substr(parse_url($url, PHP_URL_PATH), strlen('/storage/'));
             $variants = ImageOptimizer::variantPaths($relative);
             // Only advertise copies that exist (images uploaded before they did may not have them).

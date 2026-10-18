@@ -176,7 +176,8 @@ export function MarqueeStrip({ banner }) {
                 <div
                     key={i}
                     // Tilted rows are widened so their ends never show inside the viewport.
-                    className={`${banner.tilted ? '-mx-[5%] w-[110%] shadow-[0_10px_40px_color-mix(in_srgb,var(--color-brand-dark)_25%,transparent)]' : ''} ${
+                    // Light shadow only — a heavy one tinted the band around the ribbon grey.
+                    className={`${banner.tilted ? '-mx-[5%] w-[110%] shadow-[0_6px_18px_color-mix(in_srgb,var(--color-brand-dark)_10%,transparent)]' : ''} ${
                         banner.double_row && banner.tilted && i === 1
                             ? '-mt-14 sm:-mt-16'
                             : ''
@@ -194,8 +195,14 @@ export function MarqueeStrip({ banner }) {
     );
 }
 
-/** Home page section: fetches the banner (null when hidden in the dashboard). */
-export default function MarqueeBanner() {
+/**
+ * Home page section: fetches the banner (null when hidden in the dashboard).
+ * `background` should match the section right above, so the banner doesn't sit in a band
+ * of its own colour (see Home.jsx).
+ */
+export default function MarqueeBanner({
+    background = 'bg-brand-bg dark:bg-brand-dark',
+}) {
     const locale = useLocale();
     const [banner, setBanner] = useState(null);
 
@@ -216,7 +223,7 @@ export default function MarqueeBanner() {
     return (
         <section
             aria-label="Highlights"
-            className="overflow-hidden bg-brand-bg transition-colors duration-300 dark:bg-brand-dark"
+            className={`overflow-hidden transition-colors duration-300 ${background}`}
         >
             <MarqueeStrip banner={banner} />
         </section>

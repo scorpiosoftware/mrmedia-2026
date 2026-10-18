@@ -43,9 +43,13 @@ trait StoresUploadedImages
                 'file',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:2000', // ~2MB — stays under this server's upload_max_filesize (2M) so oversized files fail validation cleanly
+                'max:'.ImageOptimizer::MAX_UPLOAD_KB, // 16MB — the stored copy is re-encoded far smaller anyway
                 'dimensions:max_width=6000,max_height=6000',
             ],
+        ], [
+            'image.max'      => 'The image must be 16MB or smaller.',
+            // PHP rejected the file before Laravel saw it (usually upload_max_filesize too low).
+            'image.uploaded' => 'The image could not be uploaded — it may be larger than the server allows.',
         ]);
 
         $path = $request->file('image')->getRealPath();

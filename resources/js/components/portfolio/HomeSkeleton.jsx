@@ -175,7 +175,7 @@ function ServicesSkeleton() {
 
 function MarqueeSkeleton() {
     return (
-        <section className="overflow-hidden bg-brand-bg dark:bg-brand-dark">
+        <section className="overflow-hidden bg-white dark:bg-brand-dark">
             <div className="flex items-center gap-8 overflow-hidden bg-brand-blue px-6 py-4">
                 {Array.from({ length: 8 }).map((_, i) => (
                     <Bone

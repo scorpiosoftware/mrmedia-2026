@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, TOO_LARGE_MESSAGE } from '@/lib/upload-limits';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { LOGO_DARK_SRC, LOGO_SRC } from '@/lib/brand-logos';
 import { THEME_COLOR_KEYS, themeVars } from '@/lib/site-theme';
@@ -176,8 +177,8 @@ function BrandingUpload({ slot, value, onChange }) {
             );
             return;
         }
-        if (file.size > 2 * 1024 * 1024) {
-            setError('Image must be 2MB or smaller.');
+        if (file.size > MAX_UPLOAD_BYTES) {
+            setError(TOO_LARGE_MESSAGE);
             return;
         }
         setUploading(true);
@@ -298,7 +299,7 @@ function BrandingUpload({ slot, value, onChange }) {
                     )}
                 </div>
                 <p className="text-xs leading-relaxed text-[#5A6A9A]">
-                    {slot.tip} Max 2MB and 6000 px per side.
+                    {slot.tip} Max {MAX_UPLOAD_LABEL} and 6000 px per side.
                 </p>
                 {error && <p className="text-xs text-red-600">{error}</p>}
             </div>

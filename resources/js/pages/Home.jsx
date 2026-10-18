@@ -8,6 +8,7 @@ import Hero from '@/components/portfolio/Hero';
 import HomeSkeleton from '@/components/portfolio/HomeSkeleton';
 import MarqueeBanner from '@/components/portfolio/MarqueeBanner';
 import Navbar from '@/components/portfolio/Navbar';
+import HomePopup from '@/components/portfolio/PopupCarousel';
 import Portfolio from '@/components/portfolio/Portfolio';
 import Services from '@/components/portfolio/Services';
 import Stats from '@/components/portfolio/Stats';
@@ -112,8 +113,17 @@ export default function Home() {
                 {isShown('hero') && <Hero />}
                 {isShown('stats') && <Stats />}
                 {isShown('services') && <Services />}
-                {/* The marquee has its own on/off switch on its admin page. */}
-                <MarqueeBanner />
+                {/* The marquee has its own on/off switch on its admin page. It takes the
+                    background of the section right above it, so it never sits in a band of its own. */}
+                <MarqueeBanner
+                    background={
+                        isShown('services')
+                            ? 'bg-white dark:bg-brand-dark' // = Services
+                            : isShown('stats')
+                              ? 'bg-brand-dark dark:bg-primary-dark' // = Stats
+                              : 'bg-brand-bg dark:bg-brand-dark' // = hero's wave / site background
+                    }
+                />
                 {isShown('portfolio') && <Portfolio />}
                 {isShown('events') && <Events />}
                 {isShown('about') && <About />}
@@ -122,6 +132,8 @@ export default function Home() {
             </main>
             <Footer />
             <WhatsAppButton />
+            {/* Popup carousel — managed in Admin → Popup; renders nothing when switched off. */}
+            <HomePopup />
         </>
     );
 }

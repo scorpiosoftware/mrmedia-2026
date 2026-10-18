@@ -24,6 +24,20 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
+# Admin image uploads up to 16MB (ImageOptimizer::MAX_UPLOAD_KB). Only applies when PHP runs
+# as an Apache module; PHP-FPM / CGI hosts read public/.user.ini instead. Guarded, because a
+# bare php_value line is a 500 error on servers without mod_php.
+<IfModule mod_php.c>
+    php_value upload_max_filesize 16M
+    php_value post_max_size 20M
+    php_value memory_limit 512M
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 16M
+    php_value post_max_size 20M
+    php_value memory_limit 512M
+</IfModule>
+
 # Long-lived caching for static assets. Vite build output is content-hashed
 # (filename changes whenever the content does), so it's always safe to mark
 # immutable; everything else gets a long but non-immutable lifetime — rename

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SiteSettingController extends Controller
 {
-    // Shared hardened upload (JPG/PNG/WebP, ≤2MB, ≤6000px, content-sniffed + re-encoded).
+    // Shared hardened upload (JPG/PNG/WebP, ≤16MB, ≤6000px, content-sniffed + re-encoded).
     use StoresUploadedImages;
 
     private const UPLOAD_DIR = 'branding';

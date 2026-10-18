@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, TOO_LARGE_MESSAGE } from '@/lib/upload-limits';
 import AdminLayout from '@/components/admin/AdminLayout';
 import RepeaterField from '@/components/admin/RepeaterField';
 import {
@@ -309,8 +310,8 @@ export default function AdminEvents() {
             setError('Only JPG, PNG or WebP images are allowed.');
             return;
         }
-        if (file.size > 2 * 1024 * 1024) {
-            setError('Image must be 2MB or smaller.');
+        if (file.size > MAX_UPLOAD_BYTES) {
+            setError(TOO_LARGE_MESSAGE);
             return;
         }
 
@@ -825,7 +826,7 @@ export default function AdminEvents() {
                                     <>
                                         Recommended size{' '}
                                         <strong className="font-semibold text-[#213C93]">1600 × 900 px</strong>{' '}
-                                        (16:9) — JPG, PNG or WebP, up to 2MB. Images are cropped to fill a 16:9
+                                        (16:9) — JPG, PNG or WebP, up to {MAX_UPLOAD_LABEL}. Images are cropped to fill a 16:9
                                         banner, so keep the subject centred.
                                     </>
                                 }
@@ -1007,7 +1008,7 @@ export default function AdminEvents() {
                                                     <>
                                                         Recommended size{' '}
                                                         <strong className="font-semibold text-[#213C93]">600 × 600 px</strong>{' '}
-                                                        (1:1 square) — JPG, PNG or WebP, up to 2MB. Shown as a square
+                                                        (1:1 square) — JPG, PNG or WebP, up to {MAX_UPLOAD_LABEL}. Shown as a square
                                                         with rounded corners, so keep the face centred. Falls back to
                                                         the trainer's initial when no photo is set.
                                                     </>
@@ -1096,7 +1097,7 @@ export default function AdminEvents() {
                                                                 <>
                                                                     Recommended size{' '}
                                                                     <strong className="font-semibold text-[#213C93]">300 × 300 px</strong>{' '}
-                                                                    (1:1 square) — JPG, PNG or WebP, up to 2MB. Shown as a small
+                                                                    (1:1 square) — JPG, PNG or WebP, up to {MAX_UPLOAD_LABEL}. Shown as a small
                                                                     circle, so keep the face centred. Falls back to the person's
                                                                     initial when no photo is set.
                                                                 </>

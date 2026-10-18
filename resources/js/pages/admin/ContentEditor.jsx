@@ -1,3 +1,4 @@
+import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, TOO_LARGE_MESSAGE } from '@/lib/upload-limits';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
     Check,
@@ -75,8 +76,8 @@ function ContentImageField({ item, onChange }) {
             setError('Only JPG, PNG or WebP images are allowed.');
             return;
         }
-        if (file.size > 2 * 1024 * 1024) {
-            setError('Image must be 2MB or smaller.');
+        if (file.size > MAX_UPLOAD_BYTES) {
+            setError(TOO_LARGE_MESSAGE);
             return;
         }
         setUploading(true);
@@ -159,7 +160,7 @@ function ContentImageField({ item, onChange }) {
                     <strong className="font-semibold text-[#213C93]">
                         {tip.size}
                     </strong>{' '}
-                    ({tip.ratio}) — JPG, PNG or WebP, up to 2MB, max 6000 px per
+                    ({tip.ratio}) — JPG, PNG or WebP, up to {MAX_UPLOAD_LABEL}, max 6000 px per
                     side. {tip.note}
                 </p>
                 <p className="text-xs text-[#5A6A9A]">

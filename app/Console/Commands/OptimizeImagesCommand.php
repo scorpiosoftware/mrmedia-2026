@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Event;
+use App\Models\Popup;
 use App\Models\Project;
 use App\Models\SiteContent;
 use App\Models\SiteSetting;
@@ -29,7 +30,7 @@ class OptimizeImagesCommand extends Command
     protected $description = 'Convert existing uploaded images to optimised WebP and update their references';
 
     /** Folders on the public disk that hold admin uploads (the controllers\' UPLOAD_DIRs). */
-    private const UPLOAD_DIRS = ['content', 'projects', 'events', 'branding'];
+    private const UPLOAD_DIRS = ['content', 'projects', 'events', 'branding', 'popup'];
 
     public function handle(): int
     {
@@ -261,6 +262,20 @@ class OptimizeImagesCommand extends Command
                     },
                 );
             }
+        }
+
+        $popup = Popup::first();
+        foreach ($popup?->slides ?? [] as $i => $slide) {
+            $add(
+                'popup slide '.($i + 1),
+                $slide['image_url'] ?? null,
+                $popup,
+                function ($url) use ($popup, $i) {
+                    $slides = $popup->slides;
+                    $slides[$i]['image_url'] = $url;
+                    $popup->slides = $slides;
+                },
+            );
         }
 
         $settings = SiteSetting::first();

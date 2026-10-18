@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\MarqueeBannerController;
+use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SocialLinkController;
 use App\Http\Controllers\Api\ContentApiController;
@@ -109,6 +110,10 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/spa/admin/marquee',  [MarqueeBannerController::class, 'show']);
     Route::post('/spa/admin/marquee', [MarqueeBannerController::class, 'update']);
+
+    Route::get('/spa/admin/popup',  [PopupController::class, 'show']);
+    Route::post('/spa/admin/popup', [PopupController::class, 'update']);
+    Route::post('/spa/admin/popup/upload-image', [PopupController::class, 'uploadImage'])->middleware('throttle:20,1');
 
     Route::get('/spa/admin/social-links',       [SocialLinkController::class, 'index']);
     Route::post('/spa/admin/social-links',      [SocialLinkController::class, 'store']);

@@ -1,0 +1,1 @@
+var e=16*1024*1024,t=`16MB`,n=`Image must be ${t} or smaller.`;export{t as n,n as r,e as t};

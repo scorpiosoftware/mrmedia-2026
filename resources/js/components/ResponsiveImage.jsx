@@ -7,7 +7,7 @@ const MAX_SIDE = 1920;
 
 // Only our own uploads have the smaller copies — anything else renders as a plain <img>.
 const UPLOADED_WEBP =
-    /\/storage\/(content|projects|events|branding)\/[0-9a-f-]{36}\.webp$/i;
+    /\/storage\/(content|projects|events|branding|popup)\/[0-9a-f-]{36}\.webp$/i;
 
 /** srcset for an uploaded image, or undefined when the URL has no stored variants. */
 export function uploadedSrcSet(src) {
