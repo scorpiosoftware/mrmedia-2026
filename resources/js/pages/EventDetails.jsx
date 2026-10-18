@@ -10,6 +10,7 @@ import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { usePointerGlow } from '@/hooks/use-pointer-glow';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { seatsStatus } from '@/lib/event-seats';
+import ResponsiveImage from '@/components/ResponsiveImage';
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import {
     Award, AlertCircle, Calendar, CalendarX, CheckCircle2, ChevronDown, ChevronLeft,
@@ -419,9 +420,11 @@ function TrainerSection({ event, t }) {
                 <Reveal delay={120}>
                 <div className="group mm-beam mm-spotlight flex flex-col items-center gap-6 rounded-3xl bg-white dark:bg-brand-dark p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] border border-border dark:border-primary-light/40 sm:flex-row sm:items-start [--mm-beam-inset:-1px] [--mm-beam-speed:7s]">
                     {trainer.image_url ? (
-                        <img
+                        <ResponsiveImage
                             src={trainer.image_url}
                             alt={trainer.name}
+                            sizes="112px"
+                            loading="lazy"
                             className="h-28 w-28 shrink-0 rounded-2xl object-cover shadow-[0_0_0_4px_color-mix(in_srgb,var(--color-brand-gold)_25%,transparent)] transition-transform duration-500 group-hover:scale-105"
                         />
                     ) : (
@@ -471,7 +474,7 @@ function TestimonialsSection({ event, t }) {
                             <p className="leading-relaxed text-brand-dark dark:text-white/85">{item.quote}</p>
                             <div className="mt-4 flex items-center gap-3">
                                 {item.avatar_url ? (
-                                    <img src={item.avatar_url} alt={item.name ?? ''} className="h-9 w-9 rounded-full object-cover" />
+                                    <ResponsiveImage src={item.avatar_url} alt={item.name ?? ''} sizes="36px" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
                                 ) : (
                                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue text-xs font-bold text-white">
                                         {(item.name ?? '?').charAt(0)}
@@ -749,9 +752,11 @@ export default function EventDetails() {
                                         {event.image_url && (
                                             <Reveal>
                                                 <div className="group mm-beam aspect-video w-full overflow-hidden rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] [--mm-beam-speed:7s] [--mm-beam-width:2px]">
-                                                    <img
+                                                    <ResponsiveImage
                                                         src={event.image_url}
                                                         alt={event.title}
+                                                        // Half of max-w-5xl on desktop, full width below
+                                                        sizes="(min-width: 1024px) 464px, 92vw"
                                                         className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
                                                         loading="eager"
                                                     />

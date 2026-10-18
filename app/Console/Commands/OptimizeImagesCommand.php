@@ -76,17 +76,37 @@ class OptimizeImagesCommand extends Command
                 continue;
             }
 
-            if ($extension === $ref['format'] && max($dims) <= $ref['maxSide']) {
+            $isOptimised = $extension === $ref['format'] && max($dims) <= $ref['maxSide'];
+            // WebP images also need their smaller srcset copies (older uploads don't have them).
+            $missingVariants = $ref['format'] === 'webp'
+                && collect(ImageOptimizer::variantPaths($relative))->contains(fn ($p) => ! $disk->exists($p));
+
+            if ($isOptimised && ! $missingVariants) {
                 $rows[] = [$ref['label'], $relative, 'already optimised', '', ''];
                 $plans[$url] = null;
 
                 continue;
             }
 
-            $encoded = ImageOptimizer::encode($absolute, $ref['format'], $ref['maxSide']);
+            $encoded = ImageOptimizer::encodeWithVariants($absolute, $ref['format'], $ref['maxSide']);
             if ($encoded === null) {
                 $rows[] = [$ref['label'], $relative, 'FAILED — could not decode', '', ''];
                 $plans[$url] = null;
+
+                continue;
+            }
+
+            if ($isOptimised) {
+                // Keep the file and its URL as-is; only add the smaller copies next to it.
+                $plans[$url] = [
+                    'variantsOnly' => true,
+                    'old' => $relative,
+                    'new' => $relative,
+                    'newUrl' => $url,
+                    'main' => null,
+                    'variants' => $encoded['variants'],
+                ];
+                $rows[] = [$ref['label'], $relative, 'add smaller copies (srcset)', '', sprintf('%d×%d', ...$dims)];
 
                 continue;
             }
@@ -97,19 +117,21 @@ class OptimizeImagesCommand extends Command
             $newUrl = substr($url, 0, strrpos($url, '/') + 1).basename($newRelative);
 
             $plans[$url] = [
+                'variantsOnly' => false,
                 'old' => $relative,
                 'new' => $newRelative,
                 'newUrl' => $newUrl,
-                'bytes' => $encoded,
+                'main' => $encoded['main'],
+                'variants' => $encoded['variants'],
             ];
 
             $bytesBefore += $oldSize;
-            $bytesAfter += strlen($encoded);
+            $bytesAfter += strlen($encoded['main']);
             $rows[] = [
                 $ref['label'],
                 $relative,
                 '→ '.basename($newRelative),
-                $this->kb($oldSize).' → '.$this->kb(strlen($encoded)),
+                $this->kb($oldSize).' → '.$this->kb(strlen($encoded['main'])),
                 sprintf('%d×%d', ...$dims),
             ];
         }
@@ -123,13 +145,19 @@ class OptimizeImagesCommand extends Command
             return self::SUCCESS;
         }
 
-        $this->info(sprintf(
-            '%d file(s) to convert: %s → %s (saves %s).',
-            count($todo),
-            $this->kb($bytesBefore),
-            $this->kb($bytesAfter),
-            $this->kb($bytesBefore - $bytesAfter),
-        ));
+        $converting = array_filter($todo, fn ($plan) => ! $plan['variantsOnly']);
+        if ($converting !== []) {
+            $this->info(sprintf(
+                '%d file(s) to convert: %s → %s (saves %s).',
+                count($converting),
+                $this->kb($bytesBefore),
+                $this->kb($bytesAfter),
+                $this->kb($bytesBefore - $bytesAfter),
+            ));
+        }
+        if (count($todo) > count($converting)) {
+            $this->info(sprintf('%d already-optimised file(s) get smaller srcset copies.', count($todo) - count($converting)));
+        }
 
         if ($dryRun) {
             $this->warn('Dry run — no files written, database unchanged.');
@@ -141,18 +169,23 @@ class OptimizeImagesCommand extends Command
             return self::FAILURE;
         }
 
-        // 1. Write the new files (old ones stay until the database no longer points at them).
+        // 1. Write the new files and their srcset copies (old files stay until the database no longer points at them).
         foreach ($todo as $plan) {
-            $disk->put($plan['new'], $plan['bytes']);
+            if ($plan['main'] !== null) {
+                $disk->put($plan['new'], $plan['main']);
+            }
+            foreach ($plan['variants'] as $width => $bytes) {
+                $disk->put(ImageOptimizer::variantPath($plan['new'], $width), $bytes);
+            }
         }
 
         // 2. Repoint every reference in one transaction; on failure remove the new files.
         try {
-            DB::transaction(function () use ($references, $todo) {
+            DB::transaction(function () use ($references, $converting) {
                 $dirty = [];
                 foreach ($references as $ref) {
-                    if (isset($todo[$ref['url']])) {
-                        ($ref['set'])($todo[$ref['url']]['newUrl']);
+                    if (isset($converting[$ref['url']])) {
+                        ($ref['set'])($converting[$ref['url']]['newUrl']);
                         $dirty[spl_object_id($ref['model'])] = $ref['model'];
                     }
                 }
@@ -161,8 +194,8 @@ class OptimizeImagesCommand extends Command
                 }
             });
         } catch (\Throwable $e) {
-            foreach ($todo as $plan) {
-                $disk->delete($plan['new']);
+            foreach ($converting as $plan) {
+                $disk->delete([$plan['new'], ...ImageOptimizer::variantPaths($plan['new'])]);
             }
             $this->error('Database update failed — nothing was changed: '.$e->getMessage());
 
@@ -173,15 +206,16 @@ class OptimizeImagesCommand extends Command
 
         // 3. Remove the originals.
         if (! $this->option('keep-originals')) {
-            foreach ($todo as $plan) {
-                $disk->delete($plan['old']);
+            foreach ($converting as $plan) {
+                $disk->delete([$plan['old'], ...ImageOptimizer::variantPaths($plan['old'])]);
             }
         }
 
         $this->info(sprintf(
-            'Done: %d image(s) converted%s.',
-            count($todo),
-            $this->option('keep-originals') ? ', originals kept' : ', originals deleted',
+            'Done: %d image(s) converted, %d given srcset copies%s.',
+            count($converting),
+            count($todo) - count($converting),
+            $converting === [] ? '' : ($this->option('keep-originals') ? ', originals kept' : ', originals deleted'),
         ));
 
         return self::SUCCESS;

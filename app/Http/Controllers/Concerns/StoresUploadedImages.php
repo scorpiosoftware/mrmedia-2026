@@ -58,16 +58,21 @@ trait StoresUploadedImages
             return response()->json(['message' => 'Unsupported image type.'], 422);
         }
 
-        $reencoded = ImageOptimizer::encode($path, $format, $maxSide);
-        if ($reencoded === null) {
+        $encoded = ImageOptimizer::encodeWithVariants($path, $format, $maxSide);
+        if ($encoded === null) {
             return response()->json(['message' => 'Failed to process the uploaded image.'], 422);
         }
 
         $stored = self::UPLOAD_DIR.'/'.Str::uuid()->toString().'.'.$format;
+        $disk = Storage::disk('public');
 
-        Storage::disk('public')->put($stored, $reencoded);
+        $disk->put($stored, $encoded['main']);
+        // Smaller copies for srcset, so small slots (cards, avatars, logos) download small files.
+        foreach ($encoded['variants'] as $width => $bytes) {
+            $disk->put(ImageOptimizer::variantPath($stored, $width), $bytes);
+        }
 
-        return response()->json(['url' => Storage::disk('public')->url($stored)]);
+        return response()->json(['url' => $disk->url($stored)]);
     }
 
     /** Deletes a previously uploaded image from local storage, if the URL points at one in this controller's folder. */
@@ -83,6 +88,6 @@ trait StoresUploadedImages
         }
 
         $path = self::UPLOAD_DIR.'/'.basename($url);
-        Storage::disk('public')->delete($path);
+        Storage::disk('public')->delete([$path, ...ImageOptimizer::variantPaths($path)]);
     }
 }

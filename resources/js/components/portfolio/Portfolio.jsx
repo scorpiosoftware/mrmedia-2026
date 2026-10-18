@@ -3,6 +3,7 @@ import { useBrandLogos, useContent } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
 import { ArrowUpRight } from 'lucide-react';
 import { useState } from 'react';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 const FILTERS = ['all', 'brand', 'digital', 'media'];
 const FILTER_KEYS = {
@@ -128,16 +129,21 @@ export default function Portfolio() {
                                     style={{ backgroundColor: project.color }}
                                 >
                                     {project.image_url ? (
-                                        <img
+                                        <ResponsiveImage
                                             src={project.image_url}
                                             alt={project.title}
+                                            loading="lazy"
+                                            // 1 / 2 / 3-column grid inside max-w-7xl
+                                            sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 92vw"
                                             className="absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-75 motion-reduce:transition-none"
                                         />
                                     ) : (
                                         /* Background watermark fallback when no image is set */
                                         <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-                                            <img
+                                            <ResponsiveImage
                                                 src={logos.onDark}
+                                                sizes="144px"
+                                                loading="lazy"
                                                 alt=""
                                                 aria-hidden="true"
                                                 className="mm-float-slow w-36 object-contain opacity-10 transition-all duration-500 select-none group-hover:scale-110 group-hover:opacity-20"

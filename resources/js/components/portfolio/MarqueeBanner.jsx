@@ -1,6 +1,7 @@
 import { useBrandLogos, useLocale } from '@/hooks/use-content';
 import { Asterisk, Diamond, Sparkle, Star } from 'lucide-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 const FONT_SIZES = {
     sm: { text: 'text-lg sm:text-xl', icon: 16, pad: 'py-3', gap: 'gap-6' },
@@ -35,8 +36,9 @@ function Separator({ type, size, color }) {
             );
         case 'logo':
             return (
-                <img
+                <ResponsiveImage
                     src={logos.onDark}
+                    sizes={`${Math.ceil(size * 1.2)}px`}
                     alt=""
                     aria-hidden="true"
                     className="shrink-0 object-contain"

@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { useBrandLogos, useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
 import { useSectionVisibility } from '@/hooks/use-section-visibility';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 const NAV_KEYS = ['home', 'services', 'portfolio', 'events', 'about', 'contact'];
 const SECTION_IDS = { home: 'hero', services: 'services', portfolio: 'portfolio', events: 'events', about: 'about', contact: 'contact' };
@@ -88,8 +89,9 @@ export default function Navbar() {
                                     : 'bg-brand-dark/70 backdrop-blur-sm border border-white/15 shadow-[0_0_18px_color-mix(in_srgb,var(--color-primary-light)_35%,transparent)]'
                             }`}
                         >
-                            <img
+                            <ResponsiveImage
                                 src={!scrolled || isDarkMode ? logos.onDark : logos.light}
+                                sizes="36px"
                                 alt={site.name}
                                 className="w-9 h-9 object-contain"
                             />

@@ -4,6 +4,7 @@ import { seatsStatus } from '@/lib/event-seats';
 import { ArrowUpRight, Calendar, CalendarX, MapPin, Monitor, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 function formatDate(value, locale) {
     if (!value) return '';
@@ -85,9 +86,12 @@ export default function Events() {
                                 >
                                     {event.image_url && (
                                         <div className="aspect-video w-full overflow-hidden">
-                                            <img
+                                            <ResponsiveImage
                                                 src={event.image_url}
                                                 alt={event.title}
+                                                loading="lazy"
+                                                // 1 / 2 / 3-column grid inside max-w-7xl
+                                                sizes="(min-width: 1280px) 395px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 92vw"
                                                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                             />
                                         </div>

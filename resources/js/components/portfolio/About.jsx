@@ -2,6 +2,7 @@ import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useBrandLogos, useContent, useContentList } from '@/hooks/use-content';
 import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { ArrowRight, CheckCircle } from 'lucide-react';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 export default function About() {
     const t = useContent();
@@ -33,10 +34,11 @@ export default function About() {
                             {aboutImage ? (
                                 <>
                                     {/* Optional photo set in the dashboard (Content → About) */}
-                                    <img
+                                    <ResponsiveImage
                                         src={aboutImage}
                                         alt={t('about.title')}
                                         loading="lazy"
+                                        sizes="(min-width: 1280px) 584px, (min-width: 1024px) 46vw, 92vw"
                                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
                                     />
                                     {/* Keeps the stats badge readable over any photo */}
@@ -50,8 +52,10 @@ export default function About() {
                                         <div className="absolute w-44 h-44 rounded-full border border-brand-gold/15 mm-spin-ccw" />
                                     </div>
 
-                                    <img
+                                    <ResponsiveImage
                                         src={logos.onDark}
+                                        sizes="224px"
+                                        loading="lazy"
                                         alt=""
                                         aria-hidden="true"
                                         className="w-56 object-contain select-none mm-float-slow opacity-10"

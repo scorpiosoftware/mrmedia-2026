@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\SiteContent;
 use App\Models\SiteSetting;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class SpaController extends Controller
@@ -67,6 +69,41 @@ class SpaController extends Controller
             'ogType'      => 'website',
             'robots'      => 'index, follow',
             'jsonLd'      => $this->organizationJsonLd($content),
+            'preloadImage' => $this->heroPreload($content['hero.image'] ?? null),
+        ];
+    }
+
+    /**
+     * The hero image is usually the LCP element, but the SPA only learns its URL after the JS
+     * and the content API have loaded. Preloading it from the HTML starts the download at once.
+     * srcset/sizes mirror the hero <ResponsiveImage> so the browser fetches the same file.
+     */
+    private function heroPreload(?string $url): ?array
+    {
+        $hidden = SiteSetting::current()->hidden_sections ?? [];
+        if (! $url || in_array('hero', $hidden, true)) {
+            return null;
+        }
+
+        $srcset = null;
+        if (preg_match('#/storage/(content|projects|events|branding)/[0-9a-f-]{36}\.webp$#i', $url)) {
+            $relative = substr(parse_url($url, PHP_URL_PATH), strlen('/storage/'));
+            $variants = ImageOptimizer::variantPaths($relative);
+            // Only advertise copies that exist (images uploaded before they did may not have them).
+            if (collect($variants)->every(fn ($p) => Storage::disk('public')->exists($p))) {
+                $base = substr($url, 0, -strlen('.webp'));
+                $srcset = collect(ImageOptimizer::VARIANT_WIDTHS)
+                    ->map(fn ($w) => "{$base}-w{$w}.webp {$w}w")
+                    ->push("{$url} ".ImageOptimizer::MAX_SIDE.'w')
+                    ->implode(', ');
+            }
+        }
+
+        return [
+            'href'   => $url,
+            'srcset' => $srcset,
+            // Same as the hero image's `sizes` in Hero.jsx — keep the two in sync.
+            'sizes'  => '(min-width: 1280px) 584px, (min-width: 1024px) 46vw, (min-width: 768px) 448px, (min-width: 640px) 384px, 256px',
         ];
     }
 

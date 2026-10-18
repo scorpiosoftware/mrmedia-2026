@@ -1,6 +1,7 @@
 import { useBrandLogos, useContent } from '@/hooks/use-content';
 import { useSectionVisibility } from '@/hooks/use-section-visibility';
 import { ArrowRight, Play } from 'lucide-react';
+import ResponsiveImage from '@/components/ResponsiveImage';
 
 /* Deterministic particle positions so there are no hydration mismatches */
 const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
@@ -133,8 +134,9 @@ export default function Hero() {
                         className="mm-float-slow pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-[-52%] select-none"
                         style={{ opacity: 0.13, animationDelay: '3s' }}
                     >
-                        <img
+                        <ResponsiveImage
                             src={logos.dark}
+                            sizes="(min-width: 768px) 480px, (min-width: 640px) 384px, 288px"
                             alt=""
                             aria-hidden="true"
                             className="mm-hero-logo w-72 object-contain sm:w-96 md:w-120"
@@ -279,10 +281,13 @@ export default function Hero() {
                                 className="mm-spin-cw pointer-events-none absolute -end-6 -top-6 h-28 w-28 rounded-full border border-brand-gold/40"
                             />
                             <div className="group mm-beam relative aspect-square overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-[0_24px_80px_color-mix(in_srgb,var(--color-brand-dark)_55%,transparent)] backdrop-blur-sm [--mm-beam-speed:6s] [--mm-beam-width:2px]">
-                                <img
+                                <ResponsiveImage
                                     src={heroImage}
                                     alt={t('hero.title')}
+                                    // Likely the LCP element: fetch it first, never lazily.
                                     fetchPriority="high"
+                                    // max-w-64 / sm:max-w-sm / md:max-w-md, then half of max-w-7xl
+                                    sizes="(min-width: 1280px) 584px, (min-width: 1024px) 46vw, (min-width: 768px) 448px, (min-width: 640px) 384px, 256px"
                                     className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none"
                                 />
                                 {/* Subtle brand tint at the edge so the photo blends into the gradient */}

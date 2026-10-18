@@ -15,6 +15,7 @@
     $ogType      = $ogType ?? 'website';
     $robots      = $robots ?? 'index, follow';
     $jsonLd      = $jsonLd ?? null;
+    $preloadImage = $preloadImage ?? null;
 @endphp
 <html lang="{{ $lang }}" dir="{{ $dir }}" @if ($themeStyle) style="{{ $themeStyle }}" @endif>
     <head>
@@ -29,6 +30,12 @@
         @endif
         <meta name="robots" content="{{ $robots }}">
         <link rel="canonical" href="{{ $canonical }}">
+
+        {{-- LCP image (home hero): start downloading before the JS has even loaded --}}
+        @if ($preloadImage)
+            <link rel="preload" as="image" fetchpriority="high" href="{{ $preloadImage['href'] }}"
+                @if ($preloadImage['srcset']) imagesrcset="{{ $preloadImage['srcset'] }}" imagesizes="{{ $preloadImage['sizes'] }}" @endif>
+        @endif
 
         {{-- Open Graph --}}
         <meta property="og:site_name" content="{{ $siteName }}">

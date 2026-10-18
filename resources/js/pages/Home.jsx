@@ -22,15 +22,25 @@ import { useContent, useSiteIdentity } from '@/hooks/use-content';
 // Once shown, the skeleton stays at least this long so a fast language switch doesn't flicker.
 const MIN_SKELETON_MS = 400;
 
-/** True while `loading`, and for at least `minMs` after it started — avoids a split-second flash. */
+/**
+ * True while `loading`, and for at least `minMs` after it started — avoids a split-second flash
+ * on language switches. The very first load is never held back: that would only delay the
+ * hero (the page's LCP element).
+ */
 function useMinimumLoading(loading, minMs) {
     const [visible, setVisible] = useState(loading);
     const startedAt = useRef(loading ? Date.now() : 0);
+    const isFirstLoad = useRef(true);
 
     useEffect(() => {
         if (loading) {
             startedAt.current = Date.now();
             setVisible(true);
+            return;
+        }
+        if (isFirstLoad.current) {
+            isFirstLoad.current = false;
+            setVisible(false);
             return;
         }
         const remaining = minMs - (Date.now() - startedAt.current);
