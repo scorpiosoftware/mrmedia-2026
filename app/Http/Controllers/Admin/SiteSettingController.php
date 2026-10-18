@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Concerns\StoresUploadedImages;
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -122,7 +123,7 @@ class SiteSettingController extends Controller
             'image.dimensions' => 'The site icon must be square and at least 48 × 48 px (512 × 512 recommended).',
         ]);
 
-        // Stays PNG: iOS ignores WebP for the home-screen (apple-touch) icon. 512 px covers every icon size.
-        return $this->storeUploadedImage($request, 'png', 512);
+        // Stays PNG: iOS ignores WebP for the home-screen (apple-touch) icon.
+        return $this->storeUploadedImage($request, 'png', ImageOptimizer::FAVICON_MAX_SIDE);
     }
 }
