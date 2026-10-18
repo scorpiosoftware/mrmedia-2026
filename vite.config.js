@@ -25,4 +25,32 @@ export default defineConfig({
             '@': resolve(__dirname, 'resources/js'),
         },
     },
+    build: {
+        rolldownOptions: {
+            // Plugin time is dominated by the React Compiler (babel) by design — not actionable.
+            checks: { pluginTimings: false },
+            output: {
+                // Libraries change far less often than app code: separate chunks stay cached across deploys.
+                codeSplitting: {
+                    groups: [
+                        {
+                            name: 'react',
+                            test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+                            priority: 20,
+                        },
+                        {
+                            name: 'router',
+                            test: /node_modules[\\/](react-router|react-router-dom)[\\/]/,
+                            priority: 15,
+                        },
+                        {
+                            name: 'vendor',
+                            test: /node_modules[\\/]/,
+                            priority: 10,
+                        },
+                    ],
+                },
+            },
+        },
+    },
 });

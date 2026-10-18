@@ -2,8 +2,10 @@ import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { applyThemeVars, themeVars } from '@/lib/site-theme';
-import EventDetails from '@/pages/EventDetails';
 import Home from '@/pages/Home';
+
+// Only visitors who open an event need this page — keep it out of the home page's bundle.
+const EventDetails = lazy(() => import('@/pages/EventDetails'));
 
 // Admin screens are only ever needed by logged-in staff, not public visitors —
 // code-split them so the public site's bundle doesn't pay for admin code.

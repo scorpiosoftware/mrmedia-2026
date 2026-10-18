@@ -14,7 +14,7 @@ export default function Stats() {
     const [ref, isVisible] = useScrollAnimation(0.2);
 
     return (
-        <section className="relative overflow-hidden bg-brand-dark py-20 transition-colors duration-300 dark:bg-primary-dark">
+        <section className="relative overflow-hidden bg-brand-dark py-12 transition-colors sm:py-20 duration-300 dark:bg-primary-dark">
             {/* Background glow blobs */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div
@@ -46,11 +46,11 @@ export default function Stats() {
                 ref={ref}
                 className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
             >
-                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
                     {STATS.map(({ num, label }, i) => (
                         <div
                             key={num}
-                            className="mm-beam mm-spotlight rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-8 text-center backdrop-blur-sm transition-all duration-700 [--mm-beam-inset:-1px] hover:bg-white/[0.07]"
+                            className="mm-beam mm-spotlight rounded-xl border border-white/10 bg-white/[0.04] px-3 py-5 text-center sm:rounded-2xl sm:px-4 sm:py-8 backdrop-blur-sm transition-all duration-700 [--mm-beam-inset:-1px] hover:bg-white/[0.07]"
                             style={{
                                 '--mm-beam-speed': '6s',
                                 // Offset each card's beam so they don't orbit in lockstep
@@ -66,16 +66,16 @@ export default function Stats() {
                         >
                             {/* Number with glow */}
                             <p
-                                className="text-glow-gold text-5xl font-black sm:text-6xl"
+                                className="text-glow-gold text-4xl font-black sm:text-6xl"
                                 style={{ color: 'var(--color-brand-yellow)' }}
                             >
                                 <CountUp value={t(num)} start={isVisible} />
                             </p>
 
                             {/* Divider line */}
-                            <div className="mx-auto mt-3 mb-3 h-px w-12 bg-linear-to-r from-transparent via-brand-gold/60 to-transparent" />
+                            <div className="mx-auto my-2 h-px w-10 bg-linear-to-r from-transparent via-brand-gold/60 to-transparent sm:my-3 sm:w-12" />
 
-                            <p className="text-xs font-semibold tracking-[0.18em] text-white/60 uppercase">
+                            <p className="text-[10px] font-semibold tracking-[0.14em] text-white/60 uppercase sm:text-xs sm:tracking-[0.18em]">
                                 {t(label)}
                             </p>
                         </div>

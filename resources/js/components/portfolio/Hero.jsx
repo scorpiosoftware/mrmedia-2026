@@ -135,7 +135,7 @@ export default function Hero() {
                             src={logos.dark}
                             alt=""
                             aria-hidden="true"
-                            className="w-72 object-contain sm:w-96 md:w-120"
+                            className="mm-hero-logo w-72 object-contain sm:w-96 md:w-120"
                             style={{
                                 filter: 'blur(0.8px) drop-shadow(0 0 48px color-mix(in srgb, var(--color-primary-light) 90%, transparent)) drop-shadow(0 0 96px color-mix(in srgb, var(--color-primary-light) 50%, transparent))',
                             }}
@@ -166,7 +166,7 @@ export default function Hero() {
                             }}
                         >
                             <span
-                                className="h-2 w-2 rounded-full bg-brand-yellow"
+                                className="mm-pulse-dot h-2 w-2 rounded-full bg-brand-yellow"
                                 style={{
                                     boxShadow:
                                         '0 0 8px 2px color-mix(in srgb, var(--color-brand-yellow) 80%, transparent)',
@@ -176,7 +176,7 @@ export default function Hero() {
                             />
                             {t('hero.badge')}
                             <span
-                                className="h-2 w-2 rounded-full bg-brand-yellow"
+                                className="mm-pulse-dot h-2 w-2 rounded-full bg-brand-yellow"
                                 style={{
                                     boxShadow:
                                         '0 0 8px 2px color-mix(in srgb, var(--color-brand-yellow) 80%, transparent)',
@@ -255,7 +255,7 @@ export default function Hero() {
                     {/* Image column — only when an image is set */}
                     {split && (
                         <div
-                            className="relative mx-auto w-full max-w-md lg:max-w-none"
+                            className="relative mx-auto w-full max-w-64 sm:max-w-sm md:max-w-md lg:max-w-none"
                             style={{
                                 animation:
                                     'slide-right-fade 0.9s cubic-bezier(0.16,1,0.3,1) both',

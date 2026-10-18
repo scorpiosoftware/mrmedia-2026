@@ -105,6 +105,7 @@ class SiteSettingController extends Controller
             'image.dimensions' => 'The site icon must be square and at least 48 × 48 px (512 × 512 recommended).',
         ]);
 
-        return $this->uploadImage($request);
+        // Stays PNG: iOS ignores WebP for the home-screen (apple-touch) icon. 512 px covers every icon size.
+        return $this->storeUploadedImage($request, 'png', 512);
     }
 }
