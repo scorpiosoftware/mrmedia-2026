@@ -1,15 +1,30 @@
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent } from '@/hooks/use-content';
+import { useContent, useLocale } from '@/hooks/use-content';
 import { usePublicList } from '@/hooks/use-public-list';
 import { getServiceIcon } from '@/lib/service-icons';
 
+// Services shown before "View All" — the first ones in the admin's display order.
+const INITIAL_COUNT = 3;
+const LABELS = {
+    en: { more: 'View All Services', less: 'Show Less' },
+    ar: { more: 'عرض جميع الخدمات', less: 'عرض أقل' },
+};
+
 export default function Services() {
     const t = useContent();
+    const locale = useLocale();
+    const labels = LABELS[locale] ?? LABELS.en;
     const { items: services, loading } = usePublicList('/api/services');
+    const [expanded, setExpanded] = useState(false);
     const [headerRef, headerVisible] = useScrollAnimation(0.2);
     const [gridRef, gridVisible] = useScrollAnimation(0.08);
 
     if (!loading && services.length === 0) return null;
+
+    const hasMore = services.length > INITIAL_COUNT;
+    const visible = expanded ? services : services.slice(0, INITIAL_COUNT);
 
     return (
         <section
@@ -54,8 +69,10 @@ export default function Services() {
                             />
                         ))}
 
-                    {services.map((service, i) => {
+                    {visible.map((service, i) => {
                         const Icon = getServiceIcon(service.icon);
+                        // Cards revealed by "View All" slide in after the first three.
+                        const revealed = i >= INITIAL_COUNT;
                         return (
                             <div
                                 key={service.id}
@@ -67,6 +84,11 @@ export default function Services() {
                                         : 'translateY(32px)',
                                     transition: `opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease, background 0.3s ease, border-color 0.3s ease, translate 0.3s ease`,
                                     transitionDelay: `${i * 90}ms`,
+                                    ...(revealed && {
+                                        animation:
+                                            'slide-up-fade 0.6s cubic-bezier(0.16,1,0.3,1) both',
+                                        animationDelay: `${(i - INITIAL_COUNT) * 90}ms`,
+                                    }),
                                 }}
                             >
                                 {/* Glow dot top-right */}
@@ -90,6 +112,31 @@ export default function Services() {
                         );
                     })}
                 </div>
+
+                {/* Reveals the rest of the services */}
+                {hasMore && (
+                    <div className="mt-12 text-center">
+                        <button
+                            type="button"
+                            onClick={() => setExpanded((e) => !e)}
+                            aria-expanded={expanded}
+                            className="group inline-flex items-center gap-2 rounded-full border-2 border-brand-blue px-8 py-3 text-sm font-bold text-brand-blue transition-all duration-300 hover:scale-105 hover:bg-brand-blue hover:text-white hover:shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-blue)_30%,transparent)] dark:border-brand-yellow dark:text-brand-yellow dark:hover:bg-brand-yellow dark:hover:text-brand-dark"
+                        >
+                            {expanded ? labels.less : labels.more}
+                            {expanded ? (
+                                <ChevronUp
+                                    size={16}
+                                    className="transition-transform duration-300 group-hover:-translate-y-0.5"
+                                />
+                            ) : (
+                                <ChevronDown
+                                    size={16}
+                                    className="transition-transform duration-300 group-hover:translate-y-0.5"
+                                />
+                            )}
+                        </button>
+                    </div>
+                )}
             </div>
         </section>
     );

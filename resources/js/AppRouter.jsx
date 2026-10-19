@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import { ADMIN_SECTIONS, homePathFor } from '@/lib/admin-sections';
 import { applyThemeVars, themeVars } from '@/lib/site-theme';
 import Home from '@/pages/Home';
 
@@ -21,6 +22,9 @@ const AdminSiteSettings = lazy(() => import('@/pages/admin/SiteSettings'));
 const AdminSocialLinks = lazy(() => import('@/pages/admin/SocialLinks'));
 const EmailSettings = lazy(() => import('@/pages/admin/EmailSettings'));
 const AdminProfile = lazy(() => import('@/pages/admin/Profile'));
+const AdminUsers = lazy(() => import('@/pages/admin/Users'));
+const AdminRoles = lazy(() => import('@/pages/admin/Roles'));
+const AdminNoAccess = lazy(() => import('@/pages/admin/NoAccess'));
 
 function RouteFallback() {
     return (
@@ -30,8 +34,12 @@ function RouteFallback() {
     );
 }
 
-function RequireAuth({ children }) {
-    const { user, userLoading } = useApp();
+/**
+ * Signed-in guard for admin pages. With `permission`, a user who lacks it sees a
+ * "no access" page instead (the API refuses those endpoints too).
+ */
+function RequireAuth({ permission, children }) {
+    const { user, userLoading, can } = useApp();
 
     if (userLoading) {
         return (
@@ -42,8 +50,36 @@ function RequireAuth({ children }) {
     }
 
     if (!user) return <Navigate to="/admin/login" replace />;
+    if (!can(permission)) return <AdminNoAccess />;
     return children;
 }
+
+/** /admin (and /dashboard) → the first section this user may open. */
+function AdminHome() {
+    const { user } = useApp();
+    return (
+        <RequireAuth>
+            <Navigate to={homePathFor(user)} replace />
+        </RequireAuth>
+    );
+}
+
+// Route path → page component; each route's permission comes from ADMIN_SECTIONS.
+const ADMIN_PAGES = {
+    '/admin/content': ContentEditor,
+    '/admin/projects': AdminProjects,
+    '/admin/services': AdminServices,
+    '/admin/marquee': AdminMarquee,
+    '/admin/popup': AdminPopup,
+    '/admin/events': AdminEvents,
+    '/admin/inbox': AdminInbox,
+    '/admin/social-links': AdminSocialLinks,
+    '/admin/site-settings': AdminSiteSettings,
+    '/admin/email-settings': EmailSettings,
+    '/admin/users': AdminUsers,
+    '/admin/roles': AdminRoles,
+    '/admin/profile': AdminProfile,
+};
 
 /** Applies the dashboard's colour theme on public pages; the admin panel keeps its own brand colours. */
 function SiteThemeApplier() {
@@ -79,102 +115,25 @@ export default function AppRouter() {
                 />
                 <Route
                     path="/dashboard"
-                    element={<Navigate to="/admin/content" replace />}
+                    element={<Navigate to="/admin" replace />}
                 />
 
                 <Route path="/admin/login" element={<AdminLogin />} />
-                <Route
-                    path="/admin/content"
-                    element={
-                        <RequireAuth>
-                            <ContentEditor />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/email-settings"
-                    element={
-                        <RequireAuth>
-                            <EmailSettings />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/events"
-                    element={
-                        <RequireAuth>
-                            <AdminEvents />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/projects"
-                    element={
-                        <RequireAuth>
-                            <AdminProjects />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/services"
-                    element={
-                        <RequireAuth>
-                            <AdminServices />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/inbox"
-                    element={
-                        <RequireAuth>
-                            <AdminInbox />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/marquee"
-                    element={
-                        <RequireAuth>
-                            <AdminMarquee />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/popup"
-                    element={
-                        <RequireAuth>
-                            <AdminPopup />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/site-settings"
-                    element={
-                        <RequireAuth>
-                            <AdminSiteSettings />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/social-links"
-                    element={
-                        <RequireAuth>
-                            <AdminSocialLinks />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin/profile"
-                    element={
-                        <RequireAuth>
-                            <AdminProfile />
-                        </RequireAuth>
-                    }
-                />
-                <Route
-                    path="/admin"
-                    element={<Navigate to="/admin/content" replace />}
-                />
+                {ADMIN_SECTIONS.map(({ to, permission }) => {
+                    const Page = ADMIN_PAGES[to];
+                    return (
+                        <Route
+                            key={to}
+                            path={to}
+                            element={
+                                <RequireAuth permission={permission}>
+                                    <Page />
+                                </RequireAuth>
+                            }
+                        />
+                    );
+                })}
+                <Route path="/admin" element={<AdminHome />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </Suspense>

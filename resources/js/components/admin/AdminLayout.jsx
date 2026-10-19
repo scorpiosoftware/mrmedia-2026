@@ -28,26 +28,32 @@ import {
     Palette,
     Mail,
     Share2,
+    ShieldCheck,
     Sparkles,
     UserCircle,
+    Users,
 } from 'lucide-react';
+import { ADMIN_SECTIONS, homePathFor } from '@/lib/admin-sections';
 
-const NAV_ITEMS = [
-    { to: '/admin/content', label: 'Content', Icon: FileText },
-    { to: '/admin/projects', label: 'Projects', Icon: Briefcase },
-    { to: '/admin/services', label: 'Services', Icon: Sparkles },
-    { to: '/admin/marquee', label: 'Scrolling Banner', Icon: Megaphone },
-    { to: '/admin/popup', label: 'Popup', Icon: GalleryHorizontal },
-    { to: '/admin/events', label: 'Events & Training', Icon: Calendar },
-    { to: '/admin/inbox', label: 'Inbox', Icon: Inbox },
-    { to: '/admin/social-links', label: 'Social Media', Icon: Share2 },
-    { to: '/admin/site-settings', label: 'Site Settings', Icon: Palette },
-    { to: '/admin/email-settings', label: 'Email Settings', Icon: Mail },
-    { to: '/admin/profile', label: 'Profile', Icon: UserCircle },
-];
+const NAV_ICONS = {
+    '/admin/content': FileText,
+    '/admin/projects': Briefcase,
+    '/admin/services': Sparkles,
+    '/admin/marquee': Megaphone,
+    '/admin/popup': GalleryHorizontal,
+    '/admin/events': Calendar,
+    '/admin/inbox': Inbox,
+    '/admin/social-links': Share2,
+    '/admin/site-settings': Palette,
+    '/admin/email-settings': Mail,
+    '/admin/users': Users,
+    '/admin/roles': ShieldCheck,
+    '/admin/profile': UserCircle,
+};
 
 export default function AdminLayout({ title, actions, children }) {
-    const { user, logout } = useApp();
+    const { user, logout, can } = useApp();
+    const navItems = ADMIN_SECTIONS.filter((s) => can(s.permission));
     const logos = useBrandLogos();
     const navigate = useNavigate();
     const headerRef = useRef(null);
@@ -81,7 +87,7 @@ export default function AdminLayout({ title, actions, children }) {
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton size="lg" asChild>
-                                    <NavLink to="/admin/content">
+                                    <NavLink to={homePathFor(user)}>
                                         <img
                                             src={logos.onDark}
                                             alt=""
@@ -100,26 +106,31 @@ export default function AdminLayout({ title, actions, children }) {
                         <SidebarGroup>
                             <SidebarGroupLabel>Manage</SidebarGroupLabel>
                             <SidebarMenu>
-                                {NAV_ITEMS.map(({ to, label, Icon }) => (
-                                    <SidebarMenuItem key={to}>
-                                        <SidebarMenuButton
-                                            asChild
-                                            tooltip={{ children: label }}
-                                        >
-                                            <NavLink
-                                                to={to}
-                                                className={({ isActive }) =>
-                                                    isActive
-                                                        ? 'bg-[#213C93]/10 font-semibold text-[#213C93]'
-                                                        : ''
-                                                }
+                                {navItems.map(({ to, label }) => {
+                                    const Icon = NAV_ICONS[to];
+                                    return (
+                                        <SidebarMenuItem key={to}>
+                                            <SidebarMenuButton
+                                                asChild
+                                                tooltip={{ children: label }}
                                             >
-                                                <Icon />
-                                                <span>{label}</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                ))}
+                                                <NavLink
+                                                    to={to}
+                                                    className={({
+                                                        isActive,
+                                                    }) =>
+                                                        isActive
+                                                            ? 'bg-[#213C93]/10 font-semibold text-[#213C93]'
+                                                            : ''
+                                                    }
+                                                >
+                                                    <Icon />
+                                                    <span>{label}</span>
+                                                </NavLink>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
                             </SidebarMenu>
                         </SidebarGroup>
                     </SidebarContent>
@@ -129,6 +140,11 @@ export default function AdminLayout({ title, actions, children }) {
                             <SidebarMenuItem>
                                 <div className="truncate px-2 py-1.5 text-xs text-[#5A6A9A]">
                                     {user?.email}
+                                    {user?.roles?.length > 0 && (
+                                        <span className="block truncate text-[11px] font-semibold text-[#213C93]">
+                                            {user.roles.join(', ')}
+                                        </span>
+                                    )}
                                 </div>
                             </SidebarMenuItem>
                             <SidebarMenuItem>
@@ -147,7 +163,8 @@ export default function AdminLayout({ title, actions, children }) {
                 >
                     <header
                         ref={headerRef}
-                        className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-[#D1D5E8] bg-white/80 px-4 py-4 backdrop-blur sm:px-6">
+                        className="sticky top-0 z-40 flex items-center justify-between gap-3 border-b border-[#D1D5E8] bg-white/80 px-4 py-4 backdrop-blur sm:px-6"
+                    >
                         <div className="flex min-w-0 items-center gap-3">
                             <SidebarTrigger className="-ml-1" />
                             <h1 className="truncate text-lg font-bold text-[#0D1B4B]">

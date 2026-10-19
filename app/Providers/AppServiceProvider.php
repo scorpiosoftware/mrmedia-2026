@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Support\Permissions;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -29,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureRateLimiting();
+
+        // Super admins pass every permission check, including permissions added later.
+        Gate::before(fn ($user) => Permissions::isSuperAdmin($user) ? true : null);
     }
 
     /**

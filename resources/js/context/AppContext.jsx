@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { userCan } from '@/lib/permissions';
 
 const AppContext = createContext(null);
 
@@ -58,16 +59,22 @@ export function AppProvider({ children }) {
             .catch(() => {});
     }, []);
 
+    // Signed-in user with their roles and effective permissions (null when signed out).
+    const refreshUser = useCallback(
+        () =>
+            fetch('/spa/user', { credentials: 'include' })
+                .then((r) => (r.ok ? r.json() : null))
+                .then((data) => setUser(data))
+                .catch(() => {}),
+        [],
+    );
+
     // Check authentication on mount
     useEffect(() => {
-        fetch('/spa/user', { credentials: 'include' })
-            .then((r) => (r.ok ? r.json() : null))
-            .then((data) => {
-                setUser(data);
-                setUserLoading(false);
-            })
-            .catch(() => setUserLoading(false));
-    }, []);
+        refreshUser().finally(() => setUserLoading(false));
+    }, [refreshUser]);
+
+    const can = useCallback((permission) => userCan(user, permission), [user]);
 
     useEffect(() => {
         document.documentElement.classList.toggle('dark', isDarkMode);
@@ -125,7 +132,7 @@ export function AppProvider({ children }) {
 
     return (
         <AppContext.Provider
-            value={{ locale, content, contentLoading, whatsappNumber, whatsappVisible, user, userLoading, setLocale, login, logout, isDarkMode, toggleDarkMode, siteSettings: SITE_SETTINGS }}
+            value={{ locale, content, contentLoading, whatsappNumber, whatsappVisible, user, userLoading, refreshUser, can, setLocale, login, logout, isDarkMode, toggleDarkMode, siteSettings: SITE_SETTINGS }}
         >
             {children}
         </AppContext.Provider>

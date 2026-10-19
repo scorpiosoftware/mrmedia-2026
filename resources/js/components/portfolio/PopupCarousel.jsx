@@ -20,7 +20,7 @@ const ARROW_CLASS =
 
 /**
  * The popup itself: a "featured announcement" modal with a story-style image carousel —
- * spring entrance with a one-time gold light sweep, story progress bars, cross-fading slides
+ * spring entrance with a one-time gold glow bloom, story progress bars, cross-fading slides
  * with a slow film zoom. Presentational: the home page decides when to open it (HomePopup
  * below); the admin page renders it for its live preview.
  */
@@ -194,14 +194,14 @@ export function PopupCarousel({ popup, onClose }) {
                         className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24 bg-linear-to-b from-black/55 to-transparent"
                     />
 
-                    {/* One-time gold light sweep after the entrance */}
+                    {/* One-time gold glow that blooms from the centre and fades away after the entrance */}
                     {!closing && (
                         <div
                             aria-hidden="true"
-                            className="mm-popup-shine pointer-events-none absolute inset-y-0 -left-1/3 z-10 w-1/3"
+                            className="mm-popup-shine pointer-events-none absolute inset-0 z-10"
                             style={{
                                 background:
-                                    'linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-brand-yellow) 45%, transparent), transparent)',
+                                    'radial-gradient(circle at center, color-mix(in srgb, var(--color-brand-yellow) 40%, transparent) 0%, color-mix(in srgb, var(--color-brand-gold) 18%, transparent) 45%, transparent 75%)',
                             }}
                         />
                     )}

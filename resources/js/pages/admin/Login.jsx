@@ -13,7 +13,7 @@ export default function AdminLogin() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        if (user) navigate('/admin/content', { replace: true });
+        if (user) navigate('/admin', { replace: true });
     }, [user, navigate]);
 
     const handleSubmit = async (e) => {
@@ -22,7 +22,7 @@ export default function AdminLogin() {
         setLoading(true);
         try {
             await login(email, password);
-            navigate('/admin/content', { replace: true });
+            navigate('/admin', { replace: true });
         } catch (err) {
             setError(err.message || 'Invalid credentials');
         } finally {
