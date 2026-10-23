@@ -6,7 +6,7 @@ import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
 
 const FIELD_CLASS =
-    'rounded-xl border border-border bg-white px-4 py-3 text-sm text-brand-dark transition-all duration-200 placeholder:text-muted-foreground hover:border-brand-blue/40 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 focus:outline-none dark:border-primary-light/50 dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20';
+    'rounded-xl border border-border bg-white px-4 py-3 text-sm text-brand-dark transition-all duration-200 placeholder:text-muted-foreground hover:border-brand-blue/40 focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/20 focus:outline-none dark:border-transparent dark:bg-brand-dark dark:text-white dark:placeholder:text-white/30 dark:hover:border-primary-light/60 dark:focus:border-brand-yellow dark:focus:ring-brand-yellow/20';
 
 const LABEL_CLASS =
     'mb-2 block text-xs font-semibold tracking-wider text-brand-blue uppercase dark:text-brand-yellow';
@@ -90,7 +90,7 @@ export default function Contact() {
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* grid-cols-1 = minmax(0, 1fr): a long email can't widen the column past the screen */}
-                <div ref={ref} className="grid grid-cols-1 gap-16 lg:grid-cols-2">
+                <div ref={ref} className="grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
                     {/* Info column */}
                     <div
                         className="transition-all duration-700"
@@ -172,7 +172,31 @@ export default function Contact() {
                             transitionDelay: '100ms',
                         }}
                     >
-                        <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-5 sm:p-8 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] dark:border-primary-light/40 dark:bg-primary-dark">
+                        <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-5 pt-36 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] sm:p-8 sm:pt-44 dark:border-primary-light/40 dark:bg-primary-dark dark:shadow-[0_8px_40px_rgba(0,0,0,0.35)]">
+                            {/* Envelope flap */}
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 overflow-hidden rounded-t-3xl sm:h-48">
+                                <svg
+                                    aria-hidden="true"
+                                    viewBox="0 0 400 140"
+                                    preserveAspectRatio="none"
+                                    className="absolute inset-x-0 top-0 h-28 w-full text-brand-bg drop-shadow-[0_10px_14px_rgba(13,27,75,0.35)] sm:h-36 dark:text-primary-dark"
+                                >
+                                    <path
+                                        d="M0 0 L170 122 Q200 142 230 122 L400 0 Z"
+                                        fill="currentColor"
+                                    />
+                                    <path
+                                        d="M0 0 L170 122 Q200 142 230 122 L400 0"
+                                        fill="none"
+                                        stroke="var(--color-brand-gold)"
+                                        strokeWidth="1"
+                                        vectorEffect="non-scaling-stroke"
+                                    />
+                                </svg>
+                                <h3 className="relative pt-10 text-center text-xl font-black tracking-wide text-brand-blue uppercase sm:pt-14 sm:text-2xl dark:text-brand-yellow">
+                                    {t('contact.form.heading', 'Contact Us')}
+                                </h3>
+                            </div>
                             {status === 'sent' ? (
                                 <div className="flex h-full items-center justify-center py-16 text-center">
                                     <div>
