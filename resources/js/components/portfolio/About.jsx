@@ -67,8 +67,8 @@ export default function About() {
 
                             {/* Inner badge */}
                             <div className="absolute bottom-5 left-5 right-5 rounded-2xl bg-white/10 backdrop-blur-sm p-4 border border-white/20 sm:bottom-8 sm:left-8 sm:right-8 sm:p-5">
-                                <p className="text-2xl font-black text-brand-yellow text-glow-gold">{t('stats.years')}</p>
-                                <p className="text-sm text-white/75 mt-0.5">{t('stats.years_label')}</p>
+                                <p className="text-2xl font-black text-brand-yellow text-glow-gold">{t('about.years')}</p>
+                                <p className="text-sm text-white/75 mt-0.5">{t('about.years_label')}</p>
                             </div>
                         </div>
 
@@ -77,8 +77,8 @@ export default function About() {
                             className="absolute -top-4 -right-2 rounded-2xl bg-brand-gold p-4 shadow-[0_8px_32px_color-mix(in_srgb,var(--color-brand-gold)_50%,transparent)] mm-float-rev sm:-right-4 sm:p-5"
                             style={{ animationDelay: '0.5s' }}
                         >
-                            <p className="text-2xl font-black text-brand-dark text-glow-gold sm:text-3xl">{t('stats.clients')}</p>
-                            <p className="text-xs font-semibold text-brand-dark/70">{t('stats.clients_label')}</p>
+                            <p className="text-2xl font-black text-brand-dark text-glow-gold sm:text-3xl">{t('about.clients')}</p>
+                            <p className="text-xs font-semibold text-brand-dark/70">{t('about.clients_label')}</p>
                         </div>
                     </div>
 

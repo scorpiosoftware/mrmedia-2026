@@ -120,7 +120,11 @@ class SiteContentSeeder extends Seeder
             ['key' => 'about.value_3',     'section' => 'about', 'en_value' => 'Data-driven decisions', 'ar_value' => 'قرارات مبنية على البيانات', 'type' => 'text', 'sort_order' => 5],
             ['key' => 'about.value_4',     'section' => 'about', 'en_value' => 'Client-centric approach', 'ar_value' => 'نهج يمحور العميل', 'type' => 'text', 'sort_order' => 5],
             ['key' => 'about.image',         'section' => 'about', 'en_value' => '',                    'ar_value' => '',                    'type' => 'image',    'sort_order' => 7],
-            ['key' => 'about.cta',           'section' => 'about', 'en_value' => 'Learn More About Us', 'ar_value' => 'اعرف المزيد عنا',     'type' => 'text',     'sort_order' => 6],
+            ['key' => 'about.years',         'section' => 'about', 'en_value' => '8+',                  'ar_value' => '+8',                  'type' => 'text',     'sort_order' => 8],
+            ['key' => 'about.years_label',   'section' => 'about', 'en_value' => 'Years of Experience', 'ar_value' => 'سنوات خبرة',          'type' => 'text',     'sort_order' => 9],
+            ['key' => 'about.clients',       'section' => 'about', 'en_value' => '150+',                'ar_value' => '+150',                'type' => 'text',     'sort_order' => 10],
+            ['key' => 'about.clients_label', 'section' => 'about', 'en_value' => 'Happy Clients',       'ar_value' => 'عميل راضٍ',           'type' => 'text',     'sort_order' => 11],
+            ['key' => 'about.cta',          'section' => 'about', 'en_value' => 'Learn More About Us', 'ar_value' => 'اعرف المزيد عنا',     'type' => 'text',     'sort_order' => 6],
 
             // ── Testimonials
             ['key' => 'testimonials.section_badge', 'section' => 'testimonials', 'en_value' => 'Client Love',       'ar_value' => 'آراء عملائنا',     'type' => 'text',     'sort_order' => 1],
