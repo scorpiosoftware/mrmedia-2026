@@ -690,8 +690,40 @@
     }
 }
 
-/* Touch devices (phones/tablets): trim the costliest non-animated effects. Unlayered so it wins over the utilities. */
+/*
+ * Touch devices (phones/tablets): drop the decorative ambient loops entirely.
+ * They repaint every frame (pulsing box-shadows on 700px circles, blurred blobs, conic
+ * beams) underneath backdrop-blur panels. Merely pausing them is not enough: a paused
+ * animation still keeps its GPU layer, and on @3x iPhones (12 and newer) those huge
+ * layers exhaust WebKit's layer memory, so the landing screen keeps shaking even while
+ * idle. `animation: none` releases the layers. Unlayered so it wins over the utilities.
+ */
 @media (hover: none) and (pointer: coarse) {
+    .mm-float,
+    .mm-float-rev,
+    .mm-float-slow,
+    .mm-float-x,
+    .mm-spin-cw,
+    .mm-spin-ccw,
+    .mm-twinkle,
+    .mm-glow-blue,
+    .mm-glow-gold,
+    .mm-border-glow,
+    .mm-drift,
+    .mm-title-line,
+    .mm-text-shine,
+    .btn-gold-shimmer,
+    .mm-beam::before,
+    .mm-chip::after {
+        animation: none;
+    }
+    /* Inline `animation` on the hero badge dots — needs !important to override it. */
+    .mm-pulse-dot {
+        animation: none !important;
+    }
+    .mm-drift {
+        will-change: auto;
+    }
     /* Blur + double drop-shadow on a ~400px image is a costly filter layer. */
     .mm-hero-logo {
         filter: none !important;
