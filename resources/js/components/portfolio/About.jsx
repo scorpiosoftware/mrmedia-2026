@@ -26,7 +26,7 @@ export default function About() {
                         className="relative order-2 mx-3 sm:mx-0 lg:order-1 transition-all duration-800"
                         style={{
                             opacity:   isVisible ? 1 : 0,
-                            transform: isVisible ? 'translateX(0)' : 'translateX(-40px)',
+                            transform: isVisible ? 'translateY(0)' : 'translateY(32px)',
                             transitionDelay: '60ms',
                         }}
                     >
@@ -87,7 +87,7 @@ export default function About() {
                         className="order-1 lg:order-2 transition-all duration-800"
                         style={{
                             opacity:   isVisible ? 1 : 0,
-                            transform: isVisible ? 'translateX(0)' : 'translateX(40px)',
+                            transform: isVisible ? 'translateY(0)' : 'translateY(24px)',
                             transitionDelay: '160ms',
                         }}
                     >
@@ -120,7 +120,7 @@ export default function About() {
                                         className="flex items-center gap-2 text-sm text-brand-dark dark:text-white/80 font-medium transition-all duration-500"
                                         style={{
                                             opacity:   isVisible ? 1 : 0,
-                                            transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
+                                            transform: isVisible ? 'translateY(0)' : 'translateY(12px)',
                                             transitionDelay: `${300 + i * 80}ms`,
                                         }}
                                     >

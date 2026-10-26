@@ -56,6 +56,54 @@ function useMinimumLoading(loading, minMs) {
     return visible;
 }
 
+const SCROLL_KEY = 'mm-home-scroll';
+// Give images and lazily fetched sections this long to grow the page before giving up.
+const RESTORE_WINDOW_MS = 3000;
+
+// Only the first render after a real page reload restores — not later in-app visits to the home page.
+let restoreChecked = false;
+
+/** The scroll position saved before a reload of this page, or null. */
+function takeSavedScroll() {
+    if (restoreChecked) return null;
+    restoreChecked = true;
+    const nav = performance.getEntriesByType?.('navigation')[0];
+    if (nav?.type !== 'reload') return null;
+    try {
+        const y = Number(sessionStorage.getItem(SCROLL_KEY));
+        return y > 0 ? y : null;
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Scrolls to `y`, re-applying it while the page grows (sections and images loading in) until
+ * it's reached, the window runs out, or the visitor scrolls on their own. Returns a cleanup.
+ */
+function restoreScroll(y) {
+    // Keeps going after `y` is first reached: images above it can still load and push it down.
+    // 'instant' overrides the global `scroll-behavior: smooth`.
+    const apply = () =>
+        window.scrollTo({ top: y, left: 0, behavior: 'instant' });
+    const observer = new ResizeObserver(apply);
+    const timer = setTimeout(() => stop(), RESTORE_WINDOW_MS);
+    const userEvents = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+
+    function stop() {
+        observer.disconnect();
+        clearTimeout(timer);
+        userEvents.forEach((e) => window.removeEventListener(e, stop));
+    }
+
+    userEvents.forEach((e) =>
+        window.addEventListener(e, stop, { passive: true }),
+    );
+    observer.observe(document.body);
+    requestAnimationFrame(apply);
+    return stop;
+}
+
 export default function Home() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -75,14 +123,32 @@ export default function Home() {
     });
 
     // The page height changes as sections load, so the browser's own scroll restoration
-    // lands at a random section on refresh — start from the top instead.
+    // lands at a random section on refresh — we save and restore the position ourselves.
     useEffect(() => {
         const previous = window.history.scrollRestoration;
         window.history.scrollRestoration = 'manual';
+        const save = () => {
+            try {
+                sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
+            } catch {
+                // Storage blocked (private mode) — a refresh just starts at the top.
+            }
+        };
+        window.addEventListener('pagehide', save);
         return () => {
+            window.removeEventListener('pagehide', save);
             window.history.scrollRestoration = previous;
         };
     }, []);
+
+    // After a refresh, return to the saved position once the real sections render
+    // (a `state.scrollTo` jump from another page takes priority).
+    useEffect(() => {
+        if (showSkeleton || location.state?.scrollTo) return;
+        const target = takeSavedScroll();
+        if (target === null) return;
+        return restoreScroll(target);
+    }, [showSkeleton, location.state]);
 
     // Scroll to a section after navigating here from another page (e.g. an event's detail page)
     // (waits for the real sections to render, since the skeleton has no section ids)

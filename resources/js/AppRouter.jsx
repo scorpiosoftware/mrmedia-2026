@@ -96,10 +96,27 @@ function SiteThemeApplier() {
     return null;
 }
 
+/**
+ * Client-side navigation keeps the previous page's scroll position, so opening an
+ * event from low on the home page would land near its footer — start each page at the top.
+ * (Home's own `state.scrollTo` jump runs a frame later, so it still wins.)
+ */
+function ScrollToTop() {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        // 'instant' overrides the global `scroll-behavior: smooth`, which would glide up from the footer.
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }, [pathname]);
+
+    return null;
+}
+
 export default function AppRouter() {
     return (
         <Suspense fallback={<RouteFallback />}>
             <SiteThemeApplier />
+            <ScrollToTop />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/events/:slug" element={<EventDetails />} />
