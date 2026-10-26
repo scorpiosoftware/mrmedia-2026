@@ -980,8 +980,9 @@ export default function EventDetails() {
     } else {
         content = (
             <>
-                {/* 01 — Hero: event details, countdown, register CTA, share */}
-                <section className="mm-spotlight relative overflow-hidden bg-brand-gradient pb-16 pt-28 sm:pt-32 [--mm-spot-color:rgb(255_255_255/0.08)] [--mm-spot-size:600px]">
+                {/* 01 — Hero: event details, countdown, register CTA, share.
+                    No overflow-hidden here (the decor layer clips itself), so the calendar menu can hang below the hero. */}
+                <section className="mm-spotlight relative z-10 bg-brand-gradient pb-16 pt-28 sm:pt-32 [--mm-spot-color:rgb(255_255_255/0.08)] [--mm-spot-size:600px]">
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
                         <div
                             className="absolute -top-32 -right-32 w-125 h-125 rounded-full mm-float mm-glow-blue"
