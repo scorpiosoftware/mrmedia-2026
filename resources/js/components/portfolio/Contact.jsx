@@ -174,7 +174,8 @@ export default function Contact() {
                     >
                         <div className="mm-beam rounded-3xl border border-border bg-brand-bg p-5 pt-36 shadow-[0_4px_32px_color-mix(in_srgb,var(--color-brand-blue)_8%,transparent)] [--mm-beam-inset:-1px] [--mm-beam-speed:8s] sm:p-8 sm:pt-44 dark:border-primary-light/40 dark:bg-primary-dark dark:shadow-[0_8px_40px_rgba(0,0,0,0.35)]">
                             {/* Envelope flap */}
-                            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 overflow-hidden rounded-t-3xl sm:h-48">
+                            {/* clip-path, not overflow-hidden: iOS Safari lets the drop-shadow filtered SVG escape a radius clip */}
+                            <div className="pointer-events-none absolute inset-x-0 top-0 h-40 overflow-hidden [clip-path:inset(0_round_23px_23px_0_0)] sm:h-48">
                                 <svg
                                     aria-hidden="true"
                                     viewBox="0 0 400 140"
