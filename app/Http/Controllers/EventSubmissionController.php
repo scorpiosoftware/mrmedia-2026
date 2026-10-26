@@ -23,6 +23,11 @@ class EventSubmissionController extends Controller
             return response()->json(['message' => 'This event is not open for registration.'], 404);
         }
 
+        // `code` lets the page show the message in the visitor's language.
+        if (! $event->registrationOpen()) {
+            return response()->json(['message' => 'Registration for this event has closed.', 'code' => 'closed'], 422);
+        }
+
         $required = $event->required_fields ?: ['name', 'email'];
         $rule = fn (string $field) => in_array($field, $required, true) ? 'required' : 'nullable';
 
@@ -45,14 +50,14 @@ class EventSubmissionController extends Controller
 
             if ($result !== self::CONFLICT) {
                 return $result === self::FULL
-                    ? response()->json(['message' => 'Not enough spots left for this event.'], 422)
+                    ? response()->json(['message' => 'Not enough spots left for this event.', 'code' => 'full'], 422)
                     : response()->json(['message' => 'Submission received successfully.']);
             }
 
             usleep(random_int(10_000, 50_000)); // jitter so colliding requests don't retry in lockstep
         }
 
-        return response()->json(['message' => 'Many people are registering right now. Please try again.'], 409);
+        return response()->json(['message' => 'Many people are registering right now. Please try again.', 'code' => 'busy'], 409);
     }
 
     /**

@@ -124,6 +124,7 @@ const EMPTY_FORM = {
     location_ar: '',
     starts_at: '',
     ends_at: '',
+    timezone: 'Asia/Baghdad',
     capacity: '',
     price: '',
     group_discount_percent: '',
@@ -163,11 +164,27 @@ const EMPTY_CREDENTIAL = { text: '', text_ar: '' };
 const EMPTY_TESTIMONIAL = { quote: '', quote_ar: '', name: '', role: '', role_ar: '', avatar_url: '' };
 const EMPTY_FAQ = { question: '', question_ar: '', answer: '', answer_ar: '' };
 
+// Venue timezones offered in the form; the times typed are the venue's local time.
+const TIMEZONES = [
+    ['Asia/Baghdad', 'Baghdad (GMT+3)'],
+    ['Asia/Beirut', 'Beirut (GMT+2 / +3 summer)'],
+    ['Asia/Amman', 'Amman (GMT+3)'],
+    ['Asia/Damascus', 'Damascus (GMT+3)'],
+    ['Asia/Riyadh', 'Riyadh (GMT+3)'],
+    ['Asia/Dubai', 'Dubai (GMT+4)'],
+    ['Africa/Cairo', 'Cairo (GMT+2 / +3 summer)'],
+    ['Europe/Istanbul', 'Istanbul (GMT+3)'],
+    ['Europe/London', 'London (GMT / BST)'],
+    ['UTC', 'UTC'],
+];
+
+// The admin API returns the stored wall-clock time as "…Z" — read it back as-is (UTC getters),
+// so it isn't shifted by this browser's timezone on every save.
 function toDatetimeLocal(iso) {
     if (!iso) return '';
     const d = new Date(iso);
     const pad = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}`;
 }
 
 function formatDate(iso) {
@@ -178,6 +195,7 @@ function formatDate(iso) {
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
+        timeZone: 'UTC', // the stored wall-clock time, as typed (see toDatetimeLocal)
     }).format(new Date(iso));
 }
 
@@ -230,6 +248,7 @@ export default function AdminEvents() {
             location_ar: event.location_ar ?? '',
             starts_at: toDatetimeLocal(event.starts_at),
             ends_at: toDatetimeLocal(event.ends_at),
+            timezone: event.timezone ?? 'Asia/Baghdad',
             capacity: event.capacity ?? '',
             price: event.price ?? '',
             group_discount_percent: event.group_discount_percent ?? '',
@@ -764,6 +783,27 @@ export default function AdminEvents() {
                                         }
                                         className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
                                     />
+                                </div>
+                                <div className="sm:col-span-2">
+                                    <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                        Venue Timezone
+                                    </label>
+                                    <select
+                                        value={form.timezone}
+                                        onChange={(e) =>
+                                            set('timezone', e.target.value)
+                                        }
+                                        className="w-full rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                    >
+                                        {TIMEZONES.map(([value, label]) => (
+                                            <option key={value} value={value}>
+                                                {label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <p className="mt-1.5 text-xs text-[#5A6A9A]">
+                                        Enter the times above in this timezone. Visitors see the venue's time, and registration closes when the event starts.
+                                    </p>
                                 </div>
                             </div>
 

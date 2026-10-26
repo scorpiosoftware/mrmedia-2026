@@ -197,8 +197,8 @@ class SpaController extends Controller
             '@type'                => 'Event',
             'name'                 => $event->title,
             'description'          => $event->description ? strip_tags($event->description) : null,
-            'startDate'            => $event->starts_at?->toIso8601String(),
-            'endDate'              => $event->ends_at?->toIso8601String(),
+            'startDate'            => $event->startsAtLocal()->toIso8601String(),
+            'endDate'              => $event->endsAtLocal()?->toIso8601String(),
             'eventAttendanceMode'  => $event->mode === 'online'
                 ? 'https://schema.org/OnlineEventAttendanceMode'
                 : 'https://schema.org/OfflineEventAttendanceMode',

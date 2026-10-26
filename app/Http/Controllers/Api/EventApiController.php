@@ -95,8 +95,11 @@ class EventApiController extends Controller
             'description'     => $pick($event->description, $event->description_ar),
             'target_audience' => $pick($event->target_audience, $event->target_audience_ar),
             'location'        => $pick($event->location, $event->location_ar),
-            'starts_at'       => $event->starts_at,
-            'ends_at'         => $event->ends_at,
+            // With the venue's UTC offset, e.g. 2026-11-05T10:00:00+03:00
+            'starts_at'       => $event->startsAtLocal()->toIso8601String(),
+            'ends_at'         => $event->endsAtLocal()?->toIso8601String(),
+            'timezone'        => $event->timezone ?: Event::DEFAULT_TIMEZONE,
+            'registration_open' => $event->registrationOpen(),
             'capacity'        => $event->capacity,
             'price'           => $event->price !== null ? (float) $event->price : null,
             // Only advertised when there's something to discount.

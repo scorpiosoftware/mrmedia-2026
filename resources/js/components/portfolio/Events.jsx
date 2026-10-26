@@ -1,20 +1,15 @@
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
 import { useContent, useLocale } from '@/hooks/use-content';
+import { formatEventDate } from '@/lib/event-dates';
 import { seatsStatus } from '@/lib/event-seats';
 import { ArrowUpRight, Calendar, CalendarX, MapPin, Monitor, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ResponsiveImage from '@/components/ResponsiveImage';
 
-function formatDate(value, locale) {
-    if (!value) return '';
-    return new Intl.DateTimeFormat(locale === 'ar' ? 'ar' : 'en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-    }).format(new Date(value));
+// The venue's time, not the visitor's.
+function formatDate(event, locale) {
+    return formatEventDate(event, locale, { weekday: undefined, month: 'short' });
 }
 
 export default function Events() {
@@ -119,7 +114,7 @@ export default function Events() {
                                         <div className="mb-3 space-y-1.5 text-sm text-muted-foreground dark:text-white/60">
                                             <div className="flex items-center gap-2">
                                                 <Calendar size={14} className="shrink-0" />
-                                                {formatDate(event.starts_at, locale)}
+                                                {formatDate(event, locale)}
                                             </div>
                                             {event.location && (
                                                 <div className="flex items-center gap-2">

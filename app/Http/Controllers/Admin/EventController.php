@@ -94,6 +94,7 @@ class EventController extends Controller
             'location_ar'     => ['nullable', 'string', 'max:255'],
             'starts_at'       => ['required', 'date'],
             'ends_at'         => ['nullable', 'date', 'after_or_equal:starts_at'],
+            'timezone'        => ['nullable', 'string', 'timezone:all'],
             'capacity'        => ['nullable', 'integer', 'min:1'],
             'price'           => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
             'group_discount_percent'       => ['nullable', 'numeric', 'min:0', 'max:100'],
@@ -158,6 +159,8 @@ class EventController extends Controller
             'section_titles'   => ['nullable', 'array:agenda,agenda_ar,trainer,trainer_ar,payment,payment_ar,cta_button,cta_button_ar'],
             'section_titles.*' => ['nullable', 'string', 'max:255'],
         ]);
+
+        $data['timezone'] = $data['timezone'] ?? Event::DEFAULT_TIMEZONE;
 
         // Blank minimum falls back to the column default (2 attendees).
         $data['group_discount_min_attendees'] = $data['group_discount_min_attendees'] ?? 2;

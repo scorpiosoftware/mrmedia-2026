@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -19,6 +20,7 @@ class Event extends Model
         'location_ar',
         'starts_at',
         'ends_at',
+        'timezone',
         'capacity',
         'price',
         'group_discount_percent',
@@ -63,6 +65,28 @@ class Event extends Model
         'faqs'                 => 'array',
         'section_titles'       => 'array',
     ];
+
+    public const DEFAULT_TIMEZONE = 'Asia/Baghdad';
+
+    /**
+     * starts_at / ends_at store the wall-clock time typed in the dashboard (read back as UTC);
+     * these give the real moment, in the venue's timezone.
+     */
+    public function startsAtLocal(): CarbonInterface
+    {
+        return $this->starts_at->copy()->shiftTimezone($this->timezone ?: self::DEFAULT_TIMEZONE);
+    }
+
+    public function endsAtLocal(): ?CarbonInterface
+    {
+        return $this->ends_at?->copy()->shiftTimezone($this->timezone ?: self::DEFAULT_TIMEZONE);
+    }
+
+    /** Registration closes once the event starts. */
+    public function registrationOpen(): bool
+    {
+        return $this->startsAtLocal()->isFuture();
+    }
 
     /**
      * Price breakdown for one registration. The group discount applies to the whole

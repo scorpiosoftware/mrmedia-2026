@@ -13,6 +13,7 @@ export default function PhoneInput({
     onNumberChange,
     required = false,
     inputClassName = '',
+    id, // for the number field, so a <label htmlFor> can point at it
 }) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState('');
@@ -68,6 +69,7 @@ export default function PhoneInput({
             </button>
 
             <input
+                id={id}
                 type="tel"
                 name="phone"
                 inputMode="tel"
