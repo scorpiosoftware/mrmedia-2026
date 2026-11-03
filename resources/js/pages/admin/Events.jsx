@@ -2,6 +2,8 @@ import { MAX_UPLOAD_BYTES, MAX_UPLOAD_LABEL, TOO_LARGE_MESSAGE } from '@/lib/upl
 import AdminLayout from '@/components/admin/AdminLayout';
 import RepeaterField from '@/components/admin/RepeaterField';
 import {
+    ArrowDown,
+    ArrowUp,
     Calendar,
     Check,
     ExternalLink,
@@ -437,7 +439,7 @@ export default function AdminEvents() {
         // Re-send every editable field (not just a hand-picked subset) so toggling
         // publish state never silently wipes agenda/trainer/testimonials/faqs/CTA.
         const {
-            id, created_at, updated_at, slug, submissions_count,
+            id, created_at, updated_at, slug, sort_order, submissions_count,
             ...editableFields
         } = event;
 
@@ -458,6 +460,32 @@ export default function AdminEvents() {
             if (res.ok) loadEvents();
         } catch {
             setErrorMsg('Failed to update event.');
+        }
+    };
+
+    const move = async (index, direction) => {
+        const target = index + direction;
+        if (target < 0 || target >= events.length) return;
+        const reordered = [...events];
+        [reordered[index], reordered[target]] = [
+            reordered[target],
+            reordered[index],
+        ];
+        setEvents(reordered);
+        try {
+            await fetch('/spa/admin/events/reorder', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                    'X-CSRF-TOKEN': getCsrf(),
+                },
+                body: JSON.stringify({ ids: reordered.map((e) => e.id) }),
+            });
+        } catch {
+            setErrorMsg('Failed to reorder events.');
+            loadEvents();
         }
     };
 
@@ -1289,7 +1317,7 @@ export default function AdminEvents() {
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {events.map((event) => (
+                        {events.map((event, i) => (
                             <div
                                 key={event.id}
                                 className="rounded-2xl border border-[#D1D5E8] bg-white p-5"
@@ -1359,6 +1387,22 @@ export default function AdminEvents() {
                                     </div>
 
                                     <div className="flex shrink-0 items-center gap-2">
+                                        <button
+                                            onClick={() => move(i, -1)}
+                                            disabled={i === 0}
+                                            title="Move up"
+                                            className="rounded-lg p-2 text-[#5A6A9A] transition-colors hover:bg-[#F1F1F0] hover:text-[#213C93] disabled:opacity-30"
+                                        >
+                                            <ArrowUp size={15} />
+                                        </button>
+                                        <button
+                                            onClick={() => move(i, 1)}
+                                            disabled={i === events.length - 1}
+                                            title="Move down"
+                                            className="rounded-lg p-2 text-[#5A6A9A] transition-colors hover:bg-[#F1F1F0] hover:text-[#213C93] disabled:opacity-30"
+                                        >
+                                            <ArrowDown size={15} />
+                                        </button>
                                         {event.slug && (
                                             <a
                                                 href={`/events/${event.slug}`}

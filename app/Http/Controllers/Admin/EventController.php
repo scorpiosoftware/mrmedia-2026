@@ -18,12 +18,10 @@ class EventController extends Controller
 
     private const UPLOAD_DIR = 'events';
 
-    /** GET /spa/admin/events — all events with submission counts, newest first */
+    /** GET /spa/admin/events — all events with submission counts, ordered for display */
     public function index(): JsonResponse
     {
-        return response()->json(
-            Event::withCount('submissions')->latest('starts_at')->get()
-        );
+        return response()->json($this->orderedEvents());
     }
 
     /** POST /spa/admin/events */
@@ -31,6 +29,7 @@ class EventController extends Controller
     {
         $data = $this->validateEvent($request);
         $data['slug'] = $this->generateUniqueSlug($data['title']);
+        $data['sort_order'] = Event::max('sort_order') + 1;
 
         $event = Event::create($data);
 
@@ -61,6 +60,21 @@ class EventController extends Controller
         return response()->json(['message' => 'Event deleted.']);
     }
 
+    /** POST /spa/admin/events/reorder — body: { ids: [3, 1, 2, ...] } in the desired display order */
+    public function reorder(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['integer', 'exists:events,id'],
+        ]);
+
+        foreach ($data['ids'] as $index => $id) {
+            Event::where('id', $id)->update(['sort_order' => $index]);
+        }
+
+        return response()->json($this->orderedEvents());
+    }
+
     /** GET /spa/admin/events/{event}/submissions */
     public function submissions(Event $event): JsonResponse
     {
@@ -79,6 +93,11 @@ class EventController extends Controller
         $submission->delete();
 
         return response()->json(['message' => 'Submission deleted.']);
+    }
+
+    private function orderedEvents()
+    {
+        return Event::withCount('submissions')->orderBy('sort_order')->orderBy('starts_at')->get();
     }
 
     private function validateEvent(Request $request): array

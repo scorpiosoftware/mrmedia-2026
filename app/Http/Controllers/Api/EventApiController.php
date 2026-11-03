@@ -8,13 +8,14 @@ use Illuminate\Http\Request;
 
 class EventApiController extends Controller
 {
-    /** GET /api/events?locale=en|ar — published events for the public site, soonest first */
+    /** GET /api/events?locale=en|ar — published events for the public site, in display order */
     public function index(Request $request)
     {
         $locale = $request->get('locale') === 'ar' ? 'ar' : 'en';
 
         $events = Event::where('is_published', true)
             ->withSum('submissions', 'attendees')
+            ->orderBy('sort_order')
             ->orderBy('starts_at')
             ->get()
             ->map(fn (Event $event) => $this->present($event, $locale));

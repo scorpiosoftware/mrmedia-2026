@@ -88,6 +88,7 @@ Route::middleware('auth:web')->group(function () {
         Route::get('/spa/admin/events',       [EventController::class, 'index']);
         Route::post('/spa/admin/events',      [EventController::class, 'store']);
         Route::post('/spa/admin/events/upload-image', [EventController::class, 'uploadImage'])->middleware('throttle:20,1');
+        Route::post('/spa/admin/events/reorder',      [EventController::class, 'reorder']);
         Route::post('/spa/admin/events/{event}',   [EventController::class, 'update']);
         Route::delete('/spa/admin/events/{event}', [EventController::class, 'destroy']);
 
