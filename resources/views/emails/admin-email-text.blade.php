@@ -6,6 +6,6 @@
 @endif
 @if ($quoted)
 
-On {{ $quoted->created_at->format('M j, Y \a\t g:i A') }}, {!! $quoted->name !!} wrote:
-{!! collect(preg_split('/\R/', (string) $quoted->message))->map(fn ($line) => '> '.$line)->implode("\n") !!}
+On {{ $quoted['date']->format('M j, Y \a\t g:i A') }}, {!! $quoted['name'] !!} wrote:
+{!! collect(preg_split('/\R/', (string) $quoted['text']))->map(fn ($line) => '> '.$line)->implode("\n") !!}
 @endif

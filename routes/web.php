@@ -133,6 +133,14 @@ Route::middleware('auth:web')->group(function () {
         Route::post('/spa/admin/emails',                [EmailController::class, 'store'])->middleware('throttle:20,1');
         Route::post('/spa/admin/emails/{email}/resend', [EmailController::class, 'resend'])->middleware('throttle:20,1');
         Route::get('/spa/admin/emails/{email}/attachments/{index}', [EmailController::class, 'attachment'])->whereNumber('index');
+        Route::post('/spa/admin/emails/{email}/reply',  [EmailController::class, 'replyToEmail'])->middleware('throttle:20,1');
+
+        // Received mail (fetched from the mailbox over IMAP)
+        Route::get('/spa/admin/mail',                   [EmailController::class, 'received']);
+        Route::post('/spa/admin/mail/sync',             [EmailController::class, 'sync'])->middleware('throttle:6,1');
+        Route::get('/spa/admin/emails/{email}/thread',  [EmailController::class, 'thread']);
+        Route::get('/spa/admin/emails/{email}/html',    [EmailController::class, 'html']);
+        Route::post('/spa/admin/emails/{email}/read',   [EmailController::class, 'markRead']);
         Route::delete('/spa/admin/emails/{email}',      [EmailController::class, 'destroy']);
     });
 

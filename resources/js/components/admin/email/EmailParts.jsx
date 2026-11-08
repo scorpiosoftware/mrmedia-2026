@@ -1,6 +1,7 @@
 import EmailComposer, {
     formatBytes,
 } from '@/components/admin/email/EmailComposer';
+import EmailBody from '@/components/admin/email/EmailBody';
 import { getCsrf } from '@/components/admin/form-controls';
 import {
     Dialog,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import {
     AlertTriangle,
+    Inbox,
     CheckCircle2,
     ChevronDown,
     Loader2,
@@ -30,7 +32,7 @@ export function formatDateTime(value) {
     });
 }
 
-async function post(url, method = 'POST') {
+export async function post(url, method = 'POST') {
     const res = await fetch(url, {
         method,
         credentials: 'include',
@@ -40,8 +42,9 @@ async function post(url, method = 'POST') {
     return { ok: res.ok, json };
 }
 
-/** "Sent" / "Failed" badge — icon + label, never colour alone. */
+/** "Sent" / "Failed" badge — icon + label, never colour alone. Received emails get none. */
 export function EmailStatus({ email }) {
+    if (email.direction === 'inbound') return null;
     return email.status === 'sent' ? (
         <span className="inline-flex items-center gap-1 rounded-full bg-[#EAF6EA] px-2 py-0.5 text-xs font-semibold text-[#006300]">
             <CheckCircle2 size={11} /> Sent
@@ -56,22 +59,35 @@ export function EmailStatus({ email }) {
     );
 }
 
-function Attachments({ email }) {
+export function Attachments({ email }) {
     if (!email.attachment_list?.length) return null;
     return (
         <ul className="mt-3 flex flex-wrap gap-2">
             {email.attachment_list.map((a) => (
                 <li key={a.index}>
-                    <a
-                        href={`/spa/admin/emails/${email.id}/attachments/${a.index}`}
-                        className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-[#D1D5E8] bg-white px-2.5 py-1 text-xs text-[#0D1B4B] hover:border-[#213C93]/50 hover:text-[#213C93]"
-                    >
-                        <Paperclip size={12} className="shrink-0" />
-                        <span className="truncate">{a.name}</span>
-                        <span className="shrink-0 text-[#9AA3BF]">
-                            {formatBytes(a.size)}
+                    {a.available === false ? (
+                        <span
+                            title="Too large to download into the dashboard — open it in webmail"
+                            className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-dashed border-[#D1D5E8] bg-[#F7F8FB] px-2.5 py-1 text-xs text-[#5A6A9A]"
+                        >
+                            <Paperclip size={12} className="shrink-0" />
+                            <span className="truncate">{a.name}</span>
+                            <span className="shrink-0">
+                                {formatBytes(a.size)} · in webmail
+                            </span>
                         </span>
-                    </a>
+                    ) : (
+                        <a
+                            href={`/spa/admin/emails/${email.id}/attachments/${a.index}`}
+                            className="inline-flex max-w-full items-center gap-1.5 rounded-lg border border-[#D1D5E8] bg-white px-2.5 py-1 text-xs text-[#0D1B4B] hover:border-[#213C93]/50 hover:text-[#213C93]"
+                        >
+                            <Paperclip size={12} className="shrink-0" />
+                            <span className="truncate">{a.name}</span>
+                            <span className="shrink-0 text-[#9AA3BF]">
+                                {formatBytes(a.size)}
+                            </span>
+                        </a>
+                    )}
                 </li>
             ))}
         </ul>
@@ -79,7 +95,7 @@ function Attachments({ email }) {
 }
 
 /** Retry button for a failed email; calls `onChange(email, counts)` with the result. */
-function RetryButton({ email, onChange }) {
+export function RetryButton({ email, onChange }) {
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
     const retry = async () => {
@@ -110,47 +126,77 @@ function RetryButton({ email, onChange }) {
     );
 }
 
-/** The replies sent to a contact message, shown under it as a conversation. */
+/**
+ * One email in a conversation: ours (sent from the dashboard, tinted) or theirs
+ * (received from the mailbox, white with a "Received" label).
+ */
+export function ThreadEmail({ email, onEmailChange }) {
+    const inbound = email.direction === 'inbound';
+    return (
+        <li
+            className={`rounded-xl border p-4 ${inbound ? 'border-[#D1D5E8] bg-white' : 'border-[#E3E6F0] bg-[#F7F8FB]'}`}
+        >
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="min-w-0 text-xs text-[#5A6A9A]">
+                    {inbound ? (
+                        <Inbox size={11} className="mr-1 inline" />
+                    ) : (
+                        <Send size={11} className="mr-1 inline" />
+                    )}
+                    <span className="font-semibold text-[#0D1B4B]">
+                        {inbound
+                            ? email.from_name || email.from_address
+                            : (email.sent_by ?? email.from_name ?? 'You')}
+                    </span>
+                    {inbound && email.from_name && (
+                        <span> &lt;{email.from_address}&gt;</span>
+                    )}{' '}
+                    {inbound ? 'wrote' : 'replied'} ·{' '}
+                    {formatDateTime(email.sent_at ?? email.created_at)}
+                </p>
+                {inbound ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#E8EAF6] px-2 py-0.5 text-xs font-semibold text-[#213C93]">
+                        <Inbox size={11} /> Received
+                    </span>
+                ) : (
+                    <EmailStatus email={email} />
+                )}
+            </div>
+            <p className="mb-1 text-sm font-semibold text-[#0D1B4B]">
+                {email.subject}
+            </p>
+            {inbound ? (
+                <EmailBody email={email} />
+            ) : (
+                <p
+                    className="text-sm whitespace-pre-wrap text-[#0D1B4B]"
+                    dir="auto"
+                >
+                    {email.body}
+                </p>
+            )}
+            <Attachments email={email} />
+            {email.status === 'failed' && (
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-red-700">
+                    <span className="break-words">{email.error}</span>
+                    <RetryButton email={email} onChange={onEmailChange} />
+                </div>
+            )}
+        </li>
+    );
+}
+
+/** The emails exchanged about a contact message (our replies and their answers), as a conversation. */
 export function EmailThread({ emails, onEmailChange }) {
     if (!emails?.length) return null;
     return (
         <ol className="mb-4 space-y-3">
             {emails.map((email) => (
-                <li
+                <ThreadEmail
                     key={email.id}
-                    className="rounded-xl border border-[#E3E6F0] bg-[#F7F8FB] p-4"
-                >
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-xs text-[#5A6A9A]">
-                            <Send size={11} className="mr-1 inline" />
-                            <span className="font-semibold text-[#0D1B4B]">
-                                {email.sent_by ?? email.from_name ?? 'You'}
-                            </span>{' '}
-                            replied ·{' '}
-                            {formatDateTime(email.sent_at ?? email.created_at)}
-                        </p>
-                        <EmailStatus email={email} />
-                    </div>
-                    <p className="mb-1 text-sm font-semibold text-[#0D1B4B]">
-                        {email.subject}
-                    </p>
-                    <p
-                        className="text-sm whitespace-pre-wrap text-[#0D1B4B]"
-                        dir="auto"
-                    >
-                        {email.body}
-                    </p>
-                    <Attachments email={email} />
-                    {email.status === 'failed' && (
-                        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-red-700">
-                            <span className="break-words">{email.error}</span>
-                            <RetryButton
-                                email={email}
-                                onChange={onEmailChange}
-                            />
-                        </div>
-                    )}
-                </li>
+                    email={email}
+                    onEmailChange={onEmailChange}
+                />
             ))}
         </ol>
     );

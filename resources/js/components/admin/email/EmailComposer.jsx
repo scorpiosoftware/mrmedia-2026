@@ -29,7 +29,8 @@ function FieldError({ errors, name }) {
 
 /**
  * Writes and sends an email through the dashboard.
- * - mode "reply": `replyTo` is the visitor (fixed recipient), posts to /spa/admin/inbox/{id}/reply.
+ * - mode "reply": `replyTo` is the fixed recipient. Answers a contact message (`contactMessageId`,
+ *   posts to /spa/admin/inbox/{id}/reply) or an email (`replyToEmailId`, posts to /spa/admin/emails/{id}/reply).
  * - mode "new": free To / CC / BCC, posts to /spa/admin/emails.
  * `onSent(email, counts)` runs after a successful send; on failure the draft stays and
  * `onFailed(email)` gets the stored failed email (it can be retried from the Sent list).
@@ -39,6 +40,7 @@ export default function EmailComposer({
     mode = 'new',
     replyTo,
     contactMessageId,
+    replyToEmailId,
     defaultSubject = '',
     initialTo = '',
     onSent,
@@ -97,9 +99,11 @@ export default function EmailComposer({
         if (failedId) data.append('replaces', String(failedId));
 
         const url =
-            mode === 'reply'
-                ? `/spa/admin/inbox/${contactMessageId}/reply`
-                : '/spa/admin/emails';
+            mode !== 'reply'
+                ? '/spa/admin/emails'
+                : replyToEmailId
+                  ? `/spa/admin/emails/${replyToEmailId}/reply`
+                  : `/spa/admin/inbox/${contactMessageId}/reply`;
 
         try {
             const res = await fetch(url, {

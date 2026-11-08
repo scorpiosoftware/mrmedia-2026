@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\Mailbox\MailboxClient;
+use App\Support\Mailbox\WebklexMailboxClient;
 use App\Support\Permissions;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -21,7 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // IMAP access for receiving email (tests bind a fake).
+        $this->app->bind(MailboxClient::class, WebklexMailboxClient::class);
     }
 
     /**

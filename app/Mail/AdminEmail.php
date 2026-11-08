@@ -11,17 +11,38 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
 
 /**
- * An email written in the dashboard Inbox: a reply to a contact message or a new email.
- * Sent as HTML with a plain-text copy, the signature from Email Settings, and — for
- * replies — the visitor's original message quoted underneath.
+ * An email written in the dashboard Inbox: a reply (to a contact message or a received
+ * email) or a new email. Sent as HTML with a plain-text copy, the signature from Email
+ * Settings, and — for replies — the message being answered quoted underneath.
  */
 class AdminEmail extends Mailable
 {
+    /**
+     * @param  array{name: string, date: \Carbon\CarbonInterface, text: string}|null  $quoted
+     */
     public function __construct(
         public readonly Email $email,
         public readonly ?string $signature = null,
-        public readonly ?ContactMessage $quoted = null,
+        public readonly ?array $quoted = null,
     ) {}
+
+    /** What a reply quotes from the contact message or email it answers. */
+    public static function quoteOf(ContactMessage|Email|null $source): ?array
+    {
+        return match (true) {
+            $source instanceof ContactMessage => [
+                'name' => $source->name,
+                'date' => $source->created_at,
+                'text' => (string) $source->message,
+            ],
+            $source instanceof Email => [
+                'name' => $source->from_name ?: $source->from_address,
+                'date' => $source->sent_at ?? $source->created_at,
+                'text' => \Illuminate\Support\Str::limit((string) $source->body, 20000),
+            ],
+            default => null,
+        };
+    }
 
     public function envelope(): Envelope
     {
@@ -37,7 +58,10 @@ class AdminEmail extends Mailable
         return new Headers(
             messageId: $this->email->message_id,
             references: array_values(array_filter(explode(' ', (string) $this->email->references))),
-            text: array_filter(['In-Reply-To' => $this->email->in_reply_to ? "<{$this->email->in_reply_to}>" : null]),
+            text: array_filter([
+                'In-Reply-To'    => $this->email->in_reply_to ? "<{$this->email->in_reply_to}>" : null,
+                'X-Mrmedia-Mail' => 'dashboard',
+            ]),
         );
     }
 
@@ -59,6 +83,7 @@ class AdminEmail extends Mailable
     public function attachments(): array
     {
         return collect($this->email->attachments ?? [])
+            ->filter(fn ($a) => ! empty($a['path']))
             ->map(fn ($a) => Attachment::fromStorageDisk('local', $a['path'])->as($a['name'])->withMime($a['mime']))
             ->all();
     }

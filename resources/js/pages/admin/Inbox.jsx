@@ -1,5 +1,6 @@
 import AdminLayout from '@/components/admin/AdminLayout';
 import EmailComposer from '@/components/admin/email/EmailComposer';
+import MailTab from '@/components/admin/email/MailTab';
 import {
     ComposeDialog,
     EmailThread,
@@ -35,7 +36,8 @@ const FILTERS = [
 ];
 
 const TABS = [
-    { key: 'messages', label: 'Messages' },
+    { key: 'messages', label: 'Contact form' },
+    { key: 'mail', label: 'Mail' },
     { key: 'sent', label: 'Sent' },
 ];
 
@@ -255,12 +257,16 @@ export default function AdminInbox() {
                                 : 'border-transparent text-[#5A6A9A] hover:text-[#0D1B4B]'
                         }`}
                     >
-                        {t.key === 'messages' ? (
-                            <InboxIcon size={15} />
-                        ) : (
-                            <Send size={15} />
-                        )}
+                        {t.key === 'messages' && <InboxIcon size={15} />}
+                        {t.key === 'mail' && <Mail size={15} />}
+                        {t.key === 'sent' && <Send size={15} />}
                         {t.label}
+                        {t.key === 'mail' &&
+                            sentCounts?.received_unread > 0 && (
+                                <span className="rounded-full bg-[#213C93] px-1.5 py-0.5 text-[10px] leading-none text-white">
+                                    {sentCounts.received_unread}
+                                </span>
+                            )}
                         {t.key === 'messages' && counts.unread > 0 && (
                             <span className="rounded-full bg-[#213C93] px-1.5 py-0.5 text-[10px] leading-none text-white">
                                 {counts.unread}
@@ -278,7 +284,9 @@ export default function AdminInbox() {
                 ))}
             </div>
 
-            {tab === 'sent' ? (
+            {tab === 'mail' ? (
+                <MailTab onCountsChange={onSentCounts} />
+            ) : tab === 'sent' ? (
                 <SentEmails
                     refreshKey={sentRefresh}
                     onCountsChange={onSentCounts}

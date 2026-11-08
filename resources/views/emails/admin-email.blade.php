@@ -22,9 +22,9 @@
             @if ($quoted)
                 <div style="margin-top:28px; padding:16px 18px; background:#F7F8FB; border-{{ $rtl ? 'right' : 'left' }}:3px solid #D1D5E8; border-radius:8px; font-size:13px; color:#5A6A9A;" dir="auto">
                     <div style="margin-bottom:8px; font-weight:600;">
-                        {{ $quoted->name }} wrote on {{ $quoted->created_at->format('M j, Y \a\t g:i A') }}:
+                        {{ $quoted['name'] }} wrote on {{ $quoted['date']->format('M j, Y \a\t g:i A') }}:
                     </div>
-                    {!! nl2br(e($quoted->message)) !!}
+                    {!! nl2br(e($quoted['text'])) !!}
                 </div>
             @endif
         </div>

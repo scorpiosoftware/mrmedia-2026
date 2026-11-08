@@ -83,6 +83,7 @@ class EmailSettingsController extends Controller
                 function ($message) use ($request, $settings) {
                     $message->to($request->to)
                             ->subject(SiteSetting::current()->site_name.' — Test Email');
+                    $message->getHeaders()->addTextHeader('X-Mrmedia-Mail', 'test');
                 }
             );
 
