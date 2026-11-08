@@ -36,7 +36,8 @@ function getCsrf() {
 
 export default function Contact() {
     const t = useContent();
-    const ph = formPlaceholders(useLocale());
+    const locale = useLocale();
+    const ph = formPlaceholders(locale);
     const emails = useContentList('contact.email');
     const phones = useContentList('contact.phone');
     const addresses = useContentList('contact.address');
@@ -197,7 +198,7 @@ export default function Contact() {
                                     />
                                 </svg>
                                 <h3 className="relative pt-10 text-center text-xl font-black tracking-wide text-brand-blue uppercase sm:pt-14 sm:text-2xl dark:text-brand-yellow">
-                                    {t('contact.form.heading', 'Contact Us')}
+                                    {locale === 'ar' ? 'تواصل معنا' : 'Contact Us'}
                                 </h3>
                             </div>
                             {status === 'sent' ? (
