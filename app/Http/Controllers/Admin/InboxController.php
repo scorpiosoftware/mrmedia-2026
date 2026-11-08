@@ -16,7 +16,7 @@ class InboxController extends Controller
             ? $request->get('filter')
             : 'all';
 
-        $query = ContactMessage::query()->latest();
+        $query = ContactMessage::query()->with('emails.user:id,name')->latest();
 
         match ($filter) {
             'unread' => $query->genuine()->where('is_read', false),
@@ -43,7 +43,7 @@ class InboxController extends Controller
         ]);
 
         return response()->json([
-            'message' => $contactMessage->fresh(),
+            'message' => $contactMessage->fresh()->load('emails.user:id,name'),
             'counts' => $this->counts(),
         ]);
     }

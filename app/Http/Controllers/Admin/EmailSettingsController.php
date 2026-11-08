@@ -28,6 +28,7 @@ class EmailSettingsController extends Controller
             'from_address'     => $settings->from_address,
             'from_name'        => $settings->from_name,
             'to_address'       => $settings->to_address,
+            'signature'        => $settings->signature,
             'whatsapp_number'   => $settings->whatsapp_number,
             'whatsapp_visible'  => (bool) $settings->whatsapp_visible,
         ]);
@@ -45,6 +46,7 @@ class EmailSettingsController extends Controller
             'from_address'    => ['required', 'email', 'max:255'],
             'from_name'       => ['required', 'string', 'max:255'],
             'to_address'      => ['nullable', 'email', 'max:255'],
+            'signature'       => ['nullable', 'string', 'max:2000'],
             'whatsapp_number'  => ['nullable', 'string', 'max:30'],
             'whatsapp_visible' => ['boolean'],
         ]);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ContactMessage extends Model
 {
@@ -18,6 +19,7 @@ class ContactMessage extends Model
         'is_spam',
         'is_read',
         'read_at',
+        'replied_at',
         'mail_delivered',
         'mail_error',
     ];
@@ -26,8 +28,15 @@ class ContactMessage extends Model
         'is_spam' => 'boolean',
         'is_read' => 'boolean',
         'read_at' => 'datetime',
+        'replied_at' => 'datetime',
         'mail_delivered' => 'boolean',
     ];
+
+    /** Emails sent from the dashboard in reply to this message, oldest first. */
+    public function emails(): HasMany
+    {
+        return $this->hasMany(Email::class)->orderBy('id');
+    }
 
     public function scopeGenuine(Builder $query): Builder
     {

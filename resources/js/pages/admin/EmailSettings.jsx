@@ -20,6 +20,7 @@ const DEFAULT_FORM = {
     from_address: '',
     from_name: '',
     to_address: '',
+    signature: '',
     whatsapp_number: '',
     whatsapp_visible: true,
 };
@@ -53,6 +54,7 @@ export default function EmailSettings() {
                         from_address: data.from_address ?? '',
                         from_name: data.from_name ?? '',
                         to_address: data.to_address ?? '',
+                        signature: data.signature ?? '',
                         whatsapp_number: data.whatsapp_number ?? '',
                         whatsapp_visible: data.whatsapp_visible ?? true,
                     });
@@ -377,6 +379,27 @@ export default function EmailSettings() {
                                 <p className="mt-1.5 text-xs text-[#5A6A9A]">
                                     Contact form submissions will be sent to
                                     this address.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-xs font-semibold tracking-wider text-[#213C93] uppercase">
+                                    Email Signature
+                                </label>
+                                <textarea
+                                    value={form.signature}
+                                    onChange={(e) =>
+                                        set('signature', e.target.value)
+                                    }
+                                    rows={4}
+                                    maxLength={2000}
+                                    dir="auto"
+                                    placeholder={'Mohammad Alloul\nMarketing Manager\n+964 770 123 4567 · info@moalloul.com'}
+                                    className="w-full resize-y rounded-xl border border-[#D1D5E8] bg-[#F1F1F0] px-4 py-3 text-sm text-[#0D1B4B] focus:border-[#213C93] focus:ring-2 focus:ring-[#213C93]/20 focus:outline-none"
+                                />
+                                <p className="mt-1.5 text-xs text-[#5A6A9A]">
+                                    Added to the end of every reply and email
+                                    sent from the Inbox.
                                 </p>
                             </div>
 

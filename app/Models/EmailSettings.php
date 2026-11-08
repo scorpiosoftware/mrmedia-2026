@@ -17,6 +17,7 @@ class EmailSettings extends Model
         'from_address',
         'from_name',
         'to_address',
+        'signature',
         'whatsapp_number',
         'whatsapp_visible',
     ];

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\EmailController;
 use App\Http\Controllers\Admin\EmailSettingsController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\InboxController;
@@ -125,6 +126,14 @@ Route::middleware('auth:web')->group(function () {
         Route::get('/spa/admin/inbox',    [InboxController::class, 'index']);
         Route::post('/spa/admin/inbox/{contactMessage}/read',  [InboxController::class, 'markRead']);
         Route::delete('/spa/admin/inbox/{contactMessage}',     [InboxController::class, 'destroy']);
+        Route::post('/spa/admin/inbox/{contactMessage}/reply', [EmailController::class, 'reply'])->middleware('throttle:20,1');
+
+        // Emails sent from the Inbox (new emails, the Sent list, attachments)
+        Route::get('/spa/admin/emails',                 [EmailController::class, 'index']);
+        Route::post('/spa/admin/emails',                [EmailController::class, 'store'])->middleware('throttle:20,1');
+        Route::post('/spa/admin/emails/{email}/resend', [EmailController::class, 'resend'])->middleware('throttle:20,1');
+        Route::get('/spa/admin/emails/{email}/attachments/{index}', [EmailController::class, 'attachment'])->whereNumber('index');
+        Route::delete('/spa/admin/emails/{email}',      [EmailController::class, 'destroy']);
     });
 
     // The Content page also shows/hides home page sections, so these two accept either permission.
