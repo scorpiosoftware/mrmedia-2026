@@ -15,6 +15,10 @@ return \Illuminate\Foundation\Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // Anonymous page-view beacons: they only add statistics rows and touch no account,
+        // and the time-on-page report is sent with navigator.sendBeacon, which can't carry a token.
+        $middleware->validateCsrfTokens(except: ['spa/track', 'spa/track/*']);
+
         $middleware->web(append: [
             HandleAppearance::class,
         ]);

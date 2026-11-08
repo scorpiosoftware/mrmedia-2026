@@ -6,6 +6,7 @@ import PhoneInput from '@/components/portfolio/PhoneInput';
 import WhatsAppButton, { WhatsAppIcon } from '@/components/portfolio/WhatsAppButton';
 import { useApp } from '@/context/AppContext';
 import { useContent, useLocale, useSiteIdentity } from '@/hooks/use-content';
+import { formPlaceholders } from '@/lib/form-placeholders';
 import { useDocumentMeta } from '@/hooks/use-document-meta';
 import { usePointerGlow } from '@/hooks/use-pointer-glow';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
@@ -285,7 +286,7 @@ function PriceSummary({ event, attendees, className = '' }) {
 }
 
 const FIELD_CLASS =
-    'w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-3.5 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20';
+    'w-full rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-3.5 py-2.5 text-sm text-brand-dark dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/30 focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20';
 const LABEL_CLASS = 'mb-1.5 block text-xs font-semibold uppercase tracking-wider text-brand-blue dark:text-brand-yellow';
 
 /** Fades and lifts its content in the first time it scrolls into view (same entrance as the home page). */
@@ -330,6 +331,7 @@ function RequiredMark({ required }) {
 function RegistrationPanel({ event, isFull, onRegistered }) {
     const t = useContent();
     const locale = useLocale();
+    const ph = formPlaceholders(locale);
     const { whatsappNumber, whatsappVisible } = useApp();
     const showsWhatsApp = Boolean(whatsappNumber && whatsappVisible);
     const [form, setForm] = useState(EMPTY_FORM);
@@ -512,14 +514,14 @@ function RegistrationPanel({ event, isFull, onRegistered }) {
                             {t('events.form.name')}
                             <RequiredMark required={isRequired('name')} />
                         </label>
-                        <input id="reg-name" type="text" name="name" autoComplete="name" value={form.name} onChange={handleChange} required={isRequired('name')} className={FIELD_CLASS} />
+                        <input id="reg-name" type="text" name="name" autoComplete="name" placeholder={ph.name} value={form.name} onChange={handleChange} required={isRequired('name')} className={FIELD_CLASS} />
                     </div>
                     <div>
                         <label htmlFor="reg-email" className={LABEL_CLASS}>
                             {t('events.form.email')}
                             <RequiredMark required={isRequired('email')} />
                         </label>
-                        <input id="reg-email" type="email" name="email" autoComplete="email" value={form.email} onChange={handleChange} required={isRequired('email')} className={FIELD_CLASS} />
+                        <input id="reg-email" type="email" name="email" autoComplete="email" placeholder={ph.email} dir="ltr" value={form.email} onChange={handleChange} required={isRequired('email')} className={`${FIELD_CLASS} rtl:text-right`} />
                     </div>
                     <div>
                         <label htmlFor="reg-phone" className={LABEL_CLASS}>
@@ -533,7 +535,8 @@ function RegistrationPanel({ event, isFull, onRegistered }) {
                             onCountryChange={(iso) => setForm((prev) => ({ ...prev, phoneCountry: iso }))}
                             onNumberChange={(value) => setForm((prev) => ({ ...prev, phoneNumber: value }))}
                             required={isRequired('phone')}
-                            inputClassName="rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-3.5 py-2.5 text-sm text-brand-dark dark:text-white focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
+                            placeholder={ph.phone}
+                            inputClassName="rounded-xl border border-border dark:border-primary-light/50 bg-white dark:bg-brand-dark px-3.5 py-2.5 text-sm text-brand-dark dark:text-white placeholder:text-muted-foreground dark:placeholder:text-white/30 focus:border-brand-blue dark:focus:border-brand-yellow focus:outline-none focus:ring-2 focus:ring-brand-blue/20 dark:focus:ring-brand-yellow/20"
                         />
                     </div>
                     <div>
@@ -541,7 +544,7 @@ function RegistrationPanel({ event, isFull, onRegistered }) {
                             {t('events.form.company')}
                             <RequiredMark required={isRequired('company')} />
                         </label>
-                        <input id="reg-company" type="text" name="company" autoComplete="organization" value={form.company} onChange={handleChange} required={isRequired('company')} className={FIELD_CLASS} />
+                        <input id="reg-company" type="text" name="company" autoComplete="organization" placeholder={ph.company} value={form.company} onChange={handleChange} required={isRequired('company')} className={FIELD_CLASS} />
                     </div>
                     <div>
                         <label htmlFor="reg-attendees" className={LABEL_CLASS}>{t('events.form.attendees')}</label>
@@ -568,7 +571,7 @@ function RegistrationPanel({ event, isFull, onRegistered }) {
                             {t('events.form.message')}
                             <RequiredMark required={isRequired('message')} />
                         </label>
-                        <textarea id="reg-message" name="message" value={form.message} onChange={handleChange} rows={2} required={isRequired('message')} className={`${FIELD_CLASS} resize-none`} />
+                        <textarea id="reg-message" name="message" value={form.message} onChange={handleChange} rows={2} placeholder={ph.notes} required={isRequired('message')} className={`${FIELD_CLASS} resize-none`} />
                     </div>
                 </div>
 

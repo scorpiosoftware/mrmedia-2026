@@ -1,7 +1,8 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { ADMIN_SECTIONS, homePathFor } from '@/lib/admin-sections';
+import { trackPageView } from '@/lib/analytics';
 import { applyThemeVars, themeVars } from '@/lib/site-theme';
 import Home from '@/pages/Home';
 
@@ -11,6 +12,7 @@ const EventDetails = lazy(() => import('@/pages/EventDetails'));
 // Admin screens are only ever needed by logged-in staff, not public visitors —
 // code-split them so the public site's bundle doesn't pay for admin code.
 const AdminLogin = lazy(() => import('@/pages/admin/Login'));
+const AdminStatistics = lazy(() => import('@/pages/admin/Statistics'));
 const ContentEditor = lazy(() => import('@/pages/admin/ContentEditor'));
 const AdminInbox = lazy(() => import('@/pages/admin/Inbox'));
 const AdminEvents = lazy(() => import('@/pages/admin/Events'));
@@ -66,6 +68,7 @@ function AdminHome() {
 
 // Route path → page component; each route's permission comes from ADMIN_SECTIONS.
 const ADMIN_PAGES = {
+    '/admin/statistics': AdminStatistics,
     '/admin/content': ContentEditor,
     '/admin/projects': AdminProjects,
     '/admin/services': AdminServices,
@@ -96,6 +99,28 @@ function SiteThemeApplier() {
     return null;
 }
 
+/** Counts public page views for the dashboard's Statistics page (admin screens are never tracked). */
+function PageViewTracker() {
+    const { pathname } = useLocation();
+    const { locale } = useApp();
+    // A language switch shouldn't count as another view, so the locale is read through a ref.
+    const localeRef = useRef(locale);
+    const lastPath = useRef(null);
+
+    useEffect(() => {
+        localeRef.current = locale;
+    }, [locale]);
+
+    useEffect(() => {
+        // The ref also stops React's dev double-run from counting a page twice.
+        if (pathname.startsWith('/admin') || pathname === lastPath.current) return;
+        lastPath.current = pathname;
+        trackPageView(pathname, localeRef.current);
+    }, [pathname]);
+
+    return null;
+}
+
 /**
  * Client-side navigation keeps the previous page's scroll position, so opening an
  * event from low on the home page would land near its footer — start each page at the top.
@@ -117,6 +142,7 @@ export default function AppRouter() {
         <Suspense fallback={<RouteFallback />}>
             <SiteThemeApplier />
             <ScrollToTop />
+            <PageViewTracker />
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/events/:slug" element={<EventDetails />} />

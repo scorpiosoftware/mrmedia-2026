@@ -11,10 +11,12 @@ use App\Http\Controllers\Admin\MarqueeBannerController;
 use App\Http\Controllers\Admin\PopupController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SocialLinkController;
+use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Api\ContentApiController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\EventSubmissionController;
+use App\Http\Controllers\PageViewController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SpaController;
 use App\Support\Permissions;
@@ -64,11 +66,17 @@ Route::post('/spa/contact', [ContactController::class, 'send'])->middleware('thr
 // Public: submit/register for an event or training course
 Route::post('/spa/events/{event}/submit', [EventSubmissionController::class, 'store'])->middleware('throttle:event-submission');
 
+// Public: anonymous page-view tracking for the Statistics page (CSRF-exempt, see bootstrap/app.php)
+Route::post('/spa/track', [PageViewController::class, 'store'])->middleware('throttle:page-views');
+Route::post('/spa/track/{id}/leave', [PageViewController::class, 'leave'])->whereNumber('id')->middleware('throttle:page-views');
+
 // Admin endpoints — signed in, and each dashboard section behind its permission
 // (config/permissions.php). Profile is always available for changing your own password.
 Route::middleware('auth:web')->group(function () {
     Route::get('/spa/admin/profile',           [ProfileController::class, 'show']);
     Route::post('/spa/admin/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:6,1');
+
+    Route::get('/spa/admin/statistics', [StatisticsController::class, 'index'])->middleware('permission:statistics.view');
 
     Route::middleware('permission:content.manage')->group(function () {
         Route::get('/spa/admin/content',  [ContentApiController::class, 'adminIndex']);

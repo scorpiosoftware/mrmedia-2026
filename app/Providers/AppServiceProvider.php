@@ -52,6 +52,13 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(3)->by($request->ip()),
             Limit::perDay(25)->by($request->ip()),
         ]);
+
+        // Page-view beacons: generous enough for fast browsing (and visitors sharing one office IP),
+        // tight enough that one client can't flood the statistics table.
+        RateLimiter::for('page-views', fn (Request $request) => [
+            Limit::perMinute(120)->by($request->ip()),
+            Limit::perDay(5000)->by($request->ip()),
+        ]);
     }
 
     /**

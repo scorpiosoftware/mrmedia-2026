@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/sidebar';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import {
+    BarChart3,
     Briefcase,
     Calendar,
     FileText,
@@ -36,6 +37,7 @@ import {
 import { ADMIN_SECTIONS, homePathFor } from '@/lib/admin-sections';
 
 const NAV_ICONS = {
+    '/admin/statistics': BarChart3,
     '/admin/content': FileText,
     '/admin/projects': Briefcase,
     '/admin/services': Sparkles,

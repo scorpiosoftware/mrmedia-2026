@@ -1,6 +1,7 @@
 import PhoneInput from '@/components/portfolio/PhoneInput';
 import { useScrollAnimation } from '@/hooks/use-scroll-animation';
-import { useContent, useContentList } from '@/hooks/use-content';
+import { useContent, useContentList, useLocale } from '@/hooks/use-content';
+import { formPlaceholders } from '@/lib/form-placeholders';
 import { COUNTRIES, DEFAULT_COUNTRY } from '@/lib/countries';
 import { AlertCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState } from 'react';
@@ -35,6 +36,7 @@ function getCsrf() {
 
 export default function Contact() {
     const t = useContent();
+    const ph = formPlaceholders(useLocale());
     const emails = useContentList('contact.email');
     const phones = useContentList('contact.phone');
     const addresses = useContentList('contact.address');
@@ -247,6 +249,7 @@ export default function Contact() {
                                             onChange={handleChange}
                                             required
                                             autoComplete="name"
+                                            placeholder={ph.name}
                                             className={`w-full ${FIELD_CLASS}`}
                                         />
                                     </div>
@@ -274,6 +277,7 @@ export default function Contact() {
                                                 }))
                                             }
                                             required
+                                            placeholder={ph.phone}
                                             inputClassName={FIELD_CLASS}
                                         />
                                     </div>
@@ -282,13 +286,15 @@ export default function Contact() {
                                             name: 'email',
                                             label: t('contact.form.email'),
                                             type: 'email',
+                                            placeholder: ph.email,
                                         },
                                         {
                                             name: 'service',
                                             label: t('contact.form.service'),
                                             type: 'text',
+                                            placeholder: ph.service,
                                         },
-                                    ].map(({ name, label, type }) => (
+                                    ].map(({ name, label, type, placeholder }) => (
                                         <div key={name}>
                                             <label className={LABEL_CLASS}>
                                                 {label}
@@ -298,7 +304,10 @@ export default function Contact() {
                                                 name={name}
                                                 value={form[name]}
                                                 onChange={handleChange}
-                                                className={`w-full ${FIELD_CLASS}`}
+                                                placeholder={placeholder}
+                                                // Emails are typed left-to-right; in Arabic align them right so the cursor starts there.
+                                                dir={type === 'email' ? 'ltr' : undefined}
+                                                className={`w-full ${type === 'email' ? 'rtl:text-right' : ''} ${FIELD_CLASS}`}
                                             />
                                         </div>
                                     ))}
@@ -311,6 +320,7 @@ export default function Contact() {
                                             value={form.message}
                                             onChange={handleChange}
                                             rows={4}
+                                            placeholder={ph.message}
                                             className={`w-full resize-none ${FIELD_CLASS}`}
                                         />
                                     </div>

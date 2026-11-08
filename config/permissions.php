@@ -24,6 +24,12 @@ return [
     'super_admin_role' => 'Super Admin',
 
     'groups' => [
+        'statistics' => [
+            'label' => 'Statistics',
+            'permissions' => [
+                'statistics.view' => 'View visitor, event page and registration statistics',
+            ],
+        ],
         'content' => [
             'label' => 'Content',
             'permissions' => [

@@ -6,6 +6,11 @@ import { userCan } from '@/lib/permissions';
  * Icons live in AdminLayout so the public bundle (which loads the router) stays lean.
  */
 export const ADMIN_SECTIONS = [
+    {
+        to: '/admin/statistics',
+        label: 'Statistics',
+        permission: 'statistics.view',
+    },
     { to: '/admin/content', label: 'Content', permission: 'content.manage' },
     { to: '/admin/projects', label: 'Projects', permission: 'projects.manage' },
     { to: '/admin/services', label: 'Services', permission: 'services.manage' },

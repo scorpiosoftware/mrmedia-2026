@@ -13,6 +13,7 @@ export default function PhoneInput({
     onNumberChange,
     required = false,
     inputClassName = '',
+    placeholder,
     id, // for the number field, so a <label htmlFor> can point at it
 }) {
     const [open, setOpen] = useState(false);
@@ -80,7 +81,8 @@ export default function PhoneInput({
                 }
                 required={required}
                 pattern="[\d\s-]{4,20}"
-                className={`min-w-0 flex-1 ${inputClassName}`}
+                placeholder={placeholder}
+                className={`min-w-0 flex-1 rtl:text-right ${inputClassName}`}
             />
 
             {open && (
